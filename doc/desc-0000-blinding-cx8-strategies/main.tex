@@ -1,0 +1,111 @@
+%
+% ======================================================================
+\RequirePackage{docswitch}
+% \flag is set by the user, through the makefile:
+%    make note
+%    make apj
+% etc.
+\setjournal{\flag}
+
+\documentclass[\docopts]{\docclass}
+
+% You could also define the document class directly
+%\documentclass[]{emulateapj}
+
+% Custom commands from LSST DESC, see texmf/styles/lsstdesc_macros.sty
+\usepackage{lsstdesc_macros}
+
+\usepackage{graphicx}
+\graphicspath{{./}{./figures/}}
+\bibliographystyle{apj}
+
+% Add your own macros here:
+
+
+
+%
+% ======================================================================
+
+\begin{document}
+
+\title{ Anticipated Challenges and Strategies for Mitigating Experimenter Bias in LSST DESC Cosmology Analysis }
+
+\maketitlepre
+
+\begin{abstract}
+
+We identify some particular challenges for the LSST DESC cosmology analysis with regard to unconscious experimenter bias, and discuss possible ways to mitigate this source of systematic error based on an extensive literature search.
+
+\end{abstract}
+
+% Keywords are ignored in the LSST DESC Note style:
+\dockeys{latex: templates, papers: awesome}
+
+\maketitlepost
+
+% ----------------------------------------------------------------------
+%
+
+\section{Introduction}
+\label{sec:intro}
+
+
+% ----------------------------------------------------------------------
+
+\section{Challenges}
+\label{sec:challenges}
+
+
+% ----------------------------------------------------------------------
+
+\section{Possible Blinding Strategies for Individual Probe Analyses}
+\label{sec:indi}
+
+
+% ----------------------------------------------------------------------
+
+\section{Possible Blinding Strategies for Joint Probe Analysis}
+\label{sec:joint}
+
+
+% ----------------------------------------------------------------------
+
+\section{Discussion}
+\label{sec:discussion}
+
+
+% ----------------------------------------------------------------------
+
+\section{Conclusions}
+\label{sec:conclusions}
+
+Here's a summary of what we just reported.
+
+We can draw the following well-organized and neatly-formatted conclusions:
+\begin{itemize}
+  \item This is important.
+  \item We can measure some number with some precision.
+  \item This has some implications.
+\end{itemize}
+
+Here are some parting thoughts.
+
+
+% ----------------------------------------------------------------------
+
+\subsection*{Acknowledgments}
+
+Here is where you should add your specific acknowledgments, remembering that some standard thanks will be added via the \code{acknowledgments.tex} and \code{contributions.tex} files.
+
+\input{acknowledgments}
+
+\input{contributions}
+
+%{\it Facilities:} \facility{LSST}
+
+% Include both collaboration papers and external citations:
+\bibliography{lsstdesc,main}
+
+\end{document}
+% ======================================================================
+%

@@ -1,0 +1,12 @@
+{
+    "author": "Elisabeth Krause",
+    "affiliation": "KIPAC",
+    "email": "lise@slac.stanford.edu",
+    "title": "Anticipated Challenges and Strategies for Mitigating Experimenter Bias in LSST DESC Cosmology Analysis",
+    "description": "We identify some particular challenges wfor the LSST DESC cosmology analysis with regard to unconscious experimenter bias, and discuss possible ways to mitigate this source of systematic error based on an extensive literature search.",
+    "repo_name": "Blinding",
+    "serial_number": "0000",
+    "short_title": "cx8-strategies",
+    "folder_name": "desc-0000-blinding-cx8-strategies",
+    "default_format": "tex"
+}
