@@ -8,7 +8,7 @@ def get_parser():
     """
     parser = argparse.ArgumentParser(
         prog='blind_2pt_cosmosis',
-        formatter_class=argparse.RawDescriptionHelpFormatter,
+        formatter_class=argparse.RawTextHelpFormatter,
         description=f'''
     --------------------------------------------------------------------------------
     Blinding Module for 2pt data in Cosmosis. 
@@ -58,30 +58,40 @@ def get_parser():
 
     parser.add_argument("-u", "--origfits", type=str, required=True,
                         help='Name of unblinded fits file')
-    parser.add_argument("-i", "--ini", type=str, required=True,
+    parser.add_argument("-i", "--ini", type=str, required=False,
+                        default='default_blinding_template.ini',
                         help='Ini file containing template for generating 2pt functions. \nShould'+
-                        '\nuse a binning that matches that of the origfits file' +
+                        'use a binning that matches that of the origfits file' +
                         '\nReference a values file centered at desired reference' +
                         '\ncosmology')
-    parser.add_argument('-s', '--seed', type=str, required=True, 
+    parser.add_argument('-s', '--seed', type=str, required=False, 
+                        default="HARD_CODED_BLINDING",
                         help='string used to seed parameter shift selection')
-    parser.add_argument('-t', '--bftype', type=str, required=True,
+    parser.add_argument('-t', '--bftype', type=str, required=False,
+                        default='add',
                         help="Blinding factor type. Can be 'add', 'mult', or" + 
-                        "'multNOCS' (mult with no cov scaling) \n[MULT OPTION IS DISABLED]")
+                        "'multNOCS' (mult with no cov scaling) \n[MULT OPTION IS DISABLED]. \n>> Default is 'add'")
     parser.add_argument('-o', '--outfname', type=str, required=False,
-                        help="Output filename; only set for testing,  default behavior is" +
-                        "outfname = [origfits]_[seed].fits")
+                        default=None,
+                        help="Output filename; only set for testing,  " +
+                        "If outftag is set, then " +
+                        "\noutfname = [origfits]_[outftag]_[seed].fits." + 
+                        "\n>> Default behavior is outfname = [origfits]_[seed].fits.")
     parser.add_argument('-f', '--outftag', type=str, required=False,
-                        help="String to label output filename, for testing purposes. If set" +
-                        "when outfname is None (default), then" +
+                        default="_BLINDED",
+                        help="String to label output filename, for testing purposes. \nIf set" +
+                        "when outfname is None (default), \nthen " +
                         "outfname = [origfits]_[outftag]_[seed].fits")
     parser.add_argument('-m', '--paramshiftmodule', type=str, required=False,
+                        default=None,
                         help="String string of a python filename (minus the .py)" +
-                        "which can be used to import a function to draw parameter" +
-                        "shifts (see draw_paramshift for more info)")
+                        "\nwhich can be used to import a function to draw parameter " +
+                        "\nshifts (see draw_paramshift for more info)")
     parser.add_argument('--seedinfname', action='store_true', required=False,
+                        default=False,
                         help="If set, appends seed to blinded data filename. Default is False.")
     parser.add_argument('--seedinfits', action='store_true', required=False,
+                        default=False,
                         help="If set, stores seed in KEYWORD entry in blinded fits file. Default True.")
     return parser
 
