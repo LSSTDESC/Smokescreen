@@ -37,6 +37,9 @@ def draw_param_shift(seedstring='blinded', ranges=None, importfrom=None):
     seedind = int(int(hashlib.md5(seedstring.encode('utf-8')).hexdigest(), 16) % 1.e8)
     np.random.seed(seedind)
 
+    if ranges is None:
+        ranges = DEFAULT_PARAM_RANGE
+
     if importfrom is None:
         # sorting makes sure it's always the same order
         params2shift = sorted(ranges.keys())
