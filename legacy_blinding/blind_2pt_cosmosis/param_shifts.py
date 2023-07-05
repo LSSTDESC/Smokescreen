@@ -1,11 +1,8 @@
 import hashlib
 import numpy as np
-import importlib
+from .io import DEFAULT_PARAM_RANGE
 
-DEFAULT_PARAM_RANGE = {'cosmological_parameters--sigma8_input':(0.834-3*.04,0.834+3*0.04),\
-                       'cosmological_parameters--w':(-1.5,-.5)}
-
-def draw_param_shift(seedstring='blinded', ranges=None):
+def draw_flat_param_shift(seedstring='blinded', ranges=None):
     """
     Given a string seed, pseudo-randomly draws shift in parameter space.
 

@@ -1,8 +1,6 @@
 import pytest
-import sys
-import os
 
-from ..param_shifts import draw_param_shift
+from ..param_shifts import draw_flat_param_shift
 from ..param_shifts import DEFAULT_PARAM_RANGE
 
 @pytest.fixture
@@ -14,7 +12,7 @@ def ranges():
     }
 
 def test_parameter_shifts(ranges):
-    pdict = draw_param_shift(ranges=ranges)
+    pdict = draw_flat_param_shift(ranges=ranges)
     assert isinstance(pdict, dict)
     assert len(pdict) == len(ranges) + 1  # +1 for 'SHIFTS' key
     assert not pdict['SHIFTS']
@@ -25,7 +23,7 @@ def test_parameter_shifts(ranges):
             assert value <= ranges[param][1]
 
 def test_parameter_shifts_with_default_range():
-    pdict = draw_param_shift()
+    pdict = draw_flat_param_shift()
     assert isinstance(pdict, dict)
     assert len(pdict) == len(DEFAULT_PARAM_RANGE) + 1  # +1 for 'SHIFTS' key
     assert not pdict['SHIFTS']
