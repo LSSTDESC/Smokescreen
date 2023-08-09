@@ -104,4 +104,6 @@ def get_parser():
     parser.add_argument('--seedinfits', action='store_true', required=False,
                         default=False,
                         help="If set, stores seed in KEYWORD entry in blinded fits file. Default True.")
+    parser.add_argument("--log-level", choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
+                        default="INFO", help="Specify the logging level: DEBUG, INFO, WARNING, ERROR, or CRITICAL. Default is INFO.")
     return parser

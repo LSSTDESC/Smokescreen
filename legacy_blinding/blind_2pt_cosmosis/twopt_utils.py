@@ -2,6 +2,9 @@ import numpy as np
 import os
 import sys
 import importlib
+import logging
+logger = logging.getLogger("2pt_blinding")
+
 
 # gambiarra to import cosmosis modules
 CSD = os.environ['COSMOSIS_SRC_DIR']+'/cosmosis-standard-library/likelihood/2pt/'
@@ -67,6 +70,7 @@ def get_dictkey_for_2pttype(type1, type2):
     dictionary keys expected by this script's functions.
     (fits file 2pt table naming -> this script's naming)
     """
+    logger.debug("Requested: \n\ttype1: {0:s}, type2: {1:s}".format(type1, type2))
     mapping = {
         'G': 'galaxy',
         'C': 'cmb',
