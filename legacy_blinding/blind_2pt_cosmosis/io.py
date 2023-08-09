@@ -65,7 +65,7 @@ def get_parser():
     parser.add_argument("-u", "--origfits", type=str, required=True,
                         help='Name of unblinded fits file')
     parser.add_argument("-i", "--ini", type=str, required=False,
-                        default='default_blinding_template.ini',
+                        default='./blind_2pt_cosmosis/cosmosis_ini_files/default_blinding_template.ini',
                         help='Ini file containing template for generating 2pt functions. \nShould'+
                         'use a binning that matches that of the origfits file' +
                         '\nReference a values file centered at desired reference' +
