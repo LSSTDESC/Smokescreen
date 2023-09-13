@@ -52,27 +52,6 @@ def modify_settings(ini, angles_file=None, nz_file=None):
             raise ValueError("You specified nz_file as "+nz_file+", but I can't find the fits_nz module settings in  your ini file.")
     return ini
 
-# def handle_optional_files(ini, nz_file, angles_file):
-#     """
-#     Handle optional n(z) and angle files in the INI.
-#     """
-#     if angles_file:
-#         modify_sections_with_file(ini, ['shear_2pt_eplusb', 'shear_2pt_eminusb', '2pt_gal', '2pt_gal_shear'], 'theta_file', angles_file)
-#     if nz_file:
-#         modify_sections_with_file(ini, ['fits_nz'], 'nz_file', nz_file)
-#     return ini
-
-# def modify_sections_with_file(ini, sections, key, value):
-#     """
-#     Modify specified sections in the INI with the provided key-value pair.
-#     """
-#     for section in sections:
-#         if section in ini.__dict__['_sections']:
-#             ini.__dict__['_sections'][section][key] = value
-#         else:
-#             raise ValueError(f"You specified {key} as {value}, but the {section} module settings are not in your ini file.")
-#     return ini
-
 def apply_parameter_shifts(pipeline, pdict, doshifts):
     """
     Apply parameter shifts to the pipeline parameters.
@@ -128,13 +107,18 @@ def run_cosmosis_togen_2ptdict(pdict={}, inifile='./default_blinding_template.in
     logger.debug("Running cosmosis pipeline to generate 2pt functions.")
     pipeline = setup_pipeline(inifile, angles_file, nz_file)
     logger.debug("Passed setup_pipeline.")
+
     doshifts = len(list(pdict.keys()))
     logger.debug("Passed doshifts.")
+
     pipeline = apply_parameter_shifts(pipeline, pdict, doshifts)
     logger.debug("Passed apply_parameter_shifts.")
     logger.debug(f"Pipeline: {pipeline}")
+
     data = run_pipeline(pipeline)
     logger.debug("Passed run_pipeline.")
+    
     twoptdict = get_twoptdict_from_pipeline_data(data)
     logger.debug(f"Passed get_twoptdict_from_pipeline_data!")
+    
     return twoptdict
