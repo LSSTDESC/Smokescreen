@@ -9,6 +9,35 @@ class DictAction(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):
         setattr(namespace, self.dest, eval(values))
 
+def get_stored_seed_and_tag(args):
+    """
+    Obtains the seed and tag to be used in the output filename
+
+    Parameters
+    ----------
+    args : argparse.Namespace
+        Namespace with the arguments given by the user
+
+    Returns
+    -------
+    storeseed : str
+        Seed to be stored in the fits file
+    tagstr : str
+        Tag to be used in the output filename
+    """
+    if args.outftag is not None:
+        tagstr = args.outftag # +'_'+tagstr
+        if args.seedinfname:
+            tagstr = tagstr + '_'+ args.seedstring
+    elif args.seedinfname:
+        tagstr = '_' + args.seedstring
+
+    if args.seedinfits:
+        storeseed = args.seedstring
+    else:
+        storeseed = 'notsaved'
+    return storeseed, tagstr
+
 def get_parser():
     """
     creates the parser to obtain the user command line input

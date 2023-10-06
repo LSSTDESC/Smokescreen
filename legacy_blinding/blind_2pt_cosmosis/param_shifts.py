@@ -77,3 +77,47 @@ def apply_parameter_shifts(pipeline, pdict):
         print("  did shifts in:",haveshifted)
         raise ValueError("WARNING: YOU ASKED FOR SHIFTS IN PARAMTERS NOT IN THE COSMOSIS PIPELINE.")
     return pipeline
+
+def get_factordict(refdict,shiftdict,bftype='add'):
+    """
+    Given two point dictionaries for reference and shifted cosmology,
+    returns dictionary of blinding factors.
+
+    Parameters
+    ----------
+    refdict : dict
+        Dictionary of reference cosmology 2pt functions.
+    shiftdict : dict
+        Dictionary of shifted cosmology 2pt functions.
+    bftype : str, optional
+        What kind of blinding factor is it?
+        'add' : bf = - ref + shift
+        'mult': bf = shift/ref
+        'multNOCS': bf = shift/ref, but with no cosmic shear
+            (i.e. no E-mode or B-mode shear)
+        Default is 'add'.
+
+    Returns
+    -------
+    factordict : dict
+        Dictionary of blinding factors.
+    """
+
+    factordict = {}
+    for key in refdict:
+        end = key[key.rfind('_')+1:]
+        #print(key,end)
+        # don't take ratios or differences of angle/multipole info
+        if end in ['ell','l','theta','bins','angbins','binavg','mins','maxs']:
+            #print '    no change'
+            factordict[key] = refdict[key]
+        else:
+            if bftype=='mult' or bftype=='multNOCS':
+                logger.debug('    dividing!')
+                factordict[key] = shiftdict[key]/refdict[key]
+            elif bftype=='add':
+                logger.debug('    adding!')
+                factordict[key] = shiftdict[key] - refdict[key]
+            else:
+                raise ValueError('In get_factordict: blinding factor type not recognized')
+    return factordict

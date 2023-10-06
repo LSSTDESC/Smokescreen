@@ -1,6 +1,6 @@
 import logging
-from .param_shifts import draw_flat_param_shift
-from .io import get_parser
+from .param_shifts import draw_flat_param_shift, get_factordict
+from .io import get_parser, get_stored_seed_and_tag
 from .run_cosmosis_2pt import run_cosmosis_togen_2ptdict
 
 
@@ -29,6 +29,15 @@ def main():
     #FIXME: Add nz_file and angles_file to args
     shift_dict = run_cosmosis_togen_2ptdict(inifile=args.ini, pdict=params_shifts,
                                             nz_file=None, angles_file=None)
+    logger.debug(f"Calculated Shifted Dict")
+    #gets the blinding factors data vectors
+    factor_dict = get_factordict(reff_dict, shift_dict, bftype = args.bftype)
+    logger.debug(f"Calculated Blinded Data Vectors")
+
+    # Gets some I/O information
+    storeseed, tagstr = get_stored_seed_and_tag(args)
+
+
 
 if __name__ == '__main__':
     main()
