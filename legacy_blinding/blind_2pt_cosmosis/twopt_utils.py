@@ -111,7 +111,7 @@ def get_dictkey_for_2pttype(type1, type2):
     dictionary keys expected by this script's functions.
     (fits file 2pt table naming -> this script's naming)
     """
-    logger.debug("Requested: \n\ttype1: {0:s}, type2: {1:s}".format(type1, type2))
+    logger.debug("Requested: \ttype1: {0:s}, type2: {1:s}".format(type1, type2))
     mapping = {
         'G': 'galaxy',
         'C': 'cmb',
@@ -137,7 +137,7 @@ def get_dictkey_for_2pttype(type1, type2):
         xkey = f"{section}_{xlabel}"
     except KeyError:
         raise ValueError("Spectra type not recognized: {0:s}, {1:s} ".format(type1, type2))
-    logger.debug("Returning: \n\txkey: {0:s}, ykey: {1:s}".format(xkey, ykey))
+    logger.debug("Returning: \txkey: {0:s}, ykey: {1:s}".format(xkey, ykey))
     return xkey, ykey
 
 def get_twoptdict_from_pipeline_data(data):

@@ -1,6 +1,9 @@
 import hashlib
+import logging
 import numpy as np
 from .io import DEFAULT_PARAM_RANGE
+
+logger = logging.getLogger("2pt_blinding")
 
 def draw_flat_param_shift(seedstring='blinded', ranges=None):
     """
@@ -37,3 +40,40 @@ def draw_flat_param_shift(seedstring='blinded', ranges=None):
     pdict['SHIFTS'] = False
 
     return pdict
+
+def apply_parameter_shifts(pipeline, pdict):
+    """
+    Apply parameter shifts to the pipeline parameters.
+    """
+    doshifts = len(list(pdict.keys()))
+    if doshifts > 0:
+        SHIFTS = pdict['SHIFTS']
+        haveshifted = []
+        # set parameters as desired
+    for parameter in pipeline.parameters:
+        key = str(parameter)
+        #print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>......", key)
+        #set the values
+        if doshifts > 0:
+            try:
+              if key in pdict.keys():
+                logger.debug(f"Shifting parameter {key} by {pdict[key]}")
+                parameter.start = parameter.start + pdict[key]
+                logger.debug(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>......", parameter.start)
+                haveshifted.append(key)
+              else:
+                parameter.start = pdict[key]
+            except KeyError:
+                logger.debug(f"Parameter {key} not in pdict. Not shifting.")
+                pass
+
+        # need to set all of the parameters to be fixed for run_parameters([])
+        #  to work. Doing this will effectively run things like the test sampler
+        #  no matter what sampler is listed in the ini file
+        pipeline.set_fixed(parameter.section, parameter.name, parameter.start)
+
+    if (doshifts > 0) and (len(haveshifted) != (len(list(pdict.keys())) -1)):
+        print("  asked for shifts in:",list(pdict.keys()))
+        print("  did shifts in:",haveshifted)
+        raise ValueError("WARNING: YOU ASKED FOR SHIFTS IN PARAMTERS NOT IN THE COSMOSIS PIPELINE.")
+    return pipeline

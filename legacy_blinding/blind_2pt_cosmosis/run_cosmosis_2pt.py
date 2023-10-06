@@ -3,6 +3,7 @@ import logging
 from cosmosis.runtime.config import Inifile
 from cosmosis.runtime.pipeline import LikelihoodPipeline
 from .twopt_utils import get_twoptdict_from_pipeline_data
+from .param_shifts import apply_parameter_shifts
 
 logger = logging.getLogger("2pt_blinding")
 
@@ -52,46 +53,6 @@ def modify_settings(ini, angles_file=None, nz_file=None):
             raise ValueError("You specified nz_file as "+nz_file+", but I can't find the fits_nz module settings in  your ini file.")
     return ini
 
-def apply_parameter_shifts(pipeline, pdict, doshifts):
-    """
-    Apply parameter shifts to the pipeline parameters.
-    """
-    doshifts = len(list(pdict.keys()))
-    if doshifts:
-        SHIFTS = pdict['SHIFTS']
-        haveshifted = []
-        # set parameters as desired
-    for parameter in pipeline.parameters:
-        key = str(parameter)
-
-        #set the values
-        if doshifts:
-            try:
-                if SHIFTS:
-                    parameter.start = parameter.start + pdict[key]
-                else:
-                    parameter.start = pdict[key]
-                haveshifted.append(key)
-            except:
-                #print '  no entry in pdict'
-                pass
-
-        # need to set all of the parameters to be fixed for run_parameters([])
-        #  to work. Doing this will effectively run things like the test sampler
-        #  no matter what sampler is listed in the ini file
-        pipeline.set_fixed(parameter.section, parameter.name, parameter.start)
-
-    if doshifts:
-        #print('haveshifted',haveshifted)
-        #print('pdictkeys',pdict.keys())
-        pass
-
-    if doshifts and (len(haveshifted)!= len(list(pdict.keys())) -1):
-        print("  asked for shifts in:",list(pdict.keys()))
-        print("  did shifts in:",haveshifted)
-        raise ValueError("WARNING: YOU ASKED FOR SHIFTS IN PARAMTERS NOT IN THE COSMOSIS PIPELINE.")
-    return pipeline
-
 def run_pipeline(pipeline):
     """
     Run the Cosmosis pipeline and return the data.
@@ -99,7 +60,7 @@ def run_pipeline(pipeline):
     data = pipeline.run_parameters([])
     return data
 
-def run_cosmosis_togen_2ptdict(pdict={}, inifile='./default_blinding_template.ini',
+def run_cosmosis_togen_2ptdict(inifile, pdict={},
                                 nz_file=None, angles_file=None):
     """
     Runs cosmosis pipeline to generate 2pt functions.
@@ -108,10 +69,9 @@ def run_cosmosis_togen_2ptdict(pdict={}, inifile='./default_blinding_template.in
     pipeline = setup_pipeline(inifile, angles_file, nz_file)
     logger.debug("Passed setup_pipeline.")
 
-    doshifts = len(list(pdict.keys()))
-    logger.debug("Passed doshifts.")
-
-    pipeline = apply_parameter_shifts(pipeline, pdict, doshifts)
+    #FIXME: for some reason if this function isn't run even when I don't want to shift paramaters, 
+    # the pipeline doesn't run.
+    pipeline = apply_parameter_shifts(pipeline, pdict)
     logger.debug("Passed apply_parameter_shifts.")
     logger.debug(f"Pipeline: {pipeline}")
 

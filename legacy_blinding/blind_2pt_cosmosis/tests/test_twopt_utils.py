@@ -27,6 +27,7 @@ def test_get_dictkey_for_2pttype():
     with pytest.raises(ValueError):
         get_dictkey_for_2pttype(type1, type2)
 
+
 # # A mock datablock object for testing
 # class MockDatablock:
 #     def has_section(self, section):

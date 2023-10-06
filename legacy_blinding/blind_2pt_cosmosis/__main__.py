@@ -21,10 +21,14 @@ def main():
     logger.debug(args)
 
     params_shifts = draw_flat_param_shift(args.seed, args.paramshifts)
-    logger.debug(params_shifts)
+    logger.debug(f"Parameters shifts are: {params_shifts}")
 
     #get blinding factors
-    refdict = run_cosmosis_togen_2ptdict(inifile = args.ini)
+    reff_dict = run_cosmosis_togen_2ptdict(inifile=args.ini) #args.ini is a template
+    logger.debug(f"Calculated Reference Dict")
+    #FIXME: Add nz_file and angles_file to args
+    shift_dict = run_cosmosis_togen_2ptdict(inifile=args.ini, pdict=params_shifts,
+                                            nz_file=None, angles_file=None)
 
 if __name__ == '__main__':
     main()

@@ -1,7 +1,8 @@
 import argparse
 from . import __version__
 
-DEFAULT_PARAM_RANGE = {'cosmological_parameters--sigma8_input':(0.834-3*.04,0.834+3*0.04),\
+#FIXME: These values are causing issues!
+DEFAULT_PARAM_RANGE = {'cosmological_parameters--sigma_8_input':(0.834-3*.04,0.834+3*0.04),\
                        'cosmological_parameters--w':(-1.5,-.5)}
 
 class DictAction(argparse.Action):
@@ -93,11 +94,6 @@ def get_parser():
                         help="Dictionary of parameter shifts between quotes \". \nPlease use the parameter names" +
                         "as named in Cosmosis. \n>> Default is \"{'cosmological_parameters--sigma8_input':(0.834-3*.04,0.834"+
                         "+3*0.04),\ncosmological_parameters--w':(-1.5,-.5)}\"")
-    # parser.add_argument('-m', '--paramshiftmodule', type=str, required=False,
-    #                     default=None,
-    #                     help="String string of a python filename (minus the .py)" +
-    #                     "\nwhich can be used to import a function to draw parameter " +
-    #                     "\nshifts (see draw_paramshift for more info)")
     parser.add_argument('--seedinfname', action='store_true', required=False,
                         default=False,
                         help="If set, appends seed to blinded data filename. Default is False.")
