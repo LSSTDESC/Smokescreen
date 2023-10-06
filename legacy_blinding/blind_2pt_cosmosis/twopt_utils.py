@@ -3,8 +3,12 @@ import os
 import sys
 import importlib
 import logging
-logger = logging.getLogger("2pt_blinding")
+import fitsio
+from fitsio import FITS,FITSHDR
+import shutil
+from scipy.interpolate import interp1d
 
+logger = logging.getLogger("2pt_blinding")
 
 # gambiarra to import cosmosis modules
 CSD = os.environ['COSMOSIS_SRC_DIR']+'/cosmosis-standard-library/likelihood/2pt/'
@@ -12,6 +16,35 @@ TWOPT_MODULE = "twopoint_cosmosis"
 sys.path.insert(0, CSD)
 twopoint_cosmosis = importlib.import_module(TWOPT_MODULE)
 from twopoint_cosmosis import type_table
+
+class SpectrumInterp(object):
+    """
+    This is copied from 2pt_like, for get_data_from_dict_for_2pttype
+
+    Should not get used if bin averaging is being used; is in place
+    for if theory vector in datablock is very densely sampled, this 
+    gets used to pick out values corresponding to desired angle positions
+    """
+    def __init__(self,angle,spec,bounds_error=True):
+        if np.all(spec>0):
+            self.interp_func=interp1d(np.log(angle),np.log(spec),bounds_error=bounds_error,fill_value=-np.inf)
+            self.interp_type='loglog'
+        elif np.all(spec<0):
+            self.interp_func=interp1d(np.log(angle),np.log(-spec),bounds_error=bounds_error,fill_value=-np.inf)
+            self.interp_type='minus_loglog'
+        else:
+            self.interp_func=interp1d(np.log(angle),spec,bounds_error=bounds_error,fill_value=0.)
+            self.interp_type="log_ang"
+
+    def __call__(self,angle):
+        if self.interp_type=='loglog':
+            spec=np.exp(self.interp_func(np.log(angle)))
+        elif self.interp_type=='minus_loglog':
+            spec=-np.exp(self.interp_func(np.log(angle)))
+        else:
+            assert self.interp_type=="log_ang"
+            spec=self.interp_func(np.log(angle))
+        return spec
 
 def spectrum_array_from_block(block, section_name, types, xlabel='theta', bin_format = 'bin_{0}_{1}'):
     """
@@ -167,3 +200,222 @@ def get_twoptdict_from_pipeline_data(data):
             outdict[xkey + '_maxs'] = x_maxs
     
     return outdict
+
+def apply_2pt_blinding(factordict, origfitsfile, outfname=None, outftag="_BLINDED", 
+                       justfname=False,bftype='add', storeseed='notsaved'):
+    """
+    Given the dictionary of one set of blinding factors,
+    the name of a  of a fits file containing unblinded 2pt data,
+    and (optional) desired output file name or tag,
+    multiplies 2pt data in original fits file by blinding factors and
+    saves results (blinded data) into a new fits file.
+
+    If argument is passed for outfname, that will be the name of output file,
+    if not, will be <input filename>_<outftag>.fits. The script will check
+    that the outfname is different than the original, unblinded file. If they
+    match, it will revert to default behavior for naming the blinded file
+    so that the unblinded file isn't overwritten.
+    > if storeseed=True, will save whatever string is there to entry in fits file
+
+    If justfname == True, doesn't do any file manipulation, just returns
+    string of output filename. (for testing)
+
+    bftype can be 'add','mult' or 'mult-nocs'. For data vec d, blinding factor f
+        'add' - do additive blinding:
+                    d_blind = d_input + f, f = d_shift - d_ref, cov_bl = cov
+        'mult' - do multiplicative blinding, scale covmat in blinded file:
+                    d_blind = d_input*f, f = d_shift/d_ref, cov_bl = f^T*cov*f
+        'multNOCS' - do multiplicative blinding, but without covariance scaling
+                    d_blind = d_input*f, f = d_shift/d_ref, cov_bl = cov
+    """
+    logger.info('apply2ptblinding for', origfitsfile)
+    logger.info('bftype',bftype)
+    # check whether data is already blinded and whether Nbins match
+    for table in fitsio.read(origfitsfile): #look through tables to find 2ptdata
+        if table.header.get('2PTDATA'):
+            if table.header.get('BLINDED'): #check for blinding
+                #if entry not there, or storing False -> not already blinded
+                raise ValueError('Data is already blinded!')
+                return
+
+    # set up output file
+    if outfname == None or outfname==origfitsfile:
+        #make sure you can't accidentaly overwrite the original
+        #if output filename isn't given, add outftag onto the name of the
+        #  unblinded file
+        if outftag == None or outftag =='':
+            outftag = 'BLINDED-{0:s}-defaulttag'.format(bftype)
+        outfname = origfitsfile.replace('.fits','{0}.fits'.format(outftag))
+        #outfname = origfitsfile.replace('.fits','_{0:s}.fits'.format(outftag))
+
+    # if not justfname:
+    #     shutil.copyfile(origfitsfile,outfname)
+
+    #     hdulist = fits.open(outfname, mode='update') #update lets us write over
+
+    #     #apply blinding factors
+    #     for table in hdulist: #look all tables
+    #         if table.header.get('2PTDATA'):
+    #             factor = get_dictdat_tomatch_fitsdat(table, factordict)
+
+    #             if bftype=='mult' or bftype=='multNOCS':
+    #                 #print 'multiplying!'
+    #                 table.data['value'] *= factor
+    #                 if bftype=='mult': #store info about how to scale covmat
+    #                     type1 = table.header['QUANT1']
+    #                     type2 = table.header['QUANT2']
+    #                     raise ValueError('Not currently set up to do covariance scaling needed for multiplicative blinding.')
+
+    #             elif bftype=='add':
+    #                 #print 'adding!'
+    #                 table.data['value'] += factor
+    #             else:
+    #                 raise ValueError('bftype {0:s} not recognized'.format(bftype))
+
+    #             #add new header entry to note that blinding has occurred, and what type
+    #             table.header['BLINDED'] = bftype
+    #             table.header['KEYWORD'] = storeseed
+
+    #     hdulist.close() # will save new data to file if 'update' was passed when opened
+    #     logger.info(">>>>Stored blinded data in",outfname)
+        if not justfname:
+            shutil.copyfile(origfitsfile, outfname)
+
+            with FITS(outfname, 'rw') as hdulist:
+                # Apply blinding factors
+                for i, table in enumerate(hdulist):
+                    if '2PTDATA' in table.read_header():
+                        factor = get_dictdat_tomatch_fitsdat(table, factordict)
+
+                        if bftype == 'mult' or bftype == 'multNOCS':
+                            # print 'multiplying!'
+                            table['value'][:] *= factor
+                            if bftype == 'mult':
+                                type1 = table.read_header()['QUANT1']
+                                type2 = table.read_header()['QUANT2']
+                                raise ValueError('Not currently set up to do covariance scaling needed for multiplicative blinding.')
+
+                        elif bftype == 'add':
+                            # print 'adding!'
+                            table['value'][:] += factor
+                        else:
+                            raise ValueError('bftype {0:s} not recognized'.format(bftype))
+
+                        # Add a new header entry to note that blinding has occurred and what type
+                        table.write_key('BLINDED', bftype)
+                        table.write_key('KEYWORD', storeseed)
+
+            logger.info(">>>>Stored blinded data in", outfname)
+    return outfname
+
+def get_dictdat_tomatch_fitsdat(table, dictdata):
+    """
+    Given table of type fits.hdu.table.BinTableHDU containing 2pt data,
+    retrieves corresponding data from dictionary (blinding factors).
+
+    Expects that same z and theta bin numbers correspond to the same
+    z and theta values (i.e. matches up bin numbers but doesn't do
+    any interpolation). Theta values will be checked, but z values won't.
+    """
+    if not table.header.get('2PTDATA'):
+        logger.warning("Can't match dict data: this fits table doesn't contain 2pt data. Is named:",table.name)
+        return
+    type1 = table.header['QUANT1']
+    type2 = table.header['QUANT2']
+
+    bin1 = table.data['BIN1'] #which bin is quant1 from?
+    bin2 = table.data['BIN2'] #which bin is quant2 from?
+
+    # check for bin averaging
+    if "ANGLEMIN" in table.data.names:
+        fits_is_binavg = True
+        xfromfits_mins =  table.data['ANGLEMIN']
+        xfromfits_maxs =  table.data['ANGLEMAX']
+    else:
+        fits_is_binavg = False
+        xfromfits_mins = None
+        xfromfits_maxs = None
+    
+    xfromfits = table.data['ANG']
+
+    yfromdict = get_data_from_dict_for_2pttype(type1, type2, bin1, bin2, xfromfits,
+                                               dictdata, fits_is_binavg=fits_is_binavg,
+                                               xfits_mins=xfromfits_mins, xfits_maxs=xfromfits_maxs)
+    
+    return yfromdict
+
+def get_data_from_dict_for_2pttype(type1, type2, bin1fits, bin2fits, xfits, datadict,
+                                   fits_is_binavg=True, xfits_mins=None, xfits_maxs=None):
+    """
+    Given info about 2pt data in a fits file (spectra type, z bin numbers,
+    and angular bin numbers, extracts 2pt data from a dictionary of
+    e.g. blinding factors to match, with same array format and bin ordering
+    as the fits file data.
+    """
+    xkey,ykey = get_dictkey_for_2pttype(type1,type2)
+
+    is_binavg = datadict[ykey+'_binavg']
+    # this check is probably unnecessary, since the data is always bin averaged
+    # if dict_is_binavg != fits_is_binavg:
+    #     raise ValueError("Theory calc and fits file aren't consistent in whether they do bin averaging vs interpolation for 2pt calculations.")
+    if fits_is_binavg and ((xfits_mins is None) or (xfits_maxs is None)):
+        raise ValueError("Fits file is bin-averaged but I couldn't find theta values for bin edges.")
+
+    if 'theta' in xkey: #if realspace, put angle data into arcmin
+        xmult = 60.*180./np.pi # change to arcmin
+    else:
+        xmult = 1. #fourier space
+
+    xfromdict = datadict[xkey]*xmult #in arcmin (is in radians in datablock)
+    xfromdict = xfromdict*xmult
+    if is_binavg:
+        xfromdict_mins = datadict[xkey+'_mins']*xmult
+        xfromdict_maxs = datadict[xkey+'_maxs']*xmult
+    yfromdict = datadict[ykey]
+    binsdict = datadict[ykey+'_bins']
+    b1dict = binsdict[0]
+    b2dict = binsdict[1]
+
+    #if get theory calcs in same format as fits ones
+    Nentries = bin1fits.size
+    yout = np.zeros(Nentries)
+    #this structure will store interp functions for b1-b2 combos
+    # so we don't have to keep recreating them
+    if not is_binavg:
+        Nb1fits = max(bin1fits)
+        Nb2fits = max(bin2fits)
+        interpfuncs = [[None for b2f in range(Nb2fits)]\
+                       for b1f in range(Nb1fits)]
+
+    for i in range(Nentries):
+        b1 = bin1fits[i]
+        b2 = bin2fits[i]
+        if is_binavg:
+            wherebinsmatch = (b1==b1dict)*(b2==b2dict)
+
+            roundto=4 #round for matching, since there are more decimals in fits than datablock
+            wherexmatch_mins = np.around(xfits_mins[i],roundto)==np.around(xfromdict_mins,roundto)
+            wherexmatch_maxs = np.around(xfits_maxs[i],roundto)==np.around(xfromdict_maxs,roundto)
+            wherexmatch = wherexmatch_mins*wherexmatch_maxs
+            whichinds = wherebinsmatch*wherexmatch
+            howmany = np.sum(whichinds)
+            if howmany==0: #no matches
+                raise ValueError("No theory calc match for data point: {0:s}, z bins = ({1:d},{2:d}), theta between [{3:0.2f},{4:0.2f}]".format(ykey,b1,b2,xfits_mins[i],xfits_maxs[i]))
+            elif howmany>1: #duplicate matches
+                raise ValueError("More than one theory calc match for data point: {0:s}, z bins = ({1:d},{2:d}), theta between [{3:0.2f},{4:0.2f}]".format(ykey,b1,b2,xfits_mins[i],xfits_maxs[i]))
+                
+            yout[i] = yfromdict[whichinds]
+        else:
+            whichinds = (b1==b1dict)*(b2==b2dict)#*(ab==angbdict)
+            # get x and y info for that bin combo
+            tempx = xfromdict[whichinds]
+            tempy = yfromdict[whichinds]
+            if interpfuncs[b1-1][b2-1] is None: #no interpfunc yet, set it up
+                yinterp = SpectrumInterp(tempx,tempy)
+                interpfuncs[b1-1][b2-1] = yinterp
+            else:
+                yinterp = interpfuncs[b1-1][b2-1]
+            yout[i] =  yinterp(xfits[i])
+            # We're returning the y data from the dictionary's array
+            # interpolated to match the theta values in the fits file.
+    return yout

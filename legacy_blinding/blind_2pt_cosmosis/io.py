@@ -92,43 +92,53 @@ def get_parser():
     --------------------------------------------------------------------------------
     ''', fromfile_prefix_chars='@')
 
+
     parser.add_argument("-u", "--origfits", type=str, required=True,
                         help='Name of unblinded fits file')
+
     parser.add_argument("-i", "--ini", type=str, required=False,
-                        default='./blind_2pt_cosmosis/cosmosis_ini_files/default_blinding_template.ini',
+                        default='./blind_2pt_cosmosis/cosmosis_files/default_blinding_template.ini',
                         help='Ini file containing template for generating 2pt functions. \nShould'+
                         'use a binning that matches that of the origfits file' +
                         '\nReference a values file centered at desired reference' +
                         '\ncosmology')
+
     parser.add_argument('-s', '--seed', type=str, required=False, 
                         default="HARD_CODED_BLINDING",
                         help='string used to seed parameter shift selection')
+
     parser.add_argument('-t', '--bftype', type=str, required=False,
                         default='add',
                         help="Blinding factor type. Can be 'add', 'mult', or" + 
                         "'multNOCS' (mult with no cov scaling) \n[MULT OPTION IS DISABLED]. \n>> Default is 'add'")
+
     parser.add_argument('-o', '--outfname', type=str, required=False,
                         default=None,
                         help="Output filename; only set for testing,  " +
                         "If outftag is set, then " +
                         "\noutfname = [origfits]_[outftag]_[seed].fits." + 
                         "\n>> Default behavior is outfname = [origfits]_[seed].fits.")
+
     parser.add_argument('-f', '--outftag', type=str, required=False,
                         default="_BLINDED",
                         help="String to label output filename, for testing purposes. \nIf set" +
                         "when outfname is None (default), \nthen " +
                         "outfname = [origfits]_[outftag]_[seed].fits")
+    
     parser.add_argument('-p', '--paramshifts', action=DictAction, required=False,
                         default=DEFAULT_PARAM_RANGE,
                         help="Dictionary of parameter shifts between quotes \". \nPlease use the parameter names" +
                         "as named in Cosmosis. \n>> Default is \"{'cosmological_parameters--sigma8_input':(0.834-3*.04,0.834"+
                         "+3*0.04),\ncosmological_parameters--w':(-1.5,-.5)}\"")
+    
     parser.add_argument('--seedinfname', action='store_true', required=False,
                         default=False,
                         help="If set, appends seed to blinded data filename. Default is False.")
+    
     parser.add_argument('--seedinfits', action='store_true', required=False,
                         default=False,
                         help="If set, stores seed in KEYWORD entry in blinded fits file. Default True.")
+    
     parser.add_argument("--log-level", choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
                         default="INFO", help="Specify the logging level: DEBUG, INFO, WARNING, ERROR, or CRITICAL. Default is INFO.")
     return parser
