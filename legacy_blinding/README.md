@@ -14,4 +14,4 @@ The package in this folder is a direct adaptation of Jessie Muir's DES Y3 blindi
 ### Tests
 To run the unit tests, go to the `tests/` and run `pytest`
 
-To test main: `python -m blind_2pt_cosmosis -u test.fit --log-level DEBUG`
+To test main: `python -m blind_2pt_cosmosis -u blind_2pt_cosmosis/cosmosis_files/sim_fiducial.fits --log-level DEBUG`
