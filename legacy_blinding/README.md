@@ -10,5 +10,8 @@ The package in this folder is a direct adaptation of Jessie Muir's DES Y3 blindi
 - Install the standard library in the correct cosmosis folder `cosmosis-build-standard-library -i`
 
 ## Usage
-FIXME
+> Don't forget to `source cosmosis-configure`
+### Tests
+To run the unit tests, go to the `tests/` and run `pytest`
 
+To test main: `python -m blind_2pt_cosmosis -u test.fit --log-level DEBUG`
