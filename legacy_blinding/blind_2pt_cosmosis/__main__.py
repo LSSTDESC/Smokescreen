@@ -27,9 +27,9 @@ def main():
     #get blinding factors
     reff_dict = run_cosmosis_togen_2ptdict(inifile=args.ini) #args.ini is a template
     logger.debug(f"Calculated Reference Dict")
-    #FIXME: Add nz_file and angles_file to args
+    # FIXME: Add nz_file and angles_file to args
     shift_dict = run_cosmosis_togen_2ptdict(inifile=args.ini, pdict=params_shifts,
-                                            nz_file=None, angles_file=None)
+                                             nz_file=None, angles_file=None)
     logger.debug(f"Calculated Shifted Dict")
     #gets the blinding factors data vectors
     factor_dict = get_factordict(reff_dict, shift_dict, bftype = args.bftype)

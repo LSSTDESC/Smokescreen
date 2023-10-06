@@ -68,12 +68,17 @@ def run_cosmosis_togen_2ptdict(inifile, pdict={},
     logger.debug("Running cosmosis pipeline to generate 2pt functions.")
     pipeline = setup_pipeline(inifile, angles_file, nz_file)
     logger.debug("Passed setup_pipeline.")
-
-    #FIXME: for some reason if this function isn't run even when I don't want to shift paramaters, 
-    # the pipeline doesn't run.
-    pipeline = apply_parameter_shifts(pipeline, pdict)
-    logger.debug("Passed apply_parameter_shifts.")
-    logger.debug(f"Pipeline: {pipeline}")
+    # need to set all of the parameters to be fixed for run_parameters([])
+    #  to work. Doing this will effectively run things like the test sampler
+    #  no matter what sampler is listed in the ini file
+    for parameter in pipeline.parameters:
+        pipeline.set_fixed(parameter.section, parameter.name, parameter.start)
+    # if we need to do shifts:
+    if len(list(pdict.keys())) > 0:
+        logger.debug("Applying parameter shifts.")
+        pipeline = apply_parameter_shifts(pipeline, pdict)
+    else:
+        logger.debug("No parameter shifts to apply.")
 
     data = run_pipeline(pipeline)
     logger.debug("Passed run_pipeline.")

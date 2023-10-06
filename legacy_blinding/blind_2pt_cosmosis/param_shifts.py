@@ -59,18 +59,13 @@ def apply_parameter_shifts(pipeline, pdict):
               if key in pdict.keys():
                 logger.debug(f"Shifting parameter {key} by {pdict[key]}")
                 parameter.start = parameter.start + pdict[key]
-                logger.debug(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>......", parameter.start)
+                logger.debug(f">>>>>>>>>>>>>>>>>>>>>>>>>>>>>...... {parameter.start}")
                 haveshifted.append(key)
               else:
                 parameter.start = pdict[key]
             except KeyError:
                 logger.debug(f"Parameter {key} not in pdict. Not shifting.")
                 pass
-
-        # need to set all of the parameters to be fixed for run_parameters([])
-        #  to work. Doing this will effectively run things like the test sampler
-        #  no matter what sampler is listed in the ini file
-        pipeline.set_fixed(parameter.section, parameter.name, parameter.start)
 
     if (doshifts > 0) and (len(haveshifted) != (len(list(pdict.keys())) -1)):
         print("  asked for shifts in:",list(pdict.keys()))
