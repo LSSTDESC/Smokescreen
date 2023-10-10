@@ -1,9 +1,12 @@
 import argparse
 from . import __version__
 
-#FIXME: These values are causing issues!
 DEFAULT_PARAM_RANGE = {'cosmological_parameters--sigma_8_input':(0.834-3*.04,0.834+3*0.04),\
                        'cosmological_parameters--w':(-1.5,-.5)}
+
+# DEFAULT_PARAM_RANGE = {'cosmological_parameters--sigma_8_input':(-3*0.04, 3*0.04),\
+#                        'cosmological_parameters--w':(-0.5,0.5)}
+
 
 class DictAction(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):

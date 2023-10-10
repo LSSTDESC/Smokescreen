@@ -56,13 +56,15 @@ def apply_parameter_shifts(pipeline, pdict):
         #set the values
         if doshifts > 0:
             try:
-              if key in pdict.keys():
-                logger.debug(f"Shifting parameter {key} by {pdict[key]}")
-                parameter.start = parameter.start + pdict[key]
-                logger.debug(f">>>>>>>>>>>>>>>>>>>>>>>>>>>>>...... {parameter.start}")
+                if SHIFTS:
+                    logger.debug(f"Shifting parameter {key} by {pdict[key]}")
+                    parameter.start = parameter.start + pdict[key]
+                    logger.debug(f">>>>>>>>>>>>>>>>>>>>>>>>>>>>>...... {parameter.start}")
+                else:
+                    logger.debug(f"Shifting parameter {key} to {pdict[key]}")
+                    parameter.start = pdict[key]
+                    logger.debug(f">>>>>>>>>>>>>>>>>>>>>>>>>>>>>...... {parameter.start}")
                 haveshifted.append(key)
-              else:
-                parameter.start = pdict[key]
             except KeyError:
                 logger.debug(f"Parameter {key} not in pdict. Not shifting.")
                 pass
