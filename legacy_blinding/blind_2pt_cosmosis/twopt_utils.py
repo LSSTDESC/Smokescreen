@@ -3,8 +3,7 @@ import os
 import sys
 import importlib
 import logging
-import fitsio
-from fitsio import FITS,FITSHDR
+from astropy.io import fits
 import shutil
 from scipy.interpolate import interp1d
 
@@ -201,8 +200,8 @@ def get_twoptdict_from_pipeline_data(data):
     
     return outdict
 
-def apply_2pt_blinding(factordict, origfitsfile, outfname=None, outftag="_BLINDED", 
-                       justfname=False,bftype='add', storeseed='notsaved'):
+def apply_2pt_blinding_and_save_fits(factordict, origfitsfile, outfname=None, outftag="_BLINDED", 
+                                     justfname=False,bftype='add', storeseed='notsaved'):
     """
     Given the dictionary of one set of blinding factors,
     the name of a  of a fits file containing unblinded 2pt data,
@@ -231,7 +230,7 @@ def apply_2pt_blinding(factordict, origfitsfile, outfname=None, outftag="_BLINDE
     logger.info('apply2ptblinding for', origfitsfile)
     logger.info('bftype',bftype)
     # check whether data is already blinded and whether Nbins match
-    for table in fitsio.read(origfitsfile): #look through tables to find 2ptdata
+    for table in fits.open(origfitsfile): #look through tables to find 2ptdata
         if table.header.get('2PTDATA'):
             if table.header.get('BLINDED'): #check for blinding
                 #if entry not there, or storing False -> not already blinded
@@ -246,66 +245,38 @@ def apply_2pt_blinding(factordict, origfitsfile, outfname=None, outftag="_BLINDE
         if outftag == None or outftag =='':
             outftag = 'BLINDED-{0:s}-defaulttag'.format(bftype)
         outfname = origfitsfile.replace('.fits','{0}.fits'.format(outftag))
-        #outfname = origfitsfile.replace('.fits','_{0:s}.fits'.format(outftag))
 
-    # if not justfname:
-    #     shutil.copyfile(origfitsfile,outfname)
 
-    #     hdulist = fits.open(outfname, mode='update') #update lets us write over
+    if not justfname:
+        shutil.copyfile(origfitsfile,outfname)
 
-    #     #apply blinding factors
-    #     for table in hdulist: #look all tables
-    #         if table.header.get('2PTDATA'):
-    #             factor = get_dictdat_tomatch_fitsdat(table, factordict)
+        hdulist = fits.open(outfname, mode='update') #update lets us write over
 
-    #             if bftype=='mult' or bftype=='multNOCS':
-    #                 #print 'multiplying!'
-    #                 table.data['value'] *= factor
-    #                 if bftype=='mult': #store info about how to scale covmat
-    #                     type1 = table.header['QUANT1']
-    #                     type2 = table.header['QUANT2']
-    #                     raise ValueError('Not currently set up to do covariance scaling needed for multiplicative blinding.')
+        #apply blinding factors
+        for table in hdulist: #look all tables
+            if table.header.get('2PTDATA'):
+                factor = get_dictdat_tomatch_fitsdat(table, factordict)
 
-    #             elif bftype=='add':
-    #                 #print 'adding!'
-    #                 table.data['value'] += factor
-    #             else:
-    #                 raise ValueError('bftype {0:s} not recognized'.format(bftype))
+                if bftype=='mult' or bftype=='multNOCS':
+                    #print 'multiplying!'
+                    table.data['value'] *= factor
+                    if bftype=='mult': #store info about how to scale covmat
+                        type1 = table.header['QUANT1']
+                        type2 = table.header['QUANT2']
+                        raise ValueError('Not currently set up to do covariance scaling needed for multiplicative blinding.')
 
-    #             #add new header entry to note that blinding has occurred, and what type
-    #             table.header['BLINDED'] = bftype
-    #             table.header['KEYWORD'] = storeseed
+                elif bftype=='add':
+                    #print 'adding!'
+                    table.data['value'] += factor
+                else:
+                    raise ValueError('bftype {0:s} not recognized'.format(bftype))
 
-    #     hdulist.close() # will save new data to file if 'update' was passed when opened
-    #     logger.info(">>>>Stored blinded data in",outfname)
-        if not justfname:
-            shutil.copyfile(origfitsfile, outfname)
+                #add new header entry to note that blinding has occurred, and what type
+                table.header['BLINDED'] = bftype
+                table.header['KEYWORD'] = storeseed
 
-            with FITS(outfname, 'rw') as hdulist:
-                # Apply blinding factors
-                for i, table in enumerate(hdulist):
-                    if '2PTDATA' in table.read_header():
-                        factor = get_dictdat_tomatch_fitsdat(table, factordict)
-
-                        if bftype == 'mult' or bftype == 'multNOCS':
-                            # print 'multiplying!'
-                            table['value'][:] *= factor
-                            if bftype == 'mult':
-                                type1 = table.read_header()['QUANT1']
-                                type2 = table.read_header()['QUANT2']
-                                raise ValueError('Not currently set up to do covariance scaling needed for multiplicative blinding.')
-
-                        elif bftype == 'add':
-                            # print 'adding!'
-                            table['value'][:] += factor
-                        else:
-                            raise ValueError('bftype {0:s} not recognized'.format(bftype))
-
-                        # Add a new header entry to note that blinding has occurred and what type
-                        table.write_key('BLINDED', bftype)
-                        table.write_key('KEYWORD', storeseed)
-
-            logger.info(">>>>Stored blinded data in", outfname)
+        hdulist.close() # will save new data to file if 'update' was passed when opened
+        logger.info(f">>>> Stored blinded data in {outfname}")
     return outfname
 
 def get_dictdat_tomatch_fitsdat(table, dictdata):

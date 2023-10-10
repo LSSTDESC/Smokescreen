@@ -2,7 +2,7 @@ import logging
 from .param_shifts import draw_flat_param_shift, get_factordict
 from .io import get_parser, get_stored_seed_and_tag
 from .run_cosmosis_2pt import run_cosmosis_togen_2ptdict
-from .twopt_utils import apply_2pt_blinding
+from .twopt_utils import apply_2pt_blinding_and_save_fits
 
 
 def main():
@@ -40,9 +40,9 @@ def main():
 
     # applies the shift to the 2pt data-vector:
     #FIXME: This function is also saving the file, we want to split it!
-    # apply_2pt_blinding(factor_dict, origfitsfile=args.origfits,
-    #                    outfname=args.outfname, outftag=tagstr,
-    #                    bftype=args.bftype, storeseed = storeseed)
+    apply_2pt_blinding_and_save_fits(factor_dict, origfitsfile=args.origfits,
+                                    outfname=args.outfname, outftag=tagstr,
+                                    bftype=args.bftype, storeseed = storeseed)
 
 
 if __name__ == '__main__':
