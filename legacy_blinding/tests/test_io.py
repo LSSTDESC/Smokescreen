@@ -1,7 +1,7 @@
 import pytest
 import argparse
 
-from ..io import get_parser, DictAction
+from blind_2pt_cosmosis.io import get_parser, DictAction
 
 def test_dict_action():
     parser = argparse.ArgumentParser()

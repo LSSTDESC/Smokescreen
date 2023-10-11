@@ -1,7 +1,7 @@
 import pytest
 
-from ..param_shifts import draw_flat_param_shift
-from ..param_shifts import DEFAULT_PARAM_RANGE
+from blind_2pt_cosmosis.param_shifts import draw_flat_param_shift
+from blind_2pt_cosmosis.param_shifts import DEFAULT_PARAM_RANGE
 
 @pytest.fixture
 def ranges():

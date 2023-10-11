@@ -1,7 +1,7 @@
 import pytest
-from ..twopt_utils import get_dictkey_for_2pttype 
-from ..twopt_utils import get_twoptdict_from_pipeline_data
-from ..twopt_utils import spectrum_array_from_block
+from blind_2pt_cosmosis.twopt_utils import get_dictkey_for_2pttype 
+from blind_2pt_cosmosis.twopt_utils import get_twoptdict_from_pipeline_data
+from blind_2pt_cosmosis.twopt_utils import spectrum_array_from_block
 
 # FIXME: MISSING TESTS FOR spectrum_array_from_block
 
