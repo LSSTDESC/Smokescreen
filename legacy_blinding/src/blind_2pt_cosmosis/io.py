@@ -34,6 +34,8 @@ def get_stored_seed_and_tag(args):
             tagstr = tagstr + '_'+ args.seedstring
     elif args.seedinfname:
         tagstr = '_' + args.seedstring
+    else:
+        tagstr = ''
 
     if args.seedinfits:
         storeseed = args.seedstring
