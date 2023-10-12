@@ -227,8 +227,8 @@ def apply_2pt_blinding_and_save_fits(factordict, origfitsfile, outfname=None, ou
         'multNOCS' - do multiplicative blinding, but without covariance scaling
                     d_blind = d_input*f, f = d_shift/d_ref, cov_bl = cov
     """
-    logger.info('apply2ptblinding for', origfitsfile)
-    logger.info('bftype',bftype)
+    logger.info(f'apply2ptblinding for: {origfitsfile}')
+    logger.info(f'bftype: {bftype}')
     # check whether data is already blinded and whether Nbins match
     for table in fits.open(origfitsfile): #look through tables to find 2ptdata
         if table.header.get('2PTDATA'):
