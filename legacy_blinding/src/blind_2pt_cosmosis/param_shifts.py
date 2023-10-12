@@ -66,6 +66,7 @@ def apply_parameter_shifts(pipeline, pdict):
                     logger.debug(f">>>>>>>>>>>>>>>>>>>>>>>>>>>>>...... {parameter.start}")
                 haveshifted.append(key)
             except KeyError:
+                print("  asked for shifts in:", key)
                 logger.debug(f"Parameter {key} not in pdict. Not shifting.")
                 pass
 
