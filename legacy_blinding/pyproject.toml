@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "legacy_blinding"
+description = "Legacy Cosmosis Blinding for DESC. This is a Cosmosis V2 port of Jessie Muir's legacy_blinding scripts for DES-Y3."
+readme = "README.md"
+requires-python = ">=3.8"
+license = {file = "LICENSE"}
+maintainers = [
+    {name = "Arthur Loureiro", email = "arthur.loureiro@fysik.su.se"},
+    {name = "Jessie Muir", email =  "jmuir@perimeterinstitute.ca"},
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "numpy>=1.24.0",
+    "scipy>=1.9.0",
+    "cosmosis>=2.5",
+    "astropy>=5.3.0",
+    "pytest>=7.2.5",
+    "argparse>=1.0",
+]
+keywords = ["desc", "python", "blinding", "cosmosis"]
+dynamic = ["version"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
