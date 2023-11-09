@@ -24,6 +24,7 @@ dependencies = [
     "astropy>=5.3.0",
     "pytest>=7.2.5",
     "argparse>=1.0",
+    "sacc>=0.12",
 ]
 keywords = ["desc", "python", "blinding", "cosmosis"]
 dynamic = ["version"]
