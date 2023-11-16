@@ -32,3 +32,6 @@ dynamic = ["version"]
 [tool.setuptools.packages.find]
 where = ["src"]
 
+[tool.setuptools.package-data]
+"blind_2pt_cosmosis" = ["cosmosis_files/*.txt", "cosmosis_files/*.ini"]
+

@@ -1,0 +1,14 @@
+name: desc_blinding
+channels:
+  - conda-forge
+dependencies:
+    - numpy
+    - scipy
+    - cosmosis >=2.5
+    - astropy >=5.3.0
+    - pytest
+    - pip:
+      - argparse
+    - firecrown
+    - cosmosis 
+    - cosmosis-build-standard-library

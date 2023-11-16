@@ -1,20 +1,28 @@
 import numpy as np
 import os
-import sys
-import importlib
 import logging
 from astropy.io import fits
 import shutil
 from scipy.interpolate import interp1d
+from astropy.table import Table
 
 logger = logging.getLogger("2pt_blinding")
 
-# gambiarra to import cosmosis modules
-CSD = os.environ['COSMOSIS_SRC_DIR']+'/cosmosis-standard-library/likelihood/2pt/'
-TWOPT_MODULE = "twopoint_cosmosis"
-sys.path.insert(0, CSD)
-twopoint_cosmosis = importlib.import_module(TWOPT_MODULE)
-from twopoint_cosmosis import type_table
+# # gambiarra to use the type_table from cosmosis-standard-library
+def load_type_table():
+    # Taken from:
+    # https://github.com/joezuntz/cosmosis-standard-library/
+    #     blob/sacc/likelihood/2pt/twopoint_cosmosis.py
+    # with Joe Zuntz consent
+    dirname = os.path.split(__file__)[0]
+    table_name = os.path.join(dirname, "cosmosis_files/type_table.txt")
+    type_table = Table.read(table_name, format="ascii.commented_header")
+    table = {}
+    for (type1, type2, section, x, y) in type_table:
+        table[(type1, type2)] = (section, x, y)
+    return table
+
+type_table = load_type_table()
 
 class SpectrumInterp(object):
     """
