@@ -46,7 +46,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Install dependencies
-      run: ${{ matrix.INSTALL_DEPS }}
+        run: ${{ matrix.INSTALL_DEPS }}
 
       # Install our package.
       - name: Install legacy_blinding
