@@ -10,19 +10,19 @@ on:
   push:
     branches:
       - main
-      - development
+      - develop
 
 # List of jobs for this workflow.
 
 jobs:
   # Our pytest job.
-  ci-with-pytest:
+  legacy_blinding-pytest:
     # Our strategy lists the OS and Python versions we want to test on.
     strategy:
       # Don't quit all jobs if only one job fails.
       fail-fast: false
       matrix:
-        python-version: ["3.8","3.9","3.10"]
+        python-version: ["3.9"]
         os: [ubuntu-latest, macos-latest]
     # What operating system is this job running on?
     runs-on: ${{ matrix.os }}
@@ -40,11 +40,12 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       # Install our package.
-      - name: Install mydescpackage
+      - name: Install legacy_blinding
         run: |
+          cd legacy_blinding
           python -m pip install --upgrade pip
           python -m pip install .
 
       # Perform unit tests.
-      - name: Test with pytest
+      - name: Test legacy_blinding with pytest
         run: pytest ./tests
