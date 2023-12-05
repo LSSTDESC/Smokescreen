@@ -1,0 +1,57 @@
+# Author - Stuart McAlpine - stuart.mcalpine@fysik.su.se - Jan 2023
+name: DESC Blinding
+
+# How does the workflow get triggered?
+on:
+  # Triggers when push/pull-request made to the main branch.
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+      - develop
+
+# List of jobs for this workflow.
+
+jobs:
+  # Our pytest job.
+  legacy_blinding-pytest:
+    # Our strategy lists the OS and Python versions we want to test on.
+    strategy:
+      # Don't quit all jobs if only one job fails.
+      fail-fast: false
+      matrix:
+        python-version: ["3.9"]
+        os: [ubuntu-20.04, macos-latest]
+        include:
+          - os: ubuntu-20.04
+            INSTALL_DEPS: sudo apt-get update && sudo apt-get -y install gfortran-7 swig libopenmpi-dev openmpi-bin libopenblas-dev && sudo ln -s `which gfortran-7` /usr/local/bin/gfortran
+          - os: macos-latest
+            INSTALL_DEPS: brew update-reset && HOMEBREW_NO_AUTO_UPDATE=1  HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK=1 brew install gcc swig libomp open-mpi openblas && if [ ! -f /usr/local/bin/gfortran ]; then ln -s /usr/local/bin/gfortran-$(brew list --versions gcc | awk '{print $2}' | cut -d. -f1) /usr/local/bin/gfortran; fi
+    
+    # What operating system is this job running on?
+    runs-on: ${{ matrix.os }}
+
+    # Our CI steps for this job.
+    steps:
+      # Check out this repository code.
+      - name: Check out repository code
+        uses: actions/checkout@v3
+
+      # Install Python.
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: ${{ matrix.INSTALL_DEPS }}
+
+      # Install our package.
+      - name: Install legacy_blinding
+        run: |
+          cd legacy_blinding
+          python -m pip install --upgrade pip
+          python -m pip install .
+          pytest ./tests
