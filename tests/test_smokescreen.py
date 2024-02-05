@@ -29,6 +29,13 @@ class MockLikelihoodModule(types.ModuleType):
     def compute_theory_vector(self):
         return None
 
+class MockCosmo:
+    def __init__(self, params):
+        self._params = params
+
+    def __getitem__(self, key):
+        return self._params[key]
+
 def test_smokescreen_init():
     # Create mock inputs
     cosmo = "cosmo"
@@ -45,3 +52,28 @@ def test_smokescreen_init():
     with pytest.raises(AttributeError):
         invalid_likelihood = types.ModuleType("invalid_likelihood")
         Smokescreen(cosmo, sacc_data, invalid_likelihood, systematics_dict, shifts_dict)
+
+def test_load_shifts():
+    # Create mock inputs
+    cosmo = MockCosmo({"param1": 1, "param2": 2, "param3": 3})
+    sacc_data = "sacc_data"
+    likelihood = MockLikelihoodModule("mock_likelihood")
+    systematics_dict = {"systematic1": 0.1}
+    shifts_dict = {"param1": 1, "param2": (-1, 2), "param3": (2, 3), "param4": 4}
+
+    # Instantiate Smokescreen
+    smokescreen = Smokescreen(cosmo, sacc_data, likelihood, systematics_dict, shifts_dict)
+
+    # Call load_shifts and get the result
+    shifts = smokescreen.load_shifts()
+
+    # Check that the shifts are correct
+    assert shifts["param1"] == 1
+    assert shifts["param2"] >= 0 and shifts["param2"] <= 3
+    assert shifts["param3"] >= 2 and shifts["param3"] <= 3
+    assert "param4" not in shifts
+
+    # Check that an error is raised for an invalid tuple
+    smokescreen.shifts_dict["param1"] = (1,)
+    with pytest.raises(ValueError):
+        smokescreen.load_shifts()

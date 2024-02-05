@@ -105,7 +105,7 @@ class Smokescreen():
         for key in self.shifts_dict.keys():
             try:
                 self.cosmo._params[key]
-            except AttributeError:
+            except (AttributeError, KeyError) as error:
                 # remove the key from the shifts_dict
                 print(f"Key {key} not in cosmology parameters")
                 failed_keys.append(key)
