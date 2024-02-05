@@ -1,6 +1,7 @@
 import numpy as np
 import os 
 import types
+from copy import deepcopy
 import pyccl as ccl
 from firecrown.likelihood.likelihood import load_likelihood
 from firecrown.likelihood.likelihood import load_likelihood_from_module_type
@@ -37,6 +38,16 @@ class Smokescreen():
         self.sacc_data = sacc_data
         # load the likelihood
         self.likelihood, self.tools = self.load_likelihood(likelihood, **kwargs)
+        # save the systematics
+        self.systematics = systematics_dict
+        # save the shifts
+        self.shifts_dict = shifts_dict
+
+        # makes a deep copy of the tools for the blinded cosmology:
+        self._tools_blinding = deepcopy(self.tools)
+
+        # update the tools:
+        self.tools.update({})
 
         # # load the systematics
         # self.systematics = self.load_systematics(systematics_dict)
@@ -75,3 +86,42 @@ class Smokescreen():
             if not hasattr(likelihood, 'compute_theory_vector'):
                 raise AttributeError('Likelihood does not have a compute_vector method')
             return likelihood, tools 
+
+    def load_shifts(self):
+        """
+        Loads the shifts from the shifts dictionary.
+
+        Parameters
+        ----------
+        shifts_dict : dict
+            Dictionary of parameter names and corresponding shift widths. If the
+            shifts are single values, it does a deterministic shift: PARAM = FIDUCIAL + SHIFT
+            If the shifts are tuples of values, the dictionary values
+            should be the (lower, upper) bounds of the shift widths: PARAM = U(a, b)
+            If the first valuee is negative, it is assumed that the parameter
+            is to be shifted from the fiducial value: PARAM = FIDUCIAL + U(-a, b)
+        """
+        failed_keys = []
+        for key in self.shifts_dict.keys():
+            try:
+                self.cosmo._params[key]
+            except AttributeError:
+                # remove the key from the shifts_dict
+                print(f"Key {key} not in cosmology parameters")
+                failed_keys.append(key)
+        for key in failed_keys:
+            self.shifts_dict.pop(key)
+        shifts = {}
+        for key, value in self.shifts_dict.items():
+            if isinstance(value, tuple):
+                # check if the tuple is of length 2
+                if len(value) == 2:
+                    if value[0] < 0:
+                        shifts[key] = self.cosmo[key] + np.random.uniform(value[0], value[1])
+                    else:
+                        shifts[key] = np.random.uniform(value[0], value[1])
+                else:
+                    raise ValueError(f"Tuple {value} has to be of length 2")
+            else:
+                shifts[key] = value
+        return shifts
