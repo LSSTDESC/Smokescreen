@@ -65,7 +65,7 @@ def test_load_shifts():
     smokescreen = Smokescreen(cosmo, sacc_data, likelihood, systematics_dict, shifts_dict)
 
     # Call load_shifts and get the result
-    shifts = smokescreen.load_shifts()
+    shifts = smokescreen.load_shifts(seed="2112")
 
     # Check that the shifts are correct
     assert shifts["param1"] == 1
@@ -76,4 +76,4 @@ def test_load_shifts():
     # Check that an error is raised for an invalid tuple
     smokescreen.shifts_dict["param1"] = (1,)
     with pytest.raises(ValueError):
-        smokescreen.load_shifts()
+        smokescreen.load_shifts(seed="2112")

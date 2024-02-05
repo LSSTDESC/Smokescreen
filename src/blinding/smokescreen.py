@@ -7,6 +7,8 @@ from firecrown.likelihood.likelihood import load_likelihood
 from firecrown.likelihood.likelihood import load_likelihood_from_module_type
 from firecrown.parameters import ParamsMap
 
+from .param_shifts import draw_flat_or_deterministic_param_shifts
+
 
 # creates the smokescreen object
 class Smokescreen():
@@ -87,7 +89,7 @@ class Smokescreen():
                 raise AttributeError('Likelihood does not have a compute_vector method')
             return likelihood, tools 
 
-    def load_shifts(self):
+    def load_shifts(self, seed, type="flat"):
         """
         Loads the shifts from the shifts dictionary.
 
@@ -101,27 +103,7 @@ class Smokescreen():
             If the first valuee is negative, it is assumed that the parameter
             is to be shifted from the fiducial value: PARAM = FIDUCIAL + U(-a, b)
         """
-        failed_keys = []
-        for key in self.shifts_dict.keys():
-            try:
-                self.cosmo._params[key]
-            except (AttributeError, KeyError) as error:
-                # remove the key from the shifts_dict
-                print(f"Key {key} not in cosmology parameters")
-                failed_keys.append(key)
-        for key in failed_keys:
-            self.shifts_dict.pop(key)
-        shifts = {}
-        for key, value in self.shifts_dict.items():
-            if isinstance(value, tuple):
-                # check if the tuple is of length 2
-                if len(value) == 2:
-                    if value[0] < 0:
-                        shifts[key] = self.cosmo[key] + np.random.uniform(value[0], value[1])
-                    else:
-                        shifts[key] = np.random.uniform(value[0], value[1])
-                else:
-                    raise ValueError(f"Tuple {value} has to be of length 2")
-            else:
-                shifts[key] = value
-        return shifts
+        if type == "flat":
+            return draw_flat_or_deterministic_param_shifts(self.cosmo, self.shifts_dict, seed)
+        else:
+            raise NotImplementedError('Only flat shifts are implemented')
