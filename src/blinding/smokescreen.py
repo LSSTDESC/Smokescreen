@@ -170,16 +170,21 @@ class Smokescreen():
         blinded_cosmo = ccl.Cosmology(**blinded_cosmo_dict)
         return blinded_cosmo
 
-    def calculate_theory_vectors(self):
+    def calculate_blinding_factor(self, type="add"):
         """
-        Calculates the theory vector with the shifts applied.
+        Calculates the blinding factor for the data-vector, according to Muir et al. 2019:
 
+        type='add':
+            $f^add = d(\theta_blind) - d(\theta_fid)$
+
+        type='mult':
+            $f^mult = d(\theta_blind) / d(\theta_fid)$
         Parameters
         ----------
-        shifts : dict
-            Dictionary of parameter names and corresponding flat or deterministic
-            parameter shifts.
+        type : str
+            Type of blinding factor to be calculated. Default is "add".
         """
+        self.type = type
         # update the tools:
         self.tools.update({})
         self._tools_blinding.update({})
@@ -197,3 +202,23 @@ class Smokescreen():
         # blinded theory vector:
         self.theory_vec_blind = self.likelihood.compute_theory_vector(self._tools_blinding)
         #return theory_vector
+
+        if self.type == "add":
+            self.__blinding_factor = self.theory_vec_blind - self.theory_vec_fid
+        elif self.type == "mult":
+            self.__blinding_factor = self.theory_vec_blind / self.theory_vec_fid
+        else:
+            raise NotImplementedError('Only "add" and "mult" blinding factor is implemented')
+
+    def apply_blinding_to_likelihood_datavec(self):
+        """
+        Applies the blinding factor to the data-vector.
+        """
+        self.data_vector = self.likelihood.get_data_vector()
+        if self.type == "add":
+            self.blinded_data_vector = self.data_vector + self.__blinding_factor
+        elif self.type == "mult":
+            self.blinded_data_vector = self.data_vector * self.__blinding_factor
+        else:
+            raise NotImplementedError('Only "add" and "mult" blinding factor is implemented')
+        return self.blinded_data_vector
