@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "blinding"
-description = "DESC Blinding Unified Library. This is a DESC version of the Muir et al. (2021) blinding method."
+description = "DESC Blinding Unified Library. Based on the Muir et al. (2021) blinding method."
 readme = "README.md"
 requires-python = ">=3.8"
 license = {file = "LICENSE"}
@@ -19,7 +19,6 @@ classifiers = [
 dependencies = [
     "numpy>=1.24.0",
     "scipy>=1.9.0",
-    "cosmosis>=2.5",
     "astropy>=5.2.0",
     "pytest>=7.2.5",
     "argparse>=1.0",
