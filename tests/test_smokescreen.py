@@ -1,9 +1,12 @@
 import pytest
 import types
 import sacc
+import pyccl as ccl
 from firecrown.likelihood.likelihood import Likelihood
 from firecrown.modeling_tools import ModelingTools
 from blinding.smokescreen import Smokescreen
+
+COSMO = ccl.CosmologyVanillaLCDM()
 
 class EmptyLikelihood(Likelihood):
     """
@@ -38,42 +41,46 @@ class MockCosmo:
 
 def test_smokescreen_init():
     # Create mock inputs
-    cosmo = "cosmo"
+    cosmo = COSMO
     sacc_data = "sacc_data"
     likelihood = MockLikelihoodModule("mock_likelihood")
     systematics_dict = {"systematic1": 0.1}
-    shifts_dict = {"param1": 1}
+    shifts_dict = {"Omega_c": 1}
 
     # Check that Smokescreen can be instantiated with valid inputs
-    smokescreen = Smokescreen(cosmo, sacc_data, likelihood, systematics_dict, shifts_dict)
+    smokescreen = Smokescreen(cosmo, systematics_dict, sacc_data, likelihood, shifts_dict)
     assert isinstance(smokescreen, Smokescreen)
 
     # Check that Smokescreen raises an error when given an invalid likelihood
     with pytest.raises(AttributeError):
         invalid_likelihood = types.ModuleType("invalid_likelihood")
-        Smokescreen(cosmo, sacc_data, invalid_likelihood, systematics_dict, shifts_dict)
+        Smokescreen(cosmo, systematics_dict, sacc_data, invalid_likelihood, shifts_dict)
+
+    # check if breaks if given a shift with a key not in the cosmology parameters
+    with pytest.raises(ValueError):
+        invalid_shifts_dict = {"Omega_c": 1, "invalid_key": 1}
+        Smokescreen(cosmo, systematics_dict, sacc_data, likelihood, invalid_shifts_dict)
 
 def test_load_shifts():
     # Create mock inputs
-    cosmo = MockCosmo({"param1": 1, "param2": 2, "param3": 3})
+    cosmo = COSMO
     sacc_data = "sacc_data"
     likelihood = MockLikelihoodModule("mock_likelihood")
     systematics_dict = {"systematic1": 0.1}
-    shifts_dict = {"param1": 1, "param2": (-1, 2), "param3": (2, 3), "param4": 4}
+    shifts_dict = {"Omega_c": 1, "Omega_b": (-1, 2), "sigma8": (2, 3)}
 
     # Instantiate Smokescreen
-    smokescreen = Smokescreen(cosmo, sacc_data, likelihood, systematics_dict, shifts_dict)
+    smokescreen = Smokescreen(cosmo, systematics_dict, sacc_data, likelihood, shifts_dict)
 
     # Call load_shifts and get the result
-    shifts = smokescreen.load_shifts(seed="2112")
+    shifts = smokescreen._load_shifts(seed="2112")
 
     # Check that the shifts are correct
-    assert shifts["param1"] == 1
-    assert shifts["param2"] >= 0 and shifts["param2"] <= 3
-    assert shifts["param3"] >= 2 and shifts["param3"] <= 3
-    assert "param4" not in shifts
+    assert shifts["Omega_c"] == 1
+    assert shifts["Omega_c"] >= 0 and shifts["Omega_b"] <= 3
+    assert shifts["sigma8"] >= 2 and shifts["sigma8"] <= 3
 
     # Check that an error is raised for an invalid tuple
-    smokescreen.shifts_dict["param1"] = (1,)
+    smokescreen.shifts_dict["Omega_c"] = (1,)
     with pytest.raises(ValueError):
-        smokescreen.load_shifts(seed="2112")
+        smokescreen._load_shifts(seed="2112")

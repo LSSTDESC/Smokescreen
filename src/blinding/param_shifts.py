@@ -67,8 +67,9 @@ def draw_flat_or_deterministic_param_shifts(cosmo, shifts_dict, seed):
             cosmo._params[key]
         except (AttributeError, KeyError) as error:
             # remove the key from the shifts_dict
-            print(f"Key {key} not in cosmology parameters")
-            failed_keys.append(key)
+            #print(f"Key {key} not in cosmology parameters")
+            #failed_keys.append(key)
+            raise ValueError(f"Key {key} not in cosmology parameters")
     for key in failed_keys:
         shifts_dict.pop(key)
     shifts = {}
