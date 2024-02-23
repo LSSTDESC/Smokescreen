@@ -51,18 +51,21 @@ def test_smokescreen_init():
     shifts_dict = {"Omega_c": 1}
 
     # Check that Smokescreen can be instantiated with valid inputs
-    smokescreen = Smokescreen(cosmo, systematics_dict, sacc_data, likelihood, shifts_dict)
+    smokescreen = Smokescreen(cosmo, systematics_dict, likelihood,
+                              shifts_dict, sacc_data)
     assert isinstance(smokescreen, Smokescreen)
 
     # Check that Smokescreen raises an error when given an invalid likelihood
     with pytest.raises(AttributeError):
         invalid_likelihood = types.ModuleType("invalid_likelihood")
-        Smokescreen(cosmo, systematics_dict, sacc_data, invalid_likelihood, shifts_dict)
+        Smokescreen(cosmo, systematics_dict, invalid_likelihood,
+                    shifts_dict,sacc_data,)
 
     # check if breaks if given a shift with a key not in the cosmology parameters
     with pytest.raises(ValueError):
         invalid_shifts_dict = {"Omega_c": 1, "invalid_key": 1}
-        Smokescreen(cosmo, systematics_dict, sacc_data, likelihood, invalid_shifts_dict)
+        Smokescreen(cosmo, systematics_dict,likelihood,
+                    invalid_shifts_dict, sacc_data)
 
 def test_load_shifts():
     # Create mock inputs
@@ -73,7 +76,8 @@ def test_load_shifts():
     shifts_dict = {"Omega_c": 1, "Omega_b": (-1, 2), "sigma8": (2, 3)}
 
     # Instantiate Smokescreen
-    smokescreen = Smokescreen(cosmo, systematics_dict, sacc_data, likelihood, shifts_dict)
+    smokescreen = Smokescreen(cosmo, systematics_dict, likelihood,
+                              shifts_dict, sacc_data)
 
     # Call load_shifts and get the result
     shifts = smokescreen._load_shifts(seed="2112")
@@ -97,7 +101,9 @@ def test_load_shifts():
     with pytest.raises(NotImplementedError):
         smokescreen._load_shifts(seed="2112", shift_type="invalid")
     with pytest.raises(NotImplementedError):
-        smokescreen = Smokescreen(cosmo, systematics_dict, sacc_data, likelihood, shifts_dict, **{'shift_type': 'invalid'})
+        smokescreen = Smokescreen(cosmo, systematics_dict,
+                                  likelihood, shifts_dict, sacc_data,
+                                  **{'shift_type': 'invalid'})
 
 def test_debug_mode(capfd):
     # Create mock inputs
@@ -108,8 +114,8 @@ def test_debug_mode(capfd):
     shifts_dict = {"Omega_c": 1}
 
     # Check that Smokescreen can be instantiated with valid inputs
-    smokescreen = Smokescreen(cosmo, systematics_dict, sacc_data, likelihood, 
-                              shifts_dict, **{'debug': True})
+    smokescreen = Smokescreen(cosmo, systematics_dict, likelihood, 
+                              shifts_dict, sacc_data,  **{'debug': True})
      # Capture the output
     out, err = capfd.readouterr()
 
@@ -127,8 +133,8 @@ def test_calculate_blinding_factor_add():
     shifts_dict = {"Omega_c": 1}
 
     # Instantiate Smokescreen
-    smokescreen = Smokescreen(cosmo, systematics_dict, sacc_data, likelihood, 
-                              shifts_dict, **{'debug': True})
+    smokescreen = Smokescreen(cosmo, systematics_dict, likelihood, 
+                              shifts_dict, sacc_data, **{'debug': True})
 
     # Call calculate_blinding_factor with type="add"
     blinding_factor = smokescreen.calculate_blinding_factor(type="add")
@@ -145,8 +151,8 @@ def test_calculate_blinding_factor_mult():
     shifts_dict = {"Omega_c": 1}
 
     # Instantiate Smokescreen
-    smokescreen = Smokescreen(cosmo, systematics_dict, sacc_data, likelihood, 
-                              shifts_dict, **{'debug': True})
+    smokescreen = Smokescreen(cosmo, systematics_dict, likelihood, 
+                              shifts_dict, sacc_data, **{'debug': True})
 
     # Call calculate_blinding_factor with type="add"
     blinding_factor = smokescreen.calculate_blinding_factor(type="mult")
@@ -163,7 +169,8 @@ def test_calculate_blinding_factor_invalid_type():
     shifts_dict = {"Omega_c": 1}
 
     # Instantiate Smokescreen
-    smokescreen = Smokescreen(cosmo, systematics_dict, sacc_data, likelihood, shifts_dict)
+    smokescreen = Smokescreen(cosmo, systematics_dict, likelihood,
+                              shifts_dict, sacc_data)
 
     # Call calculate_blinding_factor with an invalid type
     with pytest.raises(NotImplementedError):
@@ -178,8 +185,8 @@ def test_apply_blinding_to_likelihood_datavec_add():
     shifts_dict = {"Omega_c": 1}
 
     # Instantiate Smokescreen
-    smokescreen = Smokescreen(cosmo, systematics_dict, sacc_data, likelihood,
-                              shifts_dict, **{'debug': True})
+    smokescreen = Smokescreen(cosmo, systematics_dict, likelihood,
+                              shifts_dict, sacc_data, **{'debug': True})
 
     # Set the blinding factor and type
     # Call calculate_blinding_factor with type="add"
@@ -201,8 +208,8 @@ def test_apply_blinding_to_likelihood_datavec_mult():
     shifts_dict = {"Omega_c": 1}
 
     # Instantiate Smokescreen
-    smokescreen = Smokescreen(cosmo, systematics_dict, sacc_data, likelihood,
-                              shifts_dict, **{'debug': True})
+    smokescreen = Smokescreen(cosmo, systematics_dict, likelihood,
+                              shifts_dict, sacc_data, **{'debug': True})
 
     # Set the blinding factor and type
     # Call calculate_blinding_factor with type="add"
@@ -225,8 +232,8 @@ def test_apply_blinding_to_likelihood_datavec_invalid_type():
     shifts_dict = {"Omega_c": 1}
 
     # Instantiate Smokescreen
-    smokescreen = Smokescreen(cosmo, systematics_dict, sacc_data, likelihood,
-                              shifts_dict, **{'debug': True})
+    smokescreen = Smokescreen(cosmo, systematics_dict, likelihood,
+                              shifts_dict, sacc_data, **{'debug': True})
 
     # Set the blinding factor and type
     # Call calculate_blinding_factor with type="add"

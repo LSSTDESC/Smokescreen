@@ -1,6 +1,7 @@
 import numpy as np
 import os 
 import types
+import inspect
 from copy import deepcopy
 import pyccl as ccl
 from firecrown.likelihood.likelihood import load_likelihood
@@ -8,6 +9,7 @@ from firecrown.likelihood.likelihood import load_likelihood_from_module_type
 from firecrown.parameters import ParamsMap
 
 from blinding.param_shifts import draw_flat_or_deterministic_param_shifts
+from blinding.utils import load_module_from_path
 
 
 # creates the smokescreen object
@@ -15,7 +17,8 @@ class Smokescreen():
     """
     Class for calling a smokescreen on the measured data-vector.
     """
-    def __init__(self, cosmo, systm_dict, sacc_data, likelihood, shifts_dict, seed="2112", **kwargs):
+    def __init__(self, cosmo, systm_dict, likelihood, shifts_dict, sacc_data=None,
+                 seed="2112", **kwargs):
         """
         Parameters
         ----------
@@ -23,8 +26,6 @@ class Smokescreen():
             Cosmology object from CCL with a fiducial cosmology.
         systm_dict : dict
             Dictionary of systematics names and corresponding fiducial values.
-        sacc_data : sacc.sacc.Sacc
-            Data-vector to be blinded.
         likelihood : str or module
             path to the likelihood or a module containing the likelihood
             must contain both `build_likelihood` and `compute_theory_vector` methods
@@ -33,6 +34,9 @@ class Smokescreen():
             shifts are single values, the dictionary values should be the shift
             widths. If the shifts are tuples of values, the dictionary values
             should be the (lower, upper) bounds of the shift widths.
+        sacc_data : sacc.sacc.Sacc
+            Data-vector to be blinded.
+            If None, the data-vector will be loaded from the likelihood.
         seed : int or str
             Random seed.
 
@@ -53,7 +57,8 @@ class Smokescreen():
         # save the data-vector
         self.sacc_data = sacc_data
         # load the likelihood
-        self.likelihood, self.tools = self._load_likelihood(likelihood)
+        self.likelihood, self.tools = self._load_likelihood(likelihood, 
+                                                            self.sacc_data)
         # save the shifts
         self.shifts_dict = shifts_dict
 
@@ -82,7 +87,7 @@ class Smokescreen():
         # # create the smokescreen data-vector
         # self.smokescreen_data = self.create_smokescreen_data()
 
-    def _load_likelihood(self, likelihood):
+    def _load_likelihood(self, likelihood, sacc_data):
         """
         Loads the likelihood either from a python module or from a file.
 
@@ -92,13 +97,20 @@ class Smokescreen():
             path to the likelihood or a module containing the likelihood
             must contain both `build_likelihood` and `compute_theory_vector` methods
         """
+        if sacc_data is not None:
+            build_parameters = {'sacc_data': sacc_data}
+        else:
+            build_parameters = None
+
+        # test the likelihood
+        self.__test_likelihood(likelihood, type)
         if type(likelihood) == str:
             # check if the file can be found
             if not os.path.isfile(likelihood):
                 raise FileNotFoundError(f'Could not find file {likelihood}')
 
             # load the likelihood from the file
-            likelihood, tools = load_likelihood(likelihood, None)
+            likelihood, tools = load_likelihood(likelihood, build_parameters)
 
             # check if the likehood has a compute_vector method
             if not hasattr(likelihood, 'compute_theory_vector'):
@@ -111,12 +123,28 @@ class Smokescreen():
                 raise AttributeError('Likelihood does not have a build_likelihood method')
 
             # tries to load the likelihood from the module
-            likelihood, tools = load_likelihood_from_module_type(likelihood, None)
+            likelihood, tools = load_likelihood_from_module_type(likelihood, 
+                                                                 build_parameters)
 
             # check if the likehood has a compute_vector method
             if not hasattr(likelihood, 'compute_theory_vector'):
                 raise AttributeError('Likelihood does not have a compute_vector method')
             return likelihood, tools 
+
+    def __test_likelihood(self, likelihood, type):
+
+        if type == "str":
+            likelihood = load_module_from_path(likelihood)
+
+        # if no sacc is provided, we need to check the likelihood is self-contained
+        if self.sacc_data is None:
+            sig = inspect.signature(likelihood.build_likelihood)
+            likefunc_params = sig.parameters
+            assert len(likefunc_params) == 0, "No sacc is provided, the likelihood must be self-contained, i. e., it must not have any parameters!"
+        else:
+            sig = inspect.signature(likelihood.build_likelihood)
+            likefunc_params = sig.parameters
+            assert len(likefunc_params) >= 1, "A sacc was provided, the likelihood must require a build_parameters dictionary!"
 
     def _load_systematics(self, systematics_dict, likelihood):
         """

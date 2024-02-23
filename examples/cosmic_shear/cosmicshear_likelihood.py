@@ -12,6 +12,7 @@ import firecrown.likelihood.gauss_family.statistic.source.weak_lensing as wl
 from firecrown.likelihood.gauss_family.statistic.two_point import TwoPoint
 from firecrown.likelihood.gauss_family.gaussian import ConstGaussian
 from firecrown.modeling_tools import ModelingTools
+from firecrown.likelihood.likelihood import NamedParameters
 
 def build_likelihood(build_parameters):
     """
@@ -28,7 +29,10 @@ def build_likelihood(build_parameters):
         A firecrown likelihood object.
     """
 
-    sacc_data = build_parameters['sacc_data']
+    try:
+        sacc_data = build_parameters['sacc_data']
+    except TypeError:
+        sacc_data = build_parameters.data['sacc_data']
 
     # This is a trick TXPipe uses to pass a sacc file or object
     # to the likelihood. We need to check if the input is a string
