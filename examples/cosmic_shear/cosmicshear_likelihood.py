@@ -30,14 +30,13 @@ def build_likelihood(build_parameters):
 
     sacc_data = build_parameters['sacc_data']
 
-    # items in the build_parameters are supposed to be
-    # just str, int, etc, not complicated parameters.
-    # this would abuse that slightly. We could always
-    # write a temporary file to disc if needed.
+    # This is a trick TXPipe uses to pass a sacc file or object
+    # to the likelihood. We need to check if the input is a string
     if isinstance(sacc_data, (str, pathlib.Path)):
         sacc_data = sacc.Sacc.load_fits(sacc_data)
     else:
         sacc_data = sacc_data.copy()
+
     # Creating sources, each one maps to a specific section of a SACC file. In
     # this case trc0, trc1 describe weak-lensing probes. The sources are saved
     # in a dictionary since they will be used by one or more two-point
