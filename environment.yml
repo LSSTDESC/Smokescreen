@@ -8,6 +8,7 @@ dependencies:
     - cosmosis >=2.5
     - astropy >=5.3.0
     - pytest
+    - pip
     - pip:
       - argparse
       - sacc
