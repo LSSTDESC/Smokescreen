@@ -6,7 +6,9 @@ from copy import deepcopy
 import pyccl as ccl
 from firecrown.likelihood.likelihood import load_likelihood
 from firecrown.likelihood.likelihood import load_likelihood_from_module_type
+from firecrown.likelihood.likelihood import NamedParameters
 from firecrown.parameters import ParamsMap
+
 
 from blinding.param_shifts import draw_flat_or_deterministic_param_shifts
 from blinding.utils import load_module_from_path
@@ -98,7 +100,7 @@ class Smokescreen():
             must contain both `build_likelihood` and `compute_theory_vector` methods
         """
         if sacc_data is not None:
-            build_parameters = {'sacc_data': sacc_data}
+            build_parameters = NamedParameters({'sacc_data': sacc_data})
         else:
             build_parameters = None
 
@@ -141,14 +143,21 @@ class Smokescreen():
             likelihood = likelihood
 
         # if no sacc is provided, we need to check the likelihood is self-contained
-        if self.sacc_data is None:
+        # FIXME: Firecrown at the moment has no way of checking this...
+        # if self.sacc_data is None:
+        #     sig = inspect.signature(likelihood.build_likelihood)
+        #     likefunc_params = sig.parameters
+        #     assert len(likefunc_params) == 0, "No sacc is provided, the likelihood must be self-contained, i. e., it must not have any parameters!"
+        # else:
+        #     sig = inspect.signature(likelihood.build_likelihood)
+        #     likefunc_params = sig.parameters
+        #     assert len(likefunc_params) >= 1, "A sacc was provided, the likelihood must require a build_parameters dictionary!"
+        if self.sacc_data is not None:
             sig = inspect.signature(likelihood.build_likelihood)
             likefunc_params = sig.parameters
-            assert len(likefunc_params) == 0, "No sacc is provided, the likelihood must be self-contained, i. e., it must not have any parameters!"
-        else:
-            sig = inspect.signature(likelihood.build_likelihood)
-            likefunc_params = sig.parameters
-            assert len(likefunc_params) >= 1, "A sacc was provided, the likelihood must require a build_parameters dictionary!"
+            assert len(likefunc_params) >= 1, ("A sacc was provided, ", 
+                                               "the likelihood must require a",
+                                               "build_parameters NamedParameters object!")
 
     def _load_systematics(self, systematics_dict, likelihood):
         """
