@@ -23,8 +23,10 @@ dependencies = [
     "pytest>=7.2.5",
     "argparse>=1.0",
     "sacc>=0.12",
+    "pytest",
+    "pytest-cov",
 ]
-keywords = ["desc", "python", "blinding", "firecrown"]
+keywords = ["desc", "python", "blinding", "firecrown", "cosmology"]
 dynamic = ["version"]
 
 [tool.setuptools.packages.find]
