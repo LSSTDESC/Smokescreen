@@ -134,7 +134,7 @@ class Smokescreen():
                 raise ValueError(f"Systematic {key} not in likelihood systematics")
         return ParamsMap(systematics_dict)
 
-    def _load_shifts(self, seed, type="flat"):
+    def _load_shifts(self, seed, shift_type="flat"):
         """
         Loads the shifts from the shifts dictionary.
 
@@ -148,7 +148,7 @@ class Smokescreen():
             If the first valuee is negative, it is assumed that the parameter
             is to be shifted from the fiducial value: PARAM = FIDUCIAL + U(-a, b)
         """
-        if type == "flat":
+        if shift_type == "flat":
             return draw_flat_or_deterministic_param_shifts(self.cosmo, self.shifts_dict, seed)
         else:
             raise NotImplementedError('Only flat shifts are implemented')

@@ -84,3 +84,33 @@ def test_load_shifts():
     smokescreen.shifts_dict["Omega_c"] = (1,)
     with pytest.raises(ValueError):
         smokescreen._load_shifts(seed="2112")
+
+    # check if breaks if given a shift with a key not in the cosmology parameters
+    smokescreen.shifts_dict["invalid_key"] = 1
+    with pytest.raises(ValueError):
+        smokescreen._load_shifts(seed="2112")
+
+    # check if break if a a shift type is not flat
+    with pytest.raises(NotImplementedError):
+        smokescreen._load_shifts(seed="2112", shift_type="invalid")
+    with pytest.raises(NotImplementedError):
+        smokescreen = Smokescreen(cosmo, systematics_dict, sacc_data, likelihood, shifts_dict, **{'shift_type': 'invalid'})
+
+def test_debug_mode(capfd):
+    # Create mock inputs
+    cosmo = COSMO
+    sacc_data = "sacc_data"
+    likelihood = MockLikelihoodModule("mock_likelihood")
+    systematics_dict = {"systematic1": 0.1}
+    shifts_dict = {"Omega_c": 1}
+
+    # Check that Smokescreen can be instantiated with valid inputs
+    smokescreen = Smokescreen(cosmo, systematics_dict, sacc_data, likelihood, 
+                              shifts_dict, **{'debug': True})
+     # Capture the output
+    out, err = capfd.readouterr()
+
+    # Check that the debug output is correct
+    assert "[DEBUG] Shifts: " in out
+    assert "[DEBUG] Blinded Cosmology: " in out
+    assert f"{shifts_dict}" in out
