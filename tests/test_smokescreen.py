@@ -214,3 +214,24 @@ def test_apply_blinding_to_likelihood_datavec_mult():
 
     # Check that the blinded data vector is correct
     assert blinded_data_vector == expected_blinded
+
+
+def test_apply_blinding_to_likelihood_datavec_invalid_type():
+    # Create mock inputs
+    cosmo = COSMO
+    sacc_data = "sacc_data"
+    likelihood = MockLikelihoodModule("mock_likelihood")
+    systematics_dict = {"systematic1": 0.1}
+    shifts_dict = {"Omega_c": 1}
+
+    # Instantiate Smokescreen
+    smokescreen = Smokescreen(cosmo, systematics_dict, sacc_data, likelihood,
+                              shifts_dict, **{'debug': True})
+
+    # Set the blinding factor and type
+    # Call calculate_blinding_factor with type="add"
+    blinding_factor = smokescreen.calculate_blinding_factor(type="mult")
+    # Set an invalid type
+    smokescreen.type = "invalid"
+    with pytest.raises(NotImplementedError):
+        smokescreen.apply_blinding_to_likelihood_datavec()
