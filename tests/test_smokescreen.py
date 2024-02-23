@@ -137,7 +137,7 @@ def test_calculate_blinding_factor_add():
                               shifts_dict, sacc_data, **{'debug': True})
 
     # Call calculate_blinding_factor with type="add"
-    blinding_factor = smokescreen.calculate_blinding_factor(type="add")
+    blinding_factor = smokescreen.calculate_blinding_factor(factor_type="add")
 
     # Check that the blinding factor is correct
     assert blinding_factor == smokescreen.theory_vec_blind - smokescreen.theory_vec_fid
@@ -155,7 +155,7 @@ def test_calculate_blinding_factor_mult():
                               shifts_dict, sacc_data, **{'debug': True})
 
     # Call calculate_blinding_factor with type="add"
-    blinding_factor = smokescreen.calculate_blinding_factor(type="mult")
+    blinding_factor = smokescreen.calculate_blinding_factor(factor_type="mult")
 
     # Check that the blinding factor is correct
     assert blinding_factor == smokescreen.theory_vec_blind / smokescreen.theory_vec_fid
@@ -174,7 +174,7 @@ def test_calculate_blinding_factor_invalid_type():
 
     # Call calculate_blinding_factor with an invalid type
     with pytest.raises(NotImplementedError):
-        smokescreen.calculate_blinding_factor(type="invalid")
+        smokescreen.calculate_blinding_factor(factor_type="invalid")
 
 def test_apply_blinding_to_likelihood_datavec_add():
     # Create mock inputs
@@ -190,7 +190,7 @@ def test_apply_blinding_to_likelihood_datavec_add():
 
     # Set the blinding factor and type
     # Call calculate_blinding_factor with type="add"
-    blinding_factor = smokescreen.calculate_blinding_factor(type="add")
+    blinding_factor = smokescreen.calculate_blinding_factor(factor_type="add")
 
     # Call apply_blinding_to_likelihood_datavec
     blinded_data_vector = smokescreen.apply_blinding_to_likelihood_datavec()
@@ -213,7 +213,7 @@ def test_apply_blinding_to_likelihood_datavec_mult():
 
     # Set the blinding factor and type
     # Call calculate_blinding_factor with type="add"
-    blinding_factor = smokescreen.calculate_blinding_factor(type="mult")
+    blinding_factor = smokescreen.calculate_blinding_factor(factor_type="mult")
 
     # Call apply_blinding_to_likelihood_datavec
     blinded_data_vector = smokescreen.apply_blinding_to_likelihood_datavec()
@@ -237,8 +237,8 @@ def test_apply_blinding_to_likelihood_datavec_invalid_type():
 
     # Set the blinding factor and type
     # Call calculate_blinding_factor with type="add"
-    blinding_factor = smokescreen.calculate_blinding_factor(type="mult")
+    blinding_factor = smokescreen.calculate_blinding_factor(factor_type="mult")
     # Set an invalid type
-    smokescreen.type = "invalid"
+    smokescreen.factor_type = "invalid"
     with pytest.raises(NotImplementedError):
         smokescreen.apply_blinding_to_likelihood_datavec()

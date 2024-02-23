@@ -202,7 +202,7 @@ class Smokescreen():
         blinded_cosmo = ccl.Cosmology(**blinded_cosmo_dict)
         return blinded_cosmo
 
-    def calculate_blinding_factor(self, type="add"):
+    def calculate_blinding_factor(self, factor_type="add"):
         """
         Calculates the blinding factor for the data-vector, according to Muir et al. 2019:
 
@@ -216,7 +216,7 @@ class Smokescreen():
         type : str
             Type of blinding factor to be calculated. Default is "add".
         """
-        self.type = type
+        self.factor_type = factor_type
         # update the tools:
         self.tools.update({})
         self._tools_blinding.update({})
@@ -235,9 +235,9 @@ class Smokescreen():
         self.theory_vec_blind = self.likelihood.compute_theory_vector(self._tools_blinding)
         #return theory_vector
 
-        if self.type == "add":
+        if self.factor_type == "add":
             self.__blinding_factor = self.theory_vec_blind - self.theory_vec_fid
-        elif self.type == "mult":
+        elif self.factor_type == "mult":
             self.__blinding_factor = self.theory_vec_blind / self.theory_vec_fid
         else:
             raise NotImplementedError('Only "add" and "mult" blinding factor is implemented')
@@ -249,9 +249,9 @@ class Smokescreen():
         Applies the blinding factor to the data-vector.
         """
         self.data_vector = self.likelihood.get_data_vector()
-        if self.type == "add":
+        if self.factor_type == "add":
             self.blinded_data_vector = self.data_vector + self.__blinding_factor
-        elif self.type == "mult":
+        elif self.factor_type == "mult":
             self.blinded_data_vector = self.data_vector * self.__blinding_factor
         else:
             raise NotImplementedError('Only "add" and "mult" blinding factor is implemented')
