@@ -56,7 +56,7 @@ jobs:
         shell: bash -l {0}
         run: |
           ${{ matrix.INSTALL_DEPS }}
-          conda activate desc_blinding
+          conda activate test
 
       # Install our package.
       - name: Install blinding
