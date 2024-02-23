@@ -102,13 +102,13 @@ class Smokescreen():
         else:
             build_parameters = None
 
-        # test the likelihood
-        self.__test_likelihood(likelihood, type)
         if type(likelihood) == str:
             # check if the file can be found
             if not os.path.isfile(likelihood):
                 raise FileNotFoundError(f'Could not find file {likelihood}')
 
+            # test the likelihood
+            self.__test_likelihood(likelihood, 'str')
             # load the likelihood from the file
             likelihood, tools = load_likelihood(likelihood, build_parameters)
 
@@ -118,6 +118,8 @@ class Smokescreen():
             return likelihood, tools
 
         elif isinstance(likelihood, types.ModuleType):
+            # test the likelihood
+            self.__test_likelihood(likelihood, 'module')
             # check if the module has a build_likelihood method
             if not hasattr(likelihood, 'build_likelihood'):
                 raise AttributeError('Likelihood does not have a build_likelihood method')
@@ -131,10 +133,12 @@ class Smokescreen():
                 raise AttributeError('Likelihood does not have a compute_vector method')
             return likelihood, tools 
 
-    def __test_likelihood(self, likelihood, type):
+    def __test_likelihood(self, likelihood, like_type):
 
-        if type == "str":
+        if like_type == "str":
             likelihood = load_module_from_path(likelihood)
+        else:
+            likelihood = likelihood
 
         # if no sacc is provided, we need to check the likelihood is self-contained
         if self.sacc_data is None:
