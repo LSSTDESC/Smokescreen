@@ -8,7 +8,7 @@ This repostory (under development) contains the blinding modules for blinding at
 
 Other info: the previous README can be found [here](bckp_README.md)
 
-> :warning: Important notice: the term "blinding" and the name "smokescreen" are used as placeholders and are not final. The final name will be decided by the DESC Blinding Working Group in discussions with the collaboration.
+> :warning: Important notice :warning: : the term "blinding" and the name "smokescreen" are used as placeholders and are not final. The final name will be decided by the DESC Blinding Working Group in discussions with the collaboration.
 
 ## Installation
 **Creating a new environment:**
@@ -53,13 +53,16 @@ def build_likelihood(build_parameters):
     """
     sacc_data = build_parameters['sacc_data']
 ```
-(This is simular to what is currently done in [TXPipe](https://github.com/LSSTDESC/TXPipe/blob/df0dcc8c1e974576dd1942624ab5ff7bd0fbbaa0/txpipe/utils/theory_model.py#L19)).
+(This is simular to what is currently done in [TXPipe](https://github.com/LSSTDESC/TXPipe/blob/df0dcc8c1e974576dd1942624ab5ff7bd0fbbaa0/txpipe/utils/theory_model.py#L19))
 
 The likelihood module also must have a method `.compute_theory_vector(ModellingTools)` which calls for the calculation of the theory vector inside the likelihood object. 
 
 The likelihood can be provided either as a path to the python file containing the `build_likelihood` function or as a python module. In the latter case, the module must be imported.
 
 ### Blinding a data vector
+TL;DR: Check the `notebooks/test_blinding_prototype.ipynb` for a working example using the 
+`des_y1_3x2pt_PT` [example from firecrown](https://github.com/LSSTDESC/firecrown/tree/master/examples/des_y1_3x2pt).
+
 The blinding module can be used to blind the data-vector measurements. The module can be used as follows:
 ```python
 # import the module
