@@ -61,7 +61,6 @@ def draw_flat_or_deterministic_param_shifts(cosmo, shifts_dict, seed):
         seed = string_to_seed(seed)
     np.random.seed(seed)
     # check the if the shifts are single value or a tuple of values
-    failed_keys = []
     for key in shifts_dict.keys():
         try:
             cosmo._params[key]
@@ -70,8 +69,6 @@ def draw_flat_or_deterministic_param_shifts(cosmo, shifts_dict, seed):
             #print(f"Key {key} not in cosmology parameters")
             #failed_keys.append(key)
             raise ValueError(f"Key {key} not in cosmology parameters")
-    for key in failed_keys:
-        shifts_dict.pop(key)
     shifts = {}
     for key, value in shifts_dict.items():
         if isinstance(value, tuple):

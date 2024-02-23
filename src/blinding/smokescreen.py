@@ -209,6 +209,8 @@ class Smokescreen():
             self.__blinding_factor = self.theory_vec_blind / self.theory_vec_fid
         else:
             raise NotImplementedError('Only "add" and "mult" blinding factor is implemented')
+        if self.__debug:
+            return self.__blinding_factor
 
     def apply_blinding_to_likelihood_datavec(self):
         """
