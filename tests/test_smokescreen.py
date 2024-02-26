@@ -242,3 +242,47 @@ def test_apply_blinding_to_likelihood_datavec_invalid_type():
     smokescreen.factor_type = "invalid"
     with pytest.raises(NotImplementedError):
         smokescreen.apply_blinding_to_likelihood_datavec()
+
+def test_load_likelihood():
+    # Create mock inputs
+    cosmo = COSMO
+    sacc_data = "./examples/cosmic_shear/cosmicshear_sacc.fits"
+    likelihood = MockLikelihoodModule("mock_likelihood")
+    systematics_dict = {"systematic1": 0.1}
+    shifts_dict = {"Omega_c": 1}
+
+    # Instantiate Smokescreen
+    smokescreen = Smokescreen(cosmo, systematics_dict, likelihood,
+                              shifts_dict, sacc_data)
+
+    # Test with a valid likelihood module
+    likelihood, tools = smokescreen._load_likelihood(likelihood, sacc_data)
+    assert isinstance(likelihood, Likelihood)
+    assert hasattr(likelihood, 'compute_theory_vector')
+    assert hasattr(likelihood, 'get_data_vector')
+
+    # Test with a valid likelihood file path
+    likelihood_file_path = "./examples/cosmic_shear/cosmicshear_likelihood.py"
+    likelihood, tools = smokescreen._load_likelihood(likelihood_file_path, sacc_data)
+    assert isinstance(likelihood, Likelihood)
+    assert hasattr(likelihood, 'compute_theory_vector')
+    assert hasattr(likelihood, 'get_data_vector')
+
+    # Test with an invalid likelihood (neither a module nor a file path)
+    with pytest.raises(TypeError):
+        smokescreen._load_likelihood(123, sacc_data)
+
+    # Test with a non-existent likelihood file path
+    with pytest.raises(FileNotFoundError):
+        smokescreen._load_likelihood("/path/to/nonexistent/file.py", sacc_data)
+
+    # Test with a module that doesn't have a 'build_likelihood' method
+    invalid_likelihood = types.ModuleType("invalid_likelihood")
+    with pytest.raises(AttributeError):
+        smokescreen._load_likelihood(invalid_likelihood, sacc_data)
+
+    # Test with a module that doesn't have a 'build_parameters' input
+    invalid_likelihood = types.ModuleType("invalid_likelihood")
+    invalid_likelihood.build_likelihood = lambda: None
+    with pytest.raises(AssertionError):
+        smokescreen._load_likelihood(invalid_likelihood, sacc_data)

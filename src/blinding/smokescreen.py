@@ -122,18 +122,16 @@ class Smokescreen():
         elif isinstance(likelihood, types.ModuleType):
             # test the likelihood
             self.__test_likelihood(likelihood, 'module')
-            # check if the module has a build_likelihood method
-            if not hasattr(likelihood, 'build_likelihood'):
-                raise AttributeError('Likelihood does not have a build_likelihood method')
 
             # tries to load the likelihood from the module
             likelihood, tools = load_likelihood_from_module_type(likelihood, 
                                                                  build_parameters)
-
             # check if the likehood has a compute_vector method
             if not hasattr(likelihood, 'compute_theory_vector'):
                 raise AttributeError('Likelihood does not have a compute_vector method')
-            return likelihood, tools 
+            return likelihood, tools
+        else:
+            raise TypeError('Likelihood must be a string path to a likelihood module or a module')
 
     def __test_likelihood(self, likelihood, like_type):
 
@@ -142,6 +140,10 @@ class Smokescreen():
         else:
             likelihood = likelihood
 
+        # check if the module has a build_likelihood method
+        if not hasattr(likelihood, 'build_likelihood'):
+            raise AttributeError('Likelihood does not have a build_likelihood method')
+        
         # if no sacc is provided, we need to check the likelihood is self-contained
         # FIXME: Firecrown at the moment has no way of checking this...
         # if self.sacc_data is None:
