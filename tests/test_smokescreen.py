@@ -45,7 +45,7 @@ class MockCosmo:
 def test_smokescreen_init():
     # Create mock inputs
     cosmo = COSMO
-    sacc_data = "sacc_data"
+    sacc_data = sacc.Sacc()
     likelihood = MockLikelihoodModule("mock_likelihood")
     systematics_dict = {"systematic1": 0.1}
     shifts_dict = {"Omega_c": 1}
@@ -70,7 +70,7 @@ def test_smokescreen_init():
 def test_load_shifts():
     # Create mock inputs
     cosmo = COSMO
-    sacc_data = "sacc_data"
+    sacc_data = sacc.Sacc()
     likelihood = MockLikelihoodModule("mock_likelihood")
     systematics_dict = {"systematic1": 0.1}
     shifts_dict = {"Omega_c": 1, "Omega_b": (-1, 2), "sigma8": (2, 3)}
@@ -108,7 +108,7 @@ def test_load_shifts():
 def test_debug_mode(capfd):
     # Create mock inputs
     cosmo = COSMO
-    sacc_data = "sacc_data"
+    sacc_data = sacc.Sacc()
     likelihood = MockLikelihoodModule("mock_likelihood")
     systematics_dict = {"systematic1": 0.1}
     shifts_dict = {"Omega_c": 1}
@@ -127,7 +127,7 @@ def test_debug_mode(capfd):
 def test_calculate_blinding_factor_add():
     # Create mock inputs
     cosmo = COSMO
-    sacc_data = "sacc_data"
+    sacc_data = sacc.Sacc()
     likelihood = MockLikelihoodModule("mock_likelihood")
     systematics_dict = {"systematic1": 0.1}
     shifts_dict = {"Omega_c": 1}
@@ -145,7 +145,7 @@ def test_calculate_blinding_factor_add():
 def test_calculate_blinding_factor_mult():
     # Create mock inputs
     cosmo = COSMO
-    sacc_data = "sacc_data"
+    sacc_data = sacc.Sacc()
     likelihood = MockLikelihoodModule("mock_likelihood")
     systematics_dict = {"systematic1": 0.1}
     shifts_dict = {"Omega_c": 1}
@@ -163,7 +163,7 @@ def test_calculate_blinding_factor_mult():
 def test_calculate_blinding_factor_invalid_type():
     # Create mock inputs
     cosmo = COSMO
-    sacc_data = "sacc_data"
+    sacc_data = sacc.Sacc()
     likelihood = MockLikelihoodModule("mock_likelihood")
     systematics_dict = {"systematic1": 0.1}
     shifts_dict = {"Omega_c": 1}
@@ -179,7 +179,7 @@ def test_calculate_blinding_factor_invalid_type():
 def test_apply_blinding_to_likelihood_datavec_add():
     # Create mock inputs
     cosmo = COSMO
-    sacc_data = "sacc_data"
+    sacc_data = sacc.Sacc()
     likelihood = MockLikelihoodModule("mock_likelihood")
     systematics_dict = {"systematic1": 0.1}
     shifts_dict = {"Omega_c": 1}
@@ -202,7 +202,7 @@ def test_apply_blinding_to_likelihood_datavec_add():
 def test_apply_blinding_to_likelihood_datavec_mult():
     # Create mock inputs
     cosmo = COSMO
-    sacc_data = "sacc_data"
+    sacc_data = sacc.Sacc()
     likelihood = MockLikelihoodModule("mock_likelihood")
     systematics_dict = {"systematic1": 0.1}
     shifts_dict = {"Omega_c": 1}
@@ -226,7 +226,7 @@ def test_apply_blinding_to_likelihood_datavec_mult():
 def test_apply_blinding_to_likelihood_datavec_invalid_type():
     # Create mock inputs
     cosmo = COSMO
-    sacc_data = "sacc_data"
+    sacc_data = sacc.Sacc()
     likelihood = MockLikelihoodModule("mock_likelihood")
     systematics_dict = {"systematic1": 0.1}
     shifts_dict = {"Omega_c": 1}
@@ -246,7 +246,7 @@ def test_apply_blinding_to_likelihood_datavec_invalid_type():
 def test_load_likelihood():
     # Create mock inputs
     cosmo = COSMO
-    sacc_data = "./examples/cosmic_shear/cosmicshear_sacc.fits"
+    sacc_data = sacc.Sacc.load_fits("./examples/cosmic_shear/cosmicshear_sacc.fits")
     likelihood = MockLikelihoodModule("mock_likelihood")
     systematics_dict = {"systematic1": 0.1}
     shifts_dict = {"Omega_c": 1}

@@ -3,8 +3,10 @@ import os
 import sys
 import types
 import inspect
+import warnings
 from copy import deepcopy
 import pyccl as ccl
+import sacc
 from firecrown.likelihood.likelihood import load_likelihood
 from firecrown.likelihood.likelihood import load_likelihood_from_module_type
 from firecrown.likelihood.likelihood import NamedParameters
@@ -21,7 +23,7 @@ class Smokescreen():
     """
     Class for calling a smokescreen on the measured data-vector.
     """
-    def __init__(self, cosmo, systm_dict, likelihood, shifts_dict, sacc_data=None,
+    def __init__(self, cosmo, systm_dict, likelihood, shifts_dict, sacc_data,
                  seed="2112", **kwargs):
         """
         Parameters
@@ -60,6 +62,8 @@ class Smokescreen():
         self.systematics_dict = systm_dict
         # save the data-vector
         self.sacc_data = sacc_data
+        # checks if the sacc_data is in the correct format:
+        assert isinstance(self.sacc_data, sacc.sacc.Sacc), "sacc_data must be a sacc object"
         # load the likelihood
         self.likelihood, self.tools = self._load_likelihood(likelihood, 
                                                             self.sacc_data)
@@ -102,10 +106,8 @@ class Smokescreen():
             path to the likelihood or a module containing the likelihood
             must contain both `build_likelihood` and `compute_theory_vector` methods
         """
-        if sacc_data is not None:
-            build_parameters = NamedParameters({'sacc_data': sacc_data})
-        else:
-            build_parameters = None
+
+        build_parameters = NamedParameters({'sacc_data': sacc_data})
 
         if type(likelihood) == str:
             # check if the file can be found
@@ -146,17 +148,7 @@ class Smokescreen():
         # check if the module has a build_likelihood method
         if not hasattr(likelihood, 'build_likelihood'):
             raise AttributeError('Likelihood does not have a build_likelihood method')
-        
-        # if no sacc is provided, we need to check the likelihood is self-contained
-        # FIXME: Firecrown at the moment has no way of checking this...
-        # if self.sacc_data is None:
-        #     sig = inspect.signature(likelihood.build_likelihood)
-        #     likefunc_params = sig.parameters
-        #     assert len(likefunc_params) == 0, "No sacc is provided, the likelihood must be self-contained, i. e., it must not have any parameters!"
-        # else:
-        #     sig = inspect.signature(likelihood.build_likelihood)
-        #     likefunc_params = sig.parameters
-        #     assert len(likefunc_params) >= 1, "A sacc was provided, the likelihood must require a build_parameters dictionary!"
+
         if self.sacc_data is not None:
             sig = inspect.signature(likelihood.build_likelihood)
             likefunc_params = sig.parameters
@@ -275,5 +267,12 @@ class Smokescreen():
     def save_blinded_datavector(self, path_to_save):
         """
         Saves the blinded data-vector to a file.
+
+        Parameters
+        ----------
+        path_to_save : str
+            Path to save the blinded data-vector.
         """
-        pass
+        idx = self.likelihood.get_sacc_indices()
+        blinded_sacc = save_to_sacc(self.sacc_data,
+                                    )
