@@ -12,6 +12,6 @@ dependencies:
     - pip:
       - argparse
       - sacc
-      - git+https://github.com/LSSTDESC/firecrown.git@master#egg=firecrown --no-deps
+      - git+https://github.com/LSSTDESC/firecrown.git@master
     - cosmosis 
     - cosmosis-build-standard-library
