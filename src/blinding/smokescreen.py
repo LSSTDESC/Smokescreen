@@ -1,5 +1,6 @@
 import numpy as np
-import os 
+import os
+import sys
 import types
 import inspect
 from copy import deepcopy
@@ -8,6 +9,7 @@ from firecrown.likelihood.likelihood import load_likelihood
 from firecrown.likelihood.likelihood import load_likelihood_from_module_type
 from firecrown.likelihood.likelihood import NamedParameters
 from firecrown.parameters import ParamsMap
+from firecrown.utils import save_to_sacc
 
 
 from blinding.param_shifts import draw_flat_or_deterministic_param_shifts
@@ -61,11 +63,12 @@ class Smokescreen():
         # load the likelihood
         self.likelihood, self.tools = self._load_likelihood(likelihood, 
                                                             self.sacc_data)
+        # loads another instance of the likelihood for the blinded cosmology
+        self._bld_likelihood, self._tools_blinding = self._load_likelihood(likelihood,
+                                                                           self.sacc_data)
+
         # save the shifts
         self.shifts_dict = shifts_dict
-
-        # makes a deep copy of the tools for the blinded cosmology:
-        self._tools_blinding = deepcopy(self.tools)
 
         # load the systematics
         self.systematics = self._load_systematics(self.systematics_dict, self.likelihood)
@@ -239,11 +242,12 @@ class Smokescreen():
 
         # update the likelihood with the systematics parameters:
         self.likelihood.update(self.systematics)
+        self._bld_likelihood.update(self.systematics)
 
         # fiducial theory vector:
         self.theory_vec_fid = self.likelihood.compute_theory_vector(self.tools)
         # blinded theory vector:
-        self.theory_vec_blind = self.likelihood.compute_theory_vector(self._tools_blinding)
+        self.theory_vec_blind = self._bld_likelihood.compute_theory_vector(self._tools_blinding)
         #return theory_vector
 
         if self.factor_type == "add":
@@ -267,3 +271,9 @@ class Smokescreen():
         else:
             raise NotImplementedError('Only "add" and "mult" blinding factor is implemented')
         return self.blinded_data_vector
+
+    def save_blinded_datavector(self, path_to_save):
+        """
+        Saves the blinded data-vector to a file.
+        """
+        pass
