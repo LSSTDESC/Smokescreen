@@ -1,4 +1,6 @@
-# Author - Stuart McAlpine - stuart.mcalpine@fysik.su.se - Jan 2023
+# Author: 
+#    - Stuart McAlpine - stuart.mcalpine@fysik.su.se 
+#    - Arthur Loureiro - arthur.loureiro@fysik.su.se
 name: DESC Blinding
 
 # How does the workflow get triggered?
@@ -16,7 +18,7 @@ on:
 
 jobs:
   # Our pytest job.
-  legacy_blinding-pytest:
+  blinding-pytest:
     # Our strategy lists the OS and Python versions we want to test on.
     strategy:
       # Don't quit all jobs if only one job fails.
@@ -39,14 +41,42 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v3
 
-      # Install Python.
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+      - name: Set up Conda
+        uses: conda-incubator/setup-miniconda@v2
         with:
-          python-version: ${{ matrix.python-version }}
+          auto-update-conda: true
+          environment-file: environment.yml
+        # # Install Python.
+      # - name: Set up Python ${{ matrix.python-version }}
+      #   uses: actions/setup-python@v4
+      #   with:
+      #     python-version: ${{ matrix.python-version }}
 
       - name: Install dependencies
-        run: ${{ matrix.INSTALL_DEPS }}
+        shell: bash -l {0}
+        run: |
+          ${{ matrix.INSTALL_DEPS }}
+          conda activate test
+
+      # Install our package.
+      - name: Install blinding
+        shell: bash -l {0}
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pytest
+          python -m pip install .
+
+      # Perform the unit test and outputs a coverage report
+      - name: Test with pytest
+        shell: bash -l {0}
+        run: |
+          pytest --cov=blinding --cov-report=xml ./tests
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v4.0.1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: LSSTDESC/Blinding
 
       # # Install our package.
       # - name: Install legacy_blinding
