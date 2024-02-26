@@ -2,6 +2,8 @@ name: desc_blinding
 channels:
   - conda-forge
 dependencies:
+    - python=3.9
+    - git+https://github.com/LSSTDESC/firecrown.git@master
     - numpy
     - ipykernel
     - scipy
@@ -12,6 +14,5 @@ dependencies:
     - pip:
       - argparse
       - sacc
-    - git+https://github.com/LSSTDESC/firecrown.git@master
     - cosmosis 
     - cosmosis-build-standard-library
