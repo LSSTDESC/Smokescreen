@@ -13,7 +13,6 @@ from firecrown.likelihood.likelihood import NamedParameters
 from firecrown.parameters import ParamsMap
 from firecrown.utils import save_to_sacc
 
-
 from blinding.param_shifts import draw_flat_or_deterministic_param_shifts
 from blinding.utils import load_module_from_path
 
@@ -264,7 +263,8 @@ class Smokescreen():
             raise NotImplementedError('Only "add" and "mult" blinding factor is implemented')
         return self.blinded_data_vector
 
-    def save_blinded_datavector(self, path_to_save):
+    def save_blinded_datavector(self, path_to_save, file_root,
+                                return_sacc=False):
         """
         Saves the blinded data-vector to a file.
 
@@ -272,7 +272,20 @@ class Smokescreen():
         ----------
         path_to_save : str
             Path to save the blinded data-vector.
+        file_root : str
+            Root of the file name.
+        return_sacc : bool
+            If True, returns the sacc object with the blinded data-vector.
+
+        Saves the blinded data-vector to a file with the name:
+        {path_to_save}/{file_root}_blinded_data_vector.fits
         """
         idx = self.likelihood.get_sacc_indices()
         blinded_sacc = save_to_sacc(self.sacc_data,
-                                    )
+                                    self.blinded_data_vector,
+                                    idx)
+        blinded_sacc.save_fits(f"{path_to_save}/{file_root}_blinded_data_vector.fits")
+        if return_sacc:
+            return blinded_sacc
+        else:
+            return None
