@@ -1,10 +1,13 @@
 import pytest
 import types
+import os
+import numpy as np
 import sacc
 import pyccl as ccl
 from firecrown.likelihood.likelihood import Likelihood
 from firecrown.modeling_tools import ModelingTools
 from blinding.smokescreen import Smokescreen
+ccl.gsl_params.LENSING_KERNEL_SPLINE_INTEGRATION = False
 
 COSMO = ccl.CosmologyVanillaLCDM()
 
@@ -286,3 +289,35 @@ def test_load_likelihood():
     invalid_likelihood.build_likelihood = lambda: None
     with pytest.raises(AssertionError):
         smokescreen._load_likelihood(invalid_likelihood, sacc_data)
+
+def test_save_blinded_datavector():
+    # Create mock inputs
+    cosmo = COSMO
+    likelihood = "./examples/cosmic_shear/cosmicshear_likelihood.py"
+    syst_dict = {
+        "trc1_delta_z": 0.1,
+        "trc0_delta_z": 0.1,
+    }
+    shift_dict = {"Omega_c": 0.34, "sigma8": 0.85}
+    sacc_data = sacc.Sacc.load_fits("./examples/cosmic_shear/cosmicshear_sacc.fits")
+    sck = Smokescreen(cosmo, syst_dict, likelihood, shift_dict, sacc_data)
+
+    # Calculate the blinding factor and apply it to the likelihood data vector
+    sck.calculate_blinding_factor()
+    blinded_dv = sck.apply_blinding_to_likelihood_datavec()
+
+    # Save the blinded data vector to a temporary file
+    temp_file_path = "./tests/"
+    temp_file_root = "temp_sacc"
+    temp_file_name = f"{temp_file_path}{temp_file_root}_blinded_data_vector.fits"
+    sck.save_blinded_datavector(temp_file_path, temp_file_root)
+
+    # Check that the file was created
+    assert os.path.exists(temp_file_name)
+
+    # Load the file and check that the data vector matches the blinded data vector
+    loaded_sacc = sacc.Sacc.load_fits(temp_file_name)
+    np.testing.assert_array_equal(loaded_sacc.mean, blinded_dv)
+
+    # Clean up the temporary file
+    os.remove(temp_file_name)
