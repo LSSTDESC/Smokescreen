@@ -6,7 +6,7 @@ These need to contain the following methods:
 - `.compute_theory_vector(ModellingTools)` which returns the theory vector for the given model
 - `.get_data_vector()` which returns the data vector from the likelihood
 
-Note that, if you are using a likelihood from Firecrown, both `.compute_theory_vector()` and `.get_data_vector()` are already implemented in the `firecrown.Likelihood` base class.
+Note that, if you are using a likelihood from Firecrown, both `.compute_theory_vector()` and `.get_data_vector()` are already implemented in the `GaussFamily` base class.
 
 There should also be a way for providing a SACC file to the likelihood externally. This can be done by adding a `sacc_file` argument to the `build_likelihood` method via the `build_params` dictionary.
 
