@@ -1,13 +1,20 @@
 import numpy as np
-import os 
+import os
+import sys
 import types
+import inspect
+import warnings
 from copy import deepcopy
 import pyccl as ccl
+import sacc
 from firecrown.likelihood.likelihood import load_likelihood
 from firecrown.likelihood.likelihood import load_likelihood_from_module_type
+from firecrown.likelihood.likelihood import NamedParameters
 from firecrown.parameters import ParamsMap
+from firecrown.utils import save_to_sacc
 
 from blinding.param_shifts import draw_flat_or_deterministic_param_shifts
+from blinding.utils import load_module_from_path
 
 
 # creates the smokescreen object
@@ -15,7 +22,8 @@ class Smokescreen():
     """
     Class for calling a smokescreen on the measured data-vector.
     """
-    def __init__(self, cosmo, systm_dict, sacc_data, likelihood, shifts_dict, seed="2112", **kwargs):
+    def __init__(self, cosmo, systm_dict, likelihood, shifts_dict, sacc_data,
+                 seed="2112", **kwargs):
         """
         Parameters
         ----------
@@ -23,8 +31,6 @@ class Smokescreen():
             Cosmology object from CCL with a fiducial cosmology.
         systm_dict : dict
             Dictionary of systematics names and corresponding fiducial values.
-        sacc_data : sacc.sacc.Sacc
-            Data-vector to be blinded.
         likelihood : str or module
             path to the likelihood or a module containing the likelihood
             must contain both `build_likelihood` and `compute_theory_vector` methods
@@ -33,6 +39,9 @@ class Smokescreen():
             shifts are single values, the dictionary values should be the shift
             widths. If the shifts are tuples of values, the dictionary values
             should be the (lower, upper) bounds of the shift widths.
+        sacc_data : sacc.sacc.Sacc
+            Data-vector to be blinded.
+            If None, the data-vector will be loaded from the likelihood.
         seed : int or str
             Random seed.
 
@@ -52,13 +61,14 @@ class Smokescreen():
         self.systematics_dict = systm_dict
         # save the data-vector
         self.sacc_data = sacc_data
+        # checks if the sacc_data is in the correct format:
+        assert isinstance(self.sacc_data, sacc.sacc.Sacc), "sacc_data must be a sacc object"
         # load the likelihood
-        self.likelihood, self.tools = self._load_likelihood(likelihood)
+        self.likelihood, self.tools = self._load_likelihood(likelihood, 
+                                                            self.sacc_data)
+
         # save the shifts
         self.shifts_dict = shifts_dict
-
-        # makes a deep copy of the tools for the blinded cosmology:
-        self._tools_blinding = deepcopy(self.tools)
 
         # load the systematics
         self.systematics = self._load_systematics(self.systematics_dict, self.likelihood)
@@ -82,7 +92,7 @@ class Smokescreen():
         # # create the smokescreen data-vector
         # self.smokescreen_data = self.create_smokescreen_data()
 
-    def _load_likelihood(self, likelihood):
+    def _load_likelihood(self, likelihood, sacc_data):
         """
         Loads the likelihood either from a python module or from a file.
 
@@ -92,13 +102,18 @@ class Smokescreen():
             path to the likelihood or a module containing the likelihood
             must contain both `build_likelihood` and `compute_theory_vector` methods
         """
+
+        build_parameters = NamedParameters({'sacc_data': sacc_data})
+
         if type(likelihood) == str:
             # check if the file can be found
             if not os.path.isfile(likelihood):
                 raise FileNotFoundError(f'Could not find file {likelihood}')
 
+            # test the likelihood
+            self.__test_likelihood(likelihood, 'str')
             # load the likelihood from the file
-            likelihood, tools = load_likelihood(likelihood, None)
+            likelihood, tools = load_likelihood(likelihood, build_parameters)
 
             # check if the likehood has a compute_vector method
             if not hasattr(likelihood, 'compute_theory_vector'):
@@ -106,17 +121,36 @@ class Smokescreen():
             return likelihood, tools
 
         elif isinstance(likelihood, types.ModuleType):
-            # check if the module has a build_likelihood method
-            if not hasattr(likelihood, 'build_likelihood'):
-                raise AttributeError('Likelihood does not have a build_likelihood method')
+            # test the likelihood
+            self.__test_likelihood(likelihood, 'module')
 
             # tries to load the likelihood from the module
-            likelihood, tools = load_likelihood_from_module_type(likelihood, None)
-
+            likelihood, tools = load_likelihood_from_module_type(likelihood, 
+                                                                 build_parameters)
             # check if the likehood has a compute_vector method
             if not hasattr(likelihood, 'compute_theory_vector'):
                 raise AttributeError('Likelihood does not have a compute_vector method')
-            return likelihood, tools 
+            return likelihood, tools
+        else:
+            raise TypeError('Likelihood must be a string path to a likelihood module or a module')
+
+    def __test_likelihood(self, likelihood, like_type):
+
+        if like_type == "str":
+            likelihood = load_module_from_path(likelihood)
+        else:
+            likelihood = likelihood
+
+        # check if the module has a build_likelihood method
+        if not hasattr(likelihood, 'build_likelihood'):
+            raise AttributeError('Likelihood does not have a build_likelihood method')
+
+        if self.sacc_data is not None:
+            sig = inspect.signature(likelihood.build_likelihood)
+            likefunc_params = sig.parameters
+            assert len(likefunc_params) >= 1, ("A sacc was provided, ", 
+                                               "the likelihood must require a",
+                                               "build_parameters NamedParameters object!")
 
     def _load_systematics(self, systematics_dict, likelihood):
         """
@@ -170,7 +204,7 @@ class Smokescreen():
         blinded_cosmo = ccl.Cosmology(**blinded_cosmo_dict)
         return blinded_cosmo
 
-    def calculate_blinding_factor(self, type="add"):
+    def calculate_blinding_factor(self, factor_type="add"):
         """
         Calculates the blinding factor for the data-vector, according to Muir et al. 2019:
 
@@ -184,28 +218,32 @@ class Smokescreen():
         type : str
             Type of blinding factor to be calculated. Default is "add".
         """
-        self.type = type
+        self.factor_type = factor_type
         # update the tools:
         self.tools.update({})
-        self._tools_blinding.update({})
-
         # prepare the original cosmology tools:
         self.tools.prepare(self.cosmo)
-        # prepare the blinded cosmology tools:
-        self._tools_blinding.prepare(self.__blinded_cosmo)
-
         # update the likelihood with the systematics parameters:
         self.likelihood.update(self.systematics)
-
         # fiducial theory vector:
         self.theory_vec_fid = self.likelihood.compute_theory_vector(self.tools)
-        # blinded theory vector:
-        self.theory_vec_blind = self.likelihood.compute_theory_vector(self._tools_blinding)
-        #return theory_vector
+        # resets the likelihood and tools
+        self.likelihood.reset()
+        self.tools.reset()
 
-        if self.type == "add":
+        # now calculates the shifted theory vector:
+        # update the tools:
+        self.tools.update({})
+        # prepare the original cosmology tools:
+        self.tools.prepare(self.__blinded_cosmo)
+        # update the likelihood with the systematics parameters:
+        self.likelihood.update(self.systematics)
+        # blinded theory vector:
+        self.theory_vec_blind = self.likelihood.compute_theory_vector(self.tools)
+
+        if self.factor_type == "add":
             self.__blinding_factor = self.theory_vec_blind - self.theory_vec_fid
-        elif self.type == "mult":
+        elif self.factor_type == "mult":
             self.__blinding_factor = self.theory_vec_blind / self.theory_vec_fid
         else:
             raise NotImplementedError('Only "add" and "mult" blinding factor is implemented')
@@ -217,10 +255,37 @@ class Smokescreen():
         Applies the blinding factor to the data-vector.
         """
         self.data_vector = self.likelihood.get_data_vector()
-        if self.type == "add":
+        if self.factor_type == "add":
             self.blinded_data_vector = self.data_vector + self.__blinding_factor
-        elif self.type == "mult":
+        elif self.factor_type == "mult":
             self.blinded_data_vector = self.data_vector * self.__blinding_factor
         else:
             raise NotImplementedError('Only "add" and "mult" blinding factor is implemented')
         return self.blinded_data_vector
+
+    def save_blinded_datavector(self, path_to_save, file_root,
+                                return_sacc=False):
+        """
+        Saves the blinded data-vector to a file.
+
+        Parameters
+        ----------
+        path_to_save : str
+            Path to save the blinded data-vector.
+        file_root : str
+            Root of the file name.
+        return_sacc : bool
+            If True, returns the sacc object with the blinded data-vector.
+
+        Saves the blinded data-vector to a file with the name:
+        {path_to_save}/{file_root}_blinded_data_vector.fits
+        """
+        idx = self.likelihood.get_sacc_indices()
+        blinded_sacc = save_to_sacc(self.sacc_data,
+                                    self.blinded_data_vector,
+                                    idx)
+        blinded_sacc.save_fits(f"{path_to_save}/{file_root}_blinded_data_vector.fits")
+        if return_sacc:
+            return blinded_sacc
+        else:
+            return None

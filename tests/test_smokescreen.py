@@ -1,10 +1,13 @@
 import pytest
 import types
+import os
+import numpy as np
 import sacc
 import pyccl as ccl
 from firecrown.likelihood.likelihood import Likelihood
 from firecrown.modeling_tools import ModelingTools
 from blinding.smokescreen import Smokescreen
+ccl.gsl_params.LENSING_KERNEL_SPLINE_INTEGRATION = False
 
 COSMO = ccl.CosmologyVanillaLCDM()
 
@@ -45,35 +48,39 @@ class MockCosmo:
 def test_smokescreen_init():
     # Create mock inputs
     cosmo = COSMO
-    sacc_data = "sacc_data"
+    sacc_data = sacc.Sacc()
     likelihood = MockLikelihoodModule("mock_likelihood")
     systematics_dict = {"systematic1": 0.1}
     shifts_dict = {"Omega_c": 1}
 
     # Check that Smokescreen can be instantiated with valid inputs
-    smokescreen = Smokescreen(cosmo, systematics_dict, sacc_data, likelihood, shifts_dict)
+    smokescreen = Smokescreen(cosmo, systematics_dict, likelihood,
+                              shifts_dict, sacc_data)
     assert isinstance(smokescreen, Smokescreen)
 
     # Check that Smokescreen raises an error when given an invalid likelihood
     with pytest.raises(AttributeError):
         invalid_likelihood = types.ModuleType("invalid_likelihood")
-        Smokescreen(cosmo, systematics_dict, sacc_data, invalid_likelihood, shifts_dict)
+        Smokescreen(cosmo, systematics_dict, invalid_likelihood,
+                    shifts_dict,sacc_data,)
 
     # check if breaks if given a shift with a key not in the cosmology parameters
     with pytest.raises(ValueError):
         invalid_shifts_dict = {"Omega_c": 1, "invalid_key": 1}
-        Smokescreen(cosmo, systematics_dict, sacc_data, likelihood, invalid_shifts_dict)
+        Smokescreen(cosmo, systematics_dict,likelihood,
+                    invalid_shifts_dict, sacc_data)
 
 def test_load_shifts():
     # Create mock inputs
     cosmo = COSMO
-    sacc_data = "sacc_data"
+    sacc_data = sacc.Sacc()
     likelihood = MockLikelihoodModule("mock_likelihood")
     systematics_dict = {"systematic1": 0.1}
     shifts_dict = {"Omega_c": 1, "Omega_b": (-1, 2), "sigma8": (2, 3)}
 
     # Instantiate Smokescreen
-    smokescreen = Smokescreen(cosmo, systematics_dict, sacc_data, likelihood, shifts_dict)
+    smokescreen = Smokescreen(cosmo, systematics_dict, likelihood,
+                              shifts_dict, sacc_data)
 
     # Call load_shifts and get the result
     shifts = smokescreen._load_shifts(seed="2112")
@@ -97,19 +104,21 @@ def test_load_shifts():
     with pytest.raises(NotImplementedError):
         smokescreen._load_shifts(seed="2112", shift_type="invalid")
     with pytest.raises(NotImplementedError):
-        smokescreen = Smokescreen(cosmo, systematics_dict, sacc_data, likelihood, shifts_dict, **{'shift_type': 'invalid'})
+        smokescreen = Smokescreen(cosmo, systematics_dict,
+                                  likelihood, shifts_dict, sacc_data,
+                                  **{'shift_type': 'invalid'})
 
 def test_debug_mode(capfd):
     # Create mock inputs
     cosmo = COSMO
-    sacc_data = "sacc_data"
+    sacc_data = sacc.Sacc()
     likelihood = MockLikelihoodModule("mock_likelihood")
     systematics_dict = {"systematic1": 0.1}
     shifts_dict = {"Omega_c": 1}
 
     # Check that Smokescreen can be instantiated with valid inputs
-    smokescreen = Smokescreen(cosmo, systematics_dict, sacc_data, likelihood, 
-                              shifts_dict, **{'debug': True})
+    smokescreen = Smokescreen(cosmo, systematics_dict, likelihood, 
+                              shifts_dict, sacc_data,  **{'debug': True})
      # Capture the output
     out, err = capfd.readouterr()
 
@@ -121,17 +130,17 @@ def test_debug_mode(capfd):
 def test_calculate_blinding_factor_add():
     # Create mock inputs
     cosmo = COSMO
-    sacc_data = "sacc_data"
+    sacc_data = sacc.Sacc()
     likelihood = MockLikelihoodModule("mock_likelihood")
     systematics_dict = {"systematic1": 0.1}
     shifts_dict = {"Omega_c": 1}
 
     # Instantiate Smokescreen
-    smokescreen = Smokescreen(cosmo, systematics_dict, sacc_data, likelihood, 
-                              shifts_dict, **{'debug': True})
+    smokescreen = Smokescreen(cosmo, systematics_dict, likelihood, 
+                              shifts_dict, sacc_data, **{'debug': True})
 
     # Call calculate_blinding_factor with type="add"
-    blinding_factor = smokescreen.calculate_blinding_factor(type="add")
+    blinding_factor = smokescreen.calculate_blinding_factor(factor_type="add")
 
     # Check that the blinding factor is correct
     assert blinding_factor == smokescreen.theory_vec_blind - smokescreen.theory_vec_fid
@@ -139,17 +148,17 @@ def test_calculate_blinding_factor_add():
 def test_calculate_blinding_factor_mult():
     # Create mock inputs
     cosmo = COSMO
-    sacc_data = "sacc_data"
+    sacc_data = sacc.Sacc()
     likelihood = MockLikelihoodModule("mock_likelihood")
     systematics_dict = {"systematic1": 0.1}
     shifts_dict = {"Omega_c": 1}
 
     # Instantiate Smokescreen
-    smokescreen = Smokescreen(cosmo, systematics_dict, sacc_data, likelihood, 
-                              shifts_dict, **{'debug': True})
+    smokescreen = Smokescreen(cosmo, systematics_dict, likelihood, 
+                              shifts_dict, sacc_data, **{'debug': True})
 
     # Call calculate_blinding_factor with type="add"
-    blinding_factor = smokescreen.calculate_blinding_factor(type="mult")
+    blinding_factor = smokescreen.calculate_blinding_factor(factor_type="mult")
 
     # Check that the blinding factor is correct
     assert blinding_factor == smokescreen.theory_vec_blind / smokescreen.theory_vec_fid
@@ -157,33 +166,34 @@ def test_calculate_blinding_factor_mult():
 def test_calculate_blinding_factor_invalid_type():
     # Create mock inputs
     cosmo = COSMO
-    sacc_data = "sacc_data"
+    sacc_data = sacc.Sacc()
     likelihood = MockLikelihoodModule("mock_likelihood")
     systematics_dict = {"systematic1": 0.1}
     shifts_dict = {"Omega_c": 1}
 
     # Instantiate Smokescreen
-    smokescreen = Smokescreen(cosmo, systematics_dict, sacc_data, likelihood, shifts_dict)
+    smokescreen = Smokescreen(cosmo, systematics_dict, likelihood,
+                              shifts_dict, sacc_data)
 
     # Call calculate_blinding_factor with an invalid type
     with pytest.raises(NotImplementedError):
-        smokescreen.calculate_blinding_factor(type="invalid")
+        smokescreen.calculate_blinding_factor(factor_type="invalid")
 
 def test_apply_blinding_to_likelihood_datavec_add():
     # Create mock inputs
     cosmo = COSMO
-    sacc_data = "sacc_data"
+    sacc_data = sacc.Sacc()
     likelihood = MockLikelihoodModule("mock_likelihood")
     systematics_dict = {"systematic1": 0.1}
     shifts_dict = {"Omega_c": 1}
 
     # Instantiate Smokescreen
-    smokescreen = Smokescreen(cosmo, systematics_dict, sacc_data, likelihood,
-                              shifts_dict, **{'debug': True})
+    smokescreen = Smokescreen(cosmo, systematics_dict, likelihood,
+                              shifts_dict, sacc_data, **{'debug': True})
 
     # Set the blinding factor and type
     # Call calculate_blinding_factor with type="add"
-    blinding_factor = smokescreen.calculate_blinding_factor(type="add")
+    blinding_factor = smokescreen.calculate_blinding_factor(factor_type="add")
 
     # Call apply_blinding_to_likelihood_datavec
     blinded_data_vector = smokescreen.apply_blinding_to_likelihood_datavec()
@@ -195,18 +205,18 @@ def test_apply_blinding_to_likelihood_datavec_add():
 def test_apply_blinding_to_likelihood_datavec_mult():
     # Create mock inputs
     cosmo = COSMO
-    sacc_data = "sacc_data"
+    sacc_data = sacc.Sacc()
     likelihood = MockLikelihoodModule("mock_likelihood")
     systematics_dict = {"systematic1": 0.1}
     shifts_dict = {"Omega_c": 1}
 
     # Instantiate Smokescreen
-    smokescreen = Smokescreen(cosmo, systematics_dict, sacc_data, likelihood,
-                              shifts_dict, **{'debug': True})
+    smokescreen = Smokescreen(cosmo, systematics_dict, likelihood,
+                              shifts_dict, sacc_data, **{'debug': True})
 
     # Set the blinding factor and type
     # Call calculate_blinding_factor with type="add"
-    blinding_factor = smokescreen.calculate_blinding_factor(type="mult")
+    blinding_factor = smokescreen.calculate_blinding_factor(factor_type="mult")
 
     # Call apply_blinding_to_likelihood_datavec
     blinded_data_vector = smokescreen.apply_blinding_to_likelihood_datavec()
@@ -219,19 +229,95 @@ def test_apply_blinding_to_likelihood_datavec_mult():
 def test_apply_blinding_to_likelihood_datavec_invalid_type():
     # Create mock inputs
     cosmo = COSMO
-    sacc_data = "sacc_data"
+    sacc_data = sacc.Sacc()
     likelihood = MockLikelihoodModule("mock_likelihood")
     systematics_dict = {"systematic1": 0.1}
     shifts_dict = {"Omega_c": 1}
 
     # Instantiate Smokescreen
-    smokescreen = Smokescreen(cosmo, systematics_dict, sacc_data, likelihood,
-                              shifts_dict, **{'debug': True})
+    smokescreen = Smokescreen(cosmo, systematics_dict, likelihood,
+                              shifts_dict, sacc_data, **{'debug': True})
 
     # Set the blinding factor and type
     # Call calculate_blinding_factor with type="add"
-    blinding_factor = smokescreen.calculate_blinding_factor(type="mult")
+    blinding_factor = smokescreen.calculate_blinding_factor(factor_type="mult")
     # Set an invalid type
-    smokescreen.type = "invalid"
+    smokescreen.factor_type = "invalid"
     with pytest.raises(NotImplementedError):
         smokescreen.apply_blinding_to_likelihood_datavec()
+
+def test_load_likelihood():
+    # Create mock inputs
+    cosmo = COSMO
+    sacc_data = sacc.Sacc.load_fits("./examples/cosmic_shear/cosmicshear_sacc.fits")
+    likelihood = MockLikelihoodModule("mock_likelihood")
+    systematics_dict = {"systematic1": 0.1}
+    shifts_dict = {"Omega_c": 1}
+
+    # Instantiate Smokescreen
+    smokescreen = Smokescreen(cosmo, systematics_dict, likelihood,
+                              shifts_dict, sacc_data)
+
+    # Test with a valid likelihood module
+    likelihood, tools = smokescreen._load_likelihood(likelihood, sacc_data)
+    assert isinstance(likelihood, Likelihood)
+    assert hasattr(likelihood, 'compute_theory_vector')
+    assert hasattr(likelihood, 'get_data_vector')
+
+    # Test with a valid likelihood file path
+    likelihood_file_path = "./examples/cosmic_shear/cosmicshear_likelihood.py"
+    likelihood, tools = smokescreen._load_likelihood(likelihood_file_path, sacc_data)
+    assert isinstance(likelihood, Likelihood)
+    assert hasattr(likelihood, 'compute_theory_vector')
+    assert hasattr(likelihood, 'get_data_vector')
+
+    # Test with an invalid likelihood (neither a module nor a file path)
+    with pytest.raises(TypeError):
+        smokescreen._load_likelihood(123, sacc_data)
+
+    # Test with a non-existent likelihood file path
+    with pytest.raises(FileNotFoundError):
+        smokescreen._load_likelihood("/path/to/nonexistent/file.py", sacc_data)
+
+    # Test with a module that doesn't have a 'build_likelihood' method
+    invalid_likelihood = types.ModuleType("invalid_likelihood")
+    with pytest.raises(AttributeError):
+        smokescreen._load_likelihood(invalid_likelihood, sacc_data)
+
+    # Test with a module that doesn't have a 'build_parameters' input
+    invalid_likelihood = types.ModuleType("invalid_likelihood")
+    invalid_likelihood.build_likelihood = lambda: None
+    with pytest.raises(AssertionError):
+        smokescreen._load_likelihood(invalid_likelihood, sacc_data)
+
+def test_save_blinded_datavector():
+    # Create mock inputs
+    cosmo = COSMO
+    likelihood = "./examples/cosmic_shear/cosmicshear_likelihood.py"
+    syst_dict = {
+        "trc1_delta_z": 0.1,
+        "trc0_delta_z": 0.1,
+    }
+    shift_dict = {"Omega_c": 0.34, "sigma8": 0.85}
+    sacc_data = sacc.Sacc.load_fits("./examples/cosmic_shear/cosmicshear_sacc.fits")
+    sck = Smokescreen(cosmo, syst_dict, likelihood, shift_dict, sacc_data)
+
+    # Calculate the blinding factor and apply it to the likelihood data vector
+    sck.calculate_blinding_factor()
+    blinded_dv = sck.apply_blinding_to_likelihood_datavec()
+
+    # Save the blinded data vector to a temporary file
+    temp_file_path = "./tests/"
+    temp_file_root = "temp_sacc"
+    temp_file_name = f"{temp_file_path}{temp_file_root}_blinded_data_vector.fits"
+    sck.save_blinded_datavector(temp_file_path, temp_file_root)
+
+    # Check that the file was created
+    assert os.path.exists(temp_file_name)
+
+    # Load the file and check that the data vector matches the blinded data vector
+    loaded_sacc = sacc.Sacc.load_fits(temp_file_name)
+    np.testing.assert_array_equal(loaded_sacc.mean, blinded_dv)
+
+    # Clean up the temporary file
+    os.remove(temp_file_name)
