@@ -66,9 +66,6 @@ class Smokescreen():
         # load the likelihood
         self.likelihood, self.tools = self._load_likelihood(likelihood, 
                                                             self.sacc_data)
-        # loads another instance of the likelihood for the blinded cosmology
-        self._bld_likelihood, self._tools_blinding = self._load_likelihood(likelihood,
-                                                                           self.sacc_data)
 
         # save the shifts
         self.shifts_dict = shifts_dict
@@ -224,22 +221,25 @@ class Smokescreen():
         self.factor_type = factor_type
         # update the tools:
         self.tools.update({})
-        self._tools_blinding.update({})
-
         # prepare the original cosmology tools:
         self.tools.prepare(self.cosmo)
-        # prepare the blinded cosmology tools:
-        self._tools_blinding.prepare(self.__blinded_cosmo)
-
         # update the likelihood with the systematics parameters:
         self.likelihood.update(self.systematics)
-        self._bld_likelihood.update(self.systematics)
-
         # fiducial theory vector:
         self.theory_vec_fid = self.likelihood.compute_theory_vector(self.tools)
+        # resets the likelihood and tools
+        self.likelihood.reset()
+        self.tools.reset()
+
+        # now calculates the shifted theory vector:
+        # update the tools:
+        self.tools.update({})
+        # prepare the original cosmology tools:
+        self.tools.prepare(self.__blinded_cosmo)
+        # update the likelihood with the systematics parameters:
+        self.likelihood.update(self.systematics)
         # blinded theory vector:
-        self.theory_vec_blind = self._bld_likelihood.compute_theory_vector(self._tools_blinding)
-        #return theory_vector
+        self.theory_vec_blind = self.likelihood.compute_theory_vector(self.tools)
 
         if self.factor_type == "add":
             self.__blinding_factor = self.theory_vec_blind - self.theory_vec_fid
