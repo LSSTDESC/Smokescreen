@@ -11,6 +11,8 @@ dependencies:
     - pytest
     - pip
     - numcosmo
+    - fitsio
+    - pyccl
     - pip:
       - argparse
       - sacc
