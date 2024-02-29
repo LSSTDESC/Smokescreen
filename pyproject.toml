@@ -13,7 +13,7 @@ maintainers = [
 ]
 classifiers = [
     "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
+    "License :: OSI Approved ::  BSD-3-Clause license",
     "Operating System :: OS Independent",
 ]
 dependencies = [
@@ -23,6 +23,7 @@ dependencies = [
     "pytest>=7.2.5",
     "argparse>=1.0",
     "sacc>=0.12",
+    "jsonargparse[signatures]>=4.0",
     "pytest",
     "pytest-cov",
 ]
