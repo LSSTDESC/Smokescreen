@@ -10,7 +10,7 @@ from blinding.smokescreen import Smokescreen
 def main(path_to_sacc: Path_drw, likelihood_path: Path_fr, systematics: dict,
          shifts_dict: dict, seed: Union[int, str] = 2112,
          cosmo: Union[CosmologyType, dict] = ccl.CosmologyVanillaLCDM()):
-    """Main function to conceal a sacc file using a firecrown likelihood.
+    """Main function to conceal a sacc file using a firecrown likelihood TEST.
 
     FIXME: Add shift type!
 
