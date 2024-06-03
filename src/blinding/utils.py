@@ -9,7 +9,7 @@ def load_cosmology_from_partial_dict(cosmo_dict):
     object setting the unspecified parameters to their default values.
     """
     # sets the default values for the cosmological parameters
-    cosmo_dict_default = ccl.CosmologyVanillaLCDM()._params_init_kwargs
+    cosmo_dict_default = ccl.CosmologyVanillaLCDM().to_dict()
     # test that keys in cosmo_dict are in cosmo_dict_default
     for key in cosmo_dict:
         if key not in cosmo_dict_default.keys():

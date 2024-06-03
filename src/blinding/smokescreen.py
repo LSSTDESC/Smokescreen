@@ -193,7 +193,7 @@ class Smokescreen():
 
         FIXME: Unsure this is the best way of doing this but it is similar to what is done in Augur.
         """
-        blinded_cosmo_dict = deepcopy(self.cosmo._params_init_kwargs)
+        blinded_cosmo_dict = deepcopy(self.cosmo.to_dict())
         # sometimes we have this extra paramters that can cause problems:
         try:
             del blinded_cosmo_dict['extra_parameters']
