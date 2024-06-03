@@ -1,0 +1,13 @@
+path_to_sacc: "./cosmicshear_sacc.fits"
+likelihood_path: "./cosmicshear_likelihood.py"
+systematics:
+  trc1_delta_z: 0.1
+  trc0_delta_z: 0.1
+shifts_dict:
+  Omega_c: [-0.1, 0.2]
+  sigma8: [-0.1, 0.1]
+seed: 2112
+# only needed if you want a different reference cosmology
+# than ccl.VanillaLCDM
+reference_cosmology: 
+  sigma8: 0.95

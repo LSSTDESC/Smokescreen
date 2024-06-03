@@ -65,11 +65,23 @@ The likelihood can be provided either as a path to the python file containing th
 TL;DR: Check the `notebooks/test_blinding_prototype.ipynb` for a working example using the 
 `des_y1_3x2pt_PT` [example from firecrown](https://github.com/LSSTDESC/firecrown/tree/master/examples/des_y1_3x2pt).
 
+#### From the commandline:
+The blinding module can be used to blind the data-vector measurements. The module can be used as follows:
+```bash
+python blinding configuration_file.yaml
+```
+You can find an example of a configuration file in `examples/cosmic_shear/blind_cosmic_shear_example.yaml`. Or you can use the following command to create a template configuration file:
+```bash
+python blinding --print_config > template_config.yaml
+```
+Note that the `reference_cosmology` is optional. If not provided, the CCL `VanillaLCDM` reference cosmology will be the one used to compute the data vector.
+
+#### From a notebook/your code:
 The blinding module can be used to blind the data-vector measurements. The module can be used as follows:
 ```python
 # import the module
 import pyccl as ccl
-from blind import Smokescreen
+from blinding import Smokescreen
 # import the likelihood that contains the model and data vector
 [...]
 import my_likelihood
@@ -95,11 +107,11 @@ syst_dict = {
             "src0_delta_z": 0.000,
             "lens0_delta_z": 0.000,}
 # create the smokescreen object
-smkscr = Smokescreen(cosmo, syst_dict, sacc_data, my_likelihood, 
+smoke = Smokescreen(cosmo, syst_dict, sacc_data, my_likelihood, 
                     {'Omega_c': (0.22, 0.32), 'sigma8': (0.7, 0.9)})
 # blind the data vector
-smkscr.calculate_blinding_factor()
-blinded_dv = smkscr.apply_blinding_to_likelihood_datavec()
+smoke.calculate_blinding_factor()
+blinded_dv = smoke.apply_blinding_to_likelihood_datavec()
 ```
 
 
