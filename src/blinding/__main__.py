@@ -1,5 +1,5 @@
 import os
-import numpy as np
+import getpass
 from typing import Union, Dict, Tuple
 from jsonargparse import CLI
 from jsonargparse.typing import Path_drw, Path_fr
@@ -12,7 +12,22 @@ warnings.filterwarnings("ignore")
 
 from blinding.smokescreen import Smokescreen
 from blinding.utils import load_cosmology_from_partial_dict
+from . import __version__
 
+banner = rf"""
+
+ (                                                          
+ )\ )                 )                                     
+(()/(    )         ( /(    (          (      (    (         
+ /(_))  (      (   )\())  ))\ (    (  )(    ))\  ))\  (     
+(_))    )\  '  )\ ((_)\  /((_))\   )\(()\  /((_)/((_) )\ )  
+/ __| _((_))  ((_)| |(_)(_)) ((_) ((_)((_)(_)) (_))  _(_/(  
+\__ \| '  \()/ _ \| / / / -_)(_-</ _|| '_|/ -_)/ -_)| ' \)) 
+|___/|_|_|_| \___/|_\_\ \___|/__/\__||_|  \___|\___||_||_|  
+                                                            
+     - DESC Pipeline for Concealing your data-vector -
+                       Version {__version__}
+"""
 
 def main(path_to_sacc: Path_fr,
          likelihood_path: str,
@@ -23,8 +38,6 @@ def main(path_to_sacc: Path_fr,
          reference_cosmology: Union[CosmologyType, dict] = ccl.CosmologyVanillaLCDM(),
          path_to_output: Path_drw = None):
     """Main function to conceal a sacc file using a firecrown likelihood.
-
-    FIXME: Add shift type!
 
     Args:
         path_to_sacc (str): Path to the sacc file to blind.
@@ -37,6 +50,7 @@ def main(path_to_sacc: Path_fr,
         VanillaLCDM as reference cosmology.
             Defaults to ccl.CosmologyVanillaLCDM().
     """
+    print(banner)
     if isinstance(reference_cosmology, dict):
         cosmo = load_cosmology_from_partial_dict(reference_cosmology)
     # tests if the sacc file exists
@@ -50,9 +64,9 @@ def main(path_to_sacc: Path_fr,
     smoke.calculate_blinding_factor(factor_type=shift_type)
     # applies the blinding factor to the sacc file
     smoke.apply_blinding_to_likelihood_datavec()
+    print(f">> User {getpass.getuser()} used Smokescreen on {path_to_sacc} ... it is super effective!")
     # get root name of the input file
     root_name = os.path.splitext(os.path.basename(path_to_sacc))[0]
-
     # saves the blinded sacc file
     if path_to_output is not None:
         smoke.save_blinded_sacc(path_to_output, root_name)
@@ -60,7 +74,7 @@ def main(path_to_sacc: Path_fr,
         # get the input file directory
         path_to_output = os.path.dirname(path_to_sacc)
         smoke.save_blinded_datavector(path_to_output, root_name)
-    print(f"Blinded sacc file saved at {path_to_output}/{root_name}_blinded_data_vector.fits")
+    print(f"\nConcealed sacc file saved as {path_to_output}/{root_name}_blinded_data_vector.fits")
 
 if __name__ == "__main__":
     CLI(main, as_positional=False)
