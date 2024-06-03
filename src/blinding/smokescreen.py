@@ -284,7 +284,7 @@ class Smokescreen():
         blinded_sacc = save_to_sacc(self.sacc_data,
                                     self.blinded_data_vector,
                                     idx)
-        blinded_sacc.save_fits(f"{path_to_save}/{file_root}_blinded_data_vector.fits")
+        blinded_sacc.save_fits(f"{path_to_save}/{file_root}_blinded_data_vector.fits", overwrite=True)
         if return_sacc:
             return blinded_sacc
         else:
