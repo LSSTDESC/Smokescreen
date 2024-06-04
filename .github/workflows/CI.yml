@@ -9,6 +9,7 @@ on:
   pull_request:
     branches:
       - main
+      - develop
   push:
     branches:
       - main
@@ -45,9 +46,11 @@ jobs:
         uses: conda-incubator/setup-miniconda@v2
         with:
           miniconda-version: "latest"
-          auto-update-conda: true
           python-version: ${{ matrix.python-version }}
-          environment-file: environment.yml
+          channels: conda-forge
+          channel-priority: true
+          auto-update-conda: true
+          auto-activate-base: true
         # # Install Python.
       # - name: Set up Python ${{ matrix.python-version }}
       #   uses: actions/setup-python@v4
@@ -58,7 +61,8 @@ jobs:
         shell: bash -l {0}
         run: |
           ${{ matrix.INSTALL_DEPS }}
-          conda activate test
+          conda env create -f environment.yml
+          conda activate desc_blinding
 
       # Install our package.
       - name: Install blinding
