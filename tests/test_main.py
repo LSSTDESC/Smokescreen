@@ -1,0 +1,35 @@
+import pytest
+from unittest.mock import patch, MagicMock
+from pyccl import CosmologyVanillaLCDM
+import sacc
+from blinding import __main__
+
+@patch('builtins.print')
+@patch('blinding.__main__.Smokescreen')
+@patch('sacc.Sacc.load_fits')
+def test_main(mock_load_fits, mock_smokescreen, mock_print):
+    # Arrange
+    path_to_sacc = "./examples/cosmic_shear/cosmicshear_sacc.fits"
+    likelihood_path = "./tests/test_data/mock_likelihood.py"
+    systematics = {}
+    shifts_dict = {"Omega_c": [-0.1, 0.2], "sigma8": [-0.1, 0.1]}
+    shift_type = 'add'
+    seed = 2112
+    reference_cosmology = CosmologyVanillaLCDM()
+    path_to_output = "./test_data/test_output.fits"
+
+    mock_smokescreen_instance = MagicMock()
+    mock_smokescreen.return_value = mock_smokescreen_instance
+
+    sacc_file = MagicMock()  # Create a mock sacc_file
+    mock_load_fits.return_value = sacc_file  # Make load_fits return the mock sacc_file
+
+    # Act
+    __main__.main(path_to_sacc, likelihood_path, systematics, shifts_dict, shift_type, seed, reference_cosmology, path_to_output)
+
+    # Assert
+    mock_load_fits.assert_called_once_with(path_to_sacc)
+    mock_smokescreen.assert_called_once_with(reference_cosmology, systematics, likelihood_path, shifts_dict, sacc_file, seed)
+    mock_smokescreen_instance.calculate_blinding_factor.assert_called_once()
+    mock_smokescreen_instance.apply_blinding_to_likelihood_datavec.assert_called_once()
+    mock_smokescreen_instance.save_blinded_sacc.assert_called_once()

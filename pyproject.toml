@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "blinding"
 description = "DESC Blinding Unified Library. Based on the Muir et al. (2021) blinding method."
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 license = {file = "LICENSE"}
 maintainers = [
     {name = "Arthur Loureiro", email = "arthur.loureiro@fysik.su.se"},

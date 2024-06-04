@@ -1,5 +1,6 @@
 [![DESC Blinding](https://github.com/LSSTDESC/Blinding/actions/workflows/CI.yml/badge.svg)](https://github.com/LSSTDESC/Blinding/actions/workflows/CI.yml)
 [![codecov](https://codecov.io/gh/LSSTDESC/Blinding/graph/badge.svg?token=T3L9QM4PTT)](https://codecov.io/gh/LSSTDESC/Blinding)
+[![License: BSD 3-Clause](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://github.com/yourusername/yourrepository/blob/main/LICENSE)
 [![LSST DESC Blinding Slack](https://img.shields.io/badge/join-Slack-4A154B)](https://lsstc.slack.com/archives/CT14ZF2AH)
 
 # DESC Blinding Modules

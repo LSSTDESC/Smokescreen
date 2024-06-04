@@ -53,6 +53,8 @@ def main(path_to_sacc: Path_fr,
     print(banner)
     if isinstance(reference_cosmology, dict):
         cosmo = load_cosmology_from_partial_dict(reference_cosmology)
+    else:
+        cosmo = reference_cosmology
     # tests if the sacc file exists
     assert os.path.exists(path_to_sacc), f"File {path_to_sacc} does not exist."
     assert os.path.exists(likelihood_path), f"File {likelihood_path} does not exist."
