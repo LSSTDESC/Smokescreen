@@ -23,6 +23,7 @@ dependencies = [
     "pytest>=7.2.5",
     "argparse>=1.0",
     "sacc>=0.12",
+    "pyccl>=3.0.2",
     "jsonargparse[signatures]>=4.0",
     "pytest",
     "pytest-cov",
