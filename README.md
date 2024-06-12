@@ -69,7 +69,7 @@ TL;DR: Check the `notebooks/test_blinding_prototype.ipynb` for a working example
 #### From the commandline:
 The blinding module can be used to blind the data-vector measurements. The module can be used as follows:
 ```bash
-python blinding configuration_file.yaml
+python blinding --config configuration_file.yaml
 ```
 You can find an example of a configuration file in `examples/cosmic_shear/blind_cosmic_shear_example.yaml`. Or you can use the following command to create a template configuration file:
 ```bash
