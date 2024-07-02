@@ -4,13 +4,18 @@ https://github.com/LSSTDESC/firecrown/blob/master/examples/cosmicshear/cosmicshe
 and in the example likelihood at TXPipe:
 https://github.com/LSSTDESC/TXPipe/blob/df0dcc8c1e974576dd1942624ab5ff7bd0fbbaa0/txpipe/utils/theory_model.py#L19
 """
-import os
 import sacc
 import pathlib
-
-import firecrown.likelihood.gauss_family.statistic.source.weak_lensing as wl
-from firecrown.likelihood.gauss_family.statistic.two_point import TwoPoint
-from firecrown.likelihood.gauss_family.gaussian import ConstGaussian
+from packaging.version import Version
+import firecrown
+if Version(firecrown.__version__) >= Version("1.8"):
+    import firecrown.likelihood.weak_lensing as wl
+    from firecrown.likelihood.two_point import TwoPoint
+    from firecrown.likelihood.gaussian import ConstGaussian
+else:
+    import firecrown.likelihood.gauss_family.statistic.source.weak_lensing as wl
+    from firecrown.likelihood.gauss_family.statistic.two_point import TwoPoint
+    from firecrown.likelihood.gauss_family.gaussian import ConstGaussian
 from firecrown.modeling_tools import ModelingTools
 from firecrown.likelihood.likelihood import NamedParameters
 
