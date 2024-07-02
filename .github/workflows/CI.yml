@@ -8,12 +8,10 @@ on:
   # Triggers when push/pull-request made to the main branch.
   pull_request:
     branches:
-      - main
-      - develop
+      - '*'
   push:
     branches:
-      - main
-      - develop
+      - '*'
 
 # List of jobs for this workflow.
 
