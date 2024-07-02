@@ -15,7 +15,20 @@ The cosmic shear example here is based on the example provided in the [firecrown
 
 The data-vector, `cosmicshear_sacc.fits`, was computed using the `generate_cosmicshear_data.py` script in the [firecrown examples directory](https://github.com/LSSTDESC/firecrown/blob/master/examples/cosmicshear/generate_cosmicshear_data.py).
 
-You can run this example from _this folder_ using the following command:
+You can run this example from `cosmic_shear/` directory using the following command:
 ```bash
-python blinding blind_cosmic_shear_example.yaml
+python -m blinding blind_cosmic_shear_example.yaml
 ```
+
+You can find a notebook example on how to run this from the command line at `notebooks/test_cosmicshear_example.ipynb`.
+
+## Supernovae Type Ia
+The Supernovae Type Ia example is based on the example provided in the [firecrown repository](https://github.com/LSSTDESC/firecrown/tree/master/examples/srd_sn).
+
+The datavector was also computed from the firecrown example.
+
+You can run this example from the `supernovae/` directory using the following command:
+```bash
+python -m blinding blind_sn_example.yaml
+```
+You can find a notebook example on how to run this from the command line at `notebooks/test_supernova_example.ipynb`.
