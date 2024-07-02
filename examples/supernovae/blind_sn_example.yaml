@@ -1,0 +1,12 @@
+path_to_sacc: "./sn_datavector.sacc"
+likelihood_path: "./sn_likelihood.py"
+systematics:
+  sn_ddf_sample_M: 0.0
+shifts_dict:
+  Omega_c: [-0.1, 0.2]
+  sigma8: [-0.1, 0.1]
+seed: 2112
+# only needed if you want a different reference cosmology
+# than ccl.VanillaLCDM
+reference_cosmology: 
+  sigma8: 0.95
