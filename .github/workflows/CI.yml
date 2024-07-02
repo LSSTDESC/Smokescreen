@@ -8,7 +8,7 @@ on:
   # Triggers when push/pull-request made to the main branch.
   pull_request:
     branches:
-      - '*'
+      - main
   push:
     branches:
       - '*'
