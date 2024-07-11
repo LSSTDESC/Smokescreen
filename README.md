@@ -11,7 +11,7 @@ This repostory (under development) contains the modules for data concealment (bl
 
 Other info: the previous README can be found [here](bckp_README.md)
 
-> :warning: Important notice :warning: : the term "blinding" and the name "smokescreen" are used as placeholders and are not final. The final name will be decided by the DESC Blinding Working Group in discussions with the collaboration.
+> :warning: Important notice :warning: : the term "blinding" is used in the context of data concealment for scientific analysis. We understand this is an outdated term and we are working to update it to a more appropriate term. If you have any suggestions, please let us know.
 
 ## Installation
 **Creating a new environment:**
@@ -110,9 +110,9 @@ syst_dict = {
 # create the smokescreen object
 smoke = ConcealDataVector(cosmo, syst_dict, sacc_data, my_likelihood, 
                           {'Omega_c': (0.22, 0.32), 'sigma8': (0.7, 0.9)})
-# blind the data vector
-smoke.calculate_blinding_factor()
-blinded_dv = smoke.apply_blinding_to_likelihood_datavec()
+# conceals (blinds) the data vector
+smoke.calculate_concealing_factor()
+concealed_dv = smoke.apply_concealing_to_likelihood_datavec()
 ```
 
 
