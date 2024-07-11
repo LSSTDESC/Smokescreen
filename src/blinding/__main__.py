@@ -45,10 +45,12 @@ def main(path_to_sacc: Path_fr,
         systematics (dict): Dictionary with fixed values for the firecrown systematics parameters.
         shifts_dict (dict): Dictionary with fixed values for the firecrown shifts parameters. 
             Example: {"Omega_c": (0.20, 0.39), "sigma8": (0.70, 0.90)}
+        shift_type (str): Type of shift to apply to the data vector. Options are 'add' and 'mult'. Defaults to 'add'.
         seed (int, str): Seed for the blinding process. Defaults to 2112.
-        cosmo (Union[CosmologyType, dict]): Cosmology object or dictionary with cosmological parameters you want different than the
-        VanillaLCDM as reference cosmology.
+        reference_cosmology (Union[CosmologyType, dict]): Cosmology object or dictionary with cosmological 
+            parameters you want different than the VanillaLCDM as reference cosmology.
             Defaults to ccl.CosmologyVanillaLCDM().
+        path_to_output (str): Path to save the blinded sacc file. Defaults to None.
     """
     print(banner)
     if isinstance(reference_cosmology, dict):

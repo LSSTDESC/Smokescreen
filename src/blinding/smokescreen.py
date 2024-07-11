@@ -135,7 +135,17 @@ class Smokescreen():
             raise TypeError('Likelihood must be a string path to a likelihood module or a module')
 
     def __test_likelihood(self, likelihood, like_type):
+        """
+        Tests if the likelihood has the required methods.
 
+        Parameters
+        ----------
+        likelihood : str or module
+            path to the likelihood or a module containing the likelihood
+            must contain both `build_likelihood` and `compute_theory_vector` methods
+        like_type : str
+            Type of likelihood. Can be either 'str' or 'module'.
+        """
         if like_type == "str":
             likelihood = load_module_from_path(likelihood)
         else:
