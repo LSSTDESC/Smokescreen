@@ -1,4 +1,4 @@
-name: desc_blinding
+name: desc_smokescreen
 channels:
   - conda-forge
 dependencies:

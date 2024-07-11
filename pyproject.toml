@@ -3,8 +3,8 @@ requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "blinding"
-description = "DESC Blinding Unified Library. Based on the Muir et al. (2021) blinding method."
+name = "Smokescreen"
+description = "Smokescreen: DESC Blinding Unified Library. Based on the Muir et al. (2021) data-vector blinding method."
 readme = "README.md"
 requires-python = ">=3.9"
 license = {file = "LICENSE"}

@@ -4,7 +4,7 @@
 [![LSST DESC Blinding Slack](https://img.shields.io/badge/join-Slack-4A154B)](https://lsstc.slack.com/archives/CT14ZF2AH)
 
 # Smokescreen -- DESC Blinding Modules
-This repostory (under development) contains the blinding modules for blinding at the following levels of the analysis:
+This repostory (under development) contains the modules for data concealment (blinding) at the following levels of the analysis:
 - Data-vector measurements
 - Posterior distribution [not yet developed]
 - (TBC) Catalogues
@@ -20,20 +20,20 @@ You can create a new conda environment with the required packages using the `env
 ```bash
 conda env create -f environment.yml
 ```
-This will create a new environment called `desc_blinding` with the required packages. You can activate the environment with:
+This will create a new environment called `desc_smokescreen` with the required packages. You can activate the environment with:
 ```bash
 conda activate desc_blinding
 ```
 
 **Using an existing environment:**
 
-If you want to install the `blinding` package in an existing environment, you can install it using:
+If you want to install the `Smokescreen` package in an existing environment, you can install it using:
 ```bash
 conda activate myenv
 conda env update --name myenv --file environment.yml --prune
 ```
 
-After installing the dependencies from `environment.yml`, you can install the `blinding` package using:
+After installing the dependencies from `environment.yml`, you can install the `Smokescreen` package using:
 ```bash
 python -m pip install [-e] .
 ```
@@ -45,7 +45,7 @@ You can test the installation by running the tests:
 pytest .
 ```
 
-## Usage: Data-vector Blinding
+## Usage: Data-vector Concealment (Blinding)
 ### Likelihood Requirements
 The blinding module requires the Firecrown likelihoods to be built with certain requirements. First we bust be able to build the likelihoods providing a [sacc](https://github.com/LSSTDESC/sacc/tree/master) object with the measurements for the data-vector:
 ```python
@@ -62,7 +62,7 @@ The likelihood module also must have a method `.compute_theory_vector(ModellingT
 
 The likelihood can be provided either as a path to the python file containing the `build_likelihood` function or as a python module. In the latter case, the module must be imported.
 
-### Blinding a data vector
+### Concealing (blinding) a data vector
 TL;DR: Check the `notebooks/test_blinding_prototype.ipynb` for a working example using the 
 `des_y1_3x2pt_PT` [example from firecrown](https://github.com/LSSTDESC/firecrown/tree/master/examples/des_y1_3x2pt).
 
