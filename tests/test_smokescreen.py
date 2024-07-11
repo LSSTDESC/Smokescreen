@@ -6,7 +6,7 @@ import sacc
 import pyccl as ccl
 from firecrown.likelihood.likelihood import Likelihood
 from firecrown.modeling_tools import ModelingTools
-from blinding.smokescreen import Smokescreen
+from smokescreen.smokescreen import Smokescreen
 ccl.gsl_params.LENSING_KERNEL_SPLINE_INTEGRATION = False
 
 COSMO = ccl.CosmologyVanillaLCDM()

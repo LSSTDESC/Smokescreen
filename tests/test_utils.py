@@ -3,8 +3,8 @@ import tempfile
 import os
 import numpy as np
 import pyccl as ccl
-from blinding.utils import string_to_seed, load_module_from_path
-from blinding.utils import load_cosmology_from_partial_dict
+from smokescreen.utils import string_to_seed, load_module_from_path
+from smokescreen.utils import load_cosmology_from_partial_dict
 
 def test_load_module_from_path():
     # Create a temporary Python module

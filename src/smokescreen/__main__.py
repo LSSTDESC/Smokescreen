@@ -10,8 +10,8 @@ import sacc
 import warnings
 warnings.filterwarnings("ignore")
 
-from blinding.smokescreen import Smokescreen
-from blinding.utils import load_cosmology_from_partial_dict
+from smokescreen.smokescreen import Smokescreen
+from smokescreen.utils import load_cosmology_from_partial_dict
 from . import __version__
 
 banner = rf"""
