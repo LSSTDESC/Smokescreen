@@ -10,7 +10,7 @@ import sacc
 import warnings
 warnings.filterwarnings("ignore")
 
-from smokescreen.datavector import ConcealDataVector
+from smokescreen import ConcealDataVector
 from smokescreen.utils import load_cosmology_from_partial_dict
 from . import __version__
 

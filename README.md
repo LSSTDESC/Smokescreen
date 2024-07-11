@@ -82,7 +82,7 @@ The blinding module can be used to blind the data-vector measurements. The modul
 ```python
 # import the module
 import pyccl as ccl
-from smokescreen.datavector import ConcealDataVector
+from smokescreen import ConcealDataVector
 # import the likelihood that contains the model and data vector
 [...]
 import my_likelihood
