@@ -3,7 +3,7 @@
 [![License: BSD 3-Clause](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://github.com/yourusername/yourrepository/blob/main/LICENSE)
 [![LSST DESC Blinding Slack](https://img.shields.io/badge/join-Slack-4A154B)](https://lsstc.slack.com/archives/CT14ZF2AH)
 
-# DESC Blinding Modules
+# Smokescreen -- DESC Blinding Modules
 This repostory (under development) contains the blinding modules for blinding at the following levels of the analysis:
 - Data-vector measurements
 - Posterior distribution [not yet developed]
