@@ -14,3 +14,8 @@ There should also be a way for providing a SACC file to the likelihood externall
 The cosmic shear example here is based on the example provided in the [firecrown repository](https://github.com/LSSTDESC/firecrown/blob/master/examples/cosmicshear/cosmicshear.py). 
 
 The data-vector, `cosmicshear_sacc.fits`, was computed using the `generate_cosmicshear_data.py` script in the [firecrown examples directory](https://github.com/LSSTDESC/firecrown/blob/master/examples/cosmicshear/generate_cosmicshear_data.py).
+
+You can run this example from _this folder_ using the following command:
+```bash
+python blinding blind_cosmic_shear_example.yaml
+```

@@ -1,7 +1,10 @@
 import pytest
 import tempfile
 import os
+import numpy as np
+import pyccl as ccl
 from blinding.utils import string_to_seed, load_module_from_path
+from blinding.utils import load_cosmology_from_partial_dict
 
 def test_load_module_from_path():
     # Create a temporary Python module
@@ -30,3 +33,17 @@ def test_string_to_seed():
 
     # Check that a different string produces a different seed
     assert string_to_seed("different_seed") != result
+
+def test_load_cosmology_from_partial_dict():
+    # Test with valid cosmological parameters
+    cosmo_dict = {"Omega_c": 0.27, "sigma8": 0.8}
+    cosmo = load_cosmology_from_partial_dict(cosmo_dict)
+    assert isinstance(cosmo, ccl.Cosmology)
+    assert cosmo["Omega_c"] == 0.27
+    assert cosmo["sigma8"] == 0.8
+
+    # Test with A_s in the dictionary
+    cosmo_dict = {"A_s": 2.1e-9}
+    cosmo = load_cosmology_from_partial_dict(cosmo_dict)
+    assert cosmo["A_s"] == 2.1e-9
+    assert np.isnan(cosmo["sigma8"])

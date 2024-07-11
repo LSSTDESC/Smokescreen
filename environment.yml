@@ -2,7 +2,7 @@ name: desc_blinding
 channels:
   - conda-forge
 dependencies:
-    - python=3.9
+    - python>=3.9
     - numpy
     - ipykernel
     - scipy
@@ -12,7 +12,7 @@ dependencies:
     - pip
     - numcosmo
     - fitsio
-    - pyccl
+    - pyccl >=3.0.2
     - pip:
       - argparse
       - sacc
