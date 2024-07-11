@@ -11,11 +11,12 @@ dependencies:
     - pytest
     - pip
     - numcosmo
+    - firecrown>=1.7.5
     - fitsio
     - pyccl >=3.0.2
     - pip:
       - argparse
       - sacc
-      - git+https://github.com/LSSTDESC/firecrown.git@master
+      #- git+https://github.com/LSSTDESC/firecrown.git@master
     - cosmosis 
     - cosmosis-build-standard-library
