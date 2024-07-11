@@ -22,7 +22,7 @@ conda env create -f environment.yml
 ```
 This will create a new environment called `desc_smokescreen` with the required packages. You can activate the environment with:
 ```bash
-conda activate desc_blinding
+conda activate desc_smokescreen
 ```
 
 **Using an existing environment:**
@@ -69,11 +69,11 @@ TL;DR: Check the `notebooks/test_blinding_prototype.ipynb` for a working example
 #### From the commandline:
 The blinding module can be used to blind the data-vector measurements. The module can be used as follows:
 ```bash
-python blinding --config configuration_file.yaml
+python smokescreen --config configuration_file.yaml
 ```
 You can find an example of a configuration file in `examples/cosmic_shear/blind_cosmic_shear_example.yaml`. Or you can use the following command to create a template configuration file:
 ```bash
-python blinding --print_config > template_config.yaml
+python smokescreen --print_config > template_config.yaml
 ```
 Note that the `reference_cosmology` is optional. If not provided, the CCL `VanillaLCDM` reference cosmology will be the one used to compute the data vector.
 
@@ -82,7 +82,7 @@ The blinding module can be used to blind the data-vector measurements. The modul
 ```python
 # import the module
 import pyccl as ccl
-from blinding import Smokescreen
+from smokescreen.datavector import ConcealDataVector
 # import the likelihood that contains the model and data vector
 [...]
 import my_likelihood
@@ -108,8 +108,8 @@ syst_dict = {
             "src0_delta_z": 0.000,
             "lens0_delta_z": 0.000,}
 # create the smokescreen object
-smoke = Smokescreen(cosmo, syst_dict, sacc_data, my_likelihood, 
-                    {'Omega_c': (0.22, 0.32), 'sigma8': (0.7, 0.9)})
+smoke = ConcealDataVector(cosmo, syst_dict, sacc_data, my_likelihood, 
+                          {'Omega_c': (0.22, 0.32), 'sigma8': (0.7, 0.9)})
 # blind the data vector
 smoke.calculate_blinding_factor()
 blinded_dv = smoke.apply_blinding_to_likelihood_datavec()

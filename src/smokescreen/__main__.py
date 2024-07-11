@@ -10,7 +10,7 @@ import sacc
 import warnings
 warnings.filterwarnings("ignore")
 
-from smokescreen.smokescreen import Smokescreen
+from smokescreen.datavector import ConcealDataVector
 from smokescreen.utils import load_cosmology_from_partial_dict
 from . import __version__
 
@@ -63,7 +63,7 @@ def main(path_to_sacc: Path_fr,
     # reads the sacc file
     sacc_data = sacc.Sacc.load_fits(path_to_sacc)
     # creates the smokescreen object
-    smoke = Smokescreen(cosmo, systematics, likelihood_path, shifts_dict, sacc_data, seed)
+    smoke = ConcealDataVector(cosmo, systematics, likelihood_path, shifts_dict, sacc_data, seed)
     # blinds the sacc file
     smoke.calculate_blinding_factor(factor_type=shift_type)
     # applies the blinding factor to the sacc file

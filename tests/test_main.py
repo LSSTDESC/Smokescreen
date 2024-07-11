@@ -6,7 +6,7 @@ from smokescreen.utils import load_cosmology_from_partial_dict
 from smokescreen import __main__
 
 @patch('builtins.print')
-@patch('smokescreen.__main__.Smokescreen')
+@patch('smokescreen.__main__.ConcealDataVector')
 @patch('sacc.Sacc.load_fits')
 def test_main(mock_load_fits, mock_smokescreen, mock_print):
     # Arrange
@@ -36,7 +36,7 @@ def test_main(mock_load_fits, mock_smokescreen, mock_print):
     mock_smokescreen_instance.save_blinded_sacc.assert_called_once()
 
 @patch('builtins.print')
-@patch('smokescreen.__main__.Smokescreen')
+@patch('smokescreen.__main__.ConcealDataVector')
 @patch('sacc.Sacc.load_fits')
 def test_main_loads_cosmology_from_dict(mock_load_fits, mock_smokescreen, mock_print):
     # Arrange

@@ -17,8 +17,7 @@ from smokescreen.param_shifts import draw_flat_or_deterministic_param_shifts
 from smokescreen.utils import load_module_from_path
 
 
-# creates the smokescreen object
-class Smokescreen():
+class ConcealDataVector():
     """
     Class for calling a smokescreen on the measured data-vector.
     """
