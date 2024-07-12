@@ -10,8 +10,8 @@ import sacc
 import warnings
 warnings.filterwarnings("ignore")
 
-from blinding.smokescreen import Smokescreen
-from blinding.utils import load_cosmology_from_partial_dict
+from smokescreen import ConcealDataVector
+from smokescreen.utils import load_cosmology_from_partial_dict
 from . import __version__
 
 banner = rf"""
@@ -63,22 +63,22 @@ def main(path_to_sacc: Path_fr,
     # reads the sacc file
     sacc_data = sacc.Sacc.load_fits(path_to_sacc)
     # creates the smokescreen object
-    smoke = Smokescreen(cosmo, systematics, likelihood_path, shifts_dict, sacc_data, seed)
+    smoke = ConcealDataVector(cosmo, systematics, likelihood_path, shifts_dict, sacc_data, seed)
     # blinds the sacc file
-    smoke.calculate_blinding_factor(factor_type=shift_type)
+    smoke.calculate_concealing_factor(factor_type=shift_type)
     # applies the blinding factor to the sacc file
-    smoke.apply_blinding_to_likelihood_datavec()
+    smoke.apply_concealing_to_likelihood_datavec()
     print(f">> User {getpass.getuser()} used Smokescreen on {path_to_sacc} ... it is super effective!")
     # get root name of the input file
     root_name = os.path.splitext(os.path.basename(path_to_sacc))[0]
     # saves the blinded sacc file
     if path_to_output is not None:
-        smoke.save_blinded_sacc(path_to_output, root_name)
+        smoke.save_concealed_datavector(path_to_output, root_name)
     else:
         # get the input file directory
         path_to_output = os.path.dirname(path_to_sacc)
-        smoke.save_blinded_datavector(path_to_output, root_name)
-    print(f"\nConcealed sacc file saved as {path_to_output}/{root_name}_blinded_data_vector.fits")
+        smoke.save_concealed_datavector(path_to_output, root_name)
+    print(f"\nConcealed sacc file saved as {path_to_output}/{root_name}_concealed_data_vector.fits")
 
 if __name__ == "__main__":
     CLI(main, as_positional=False)

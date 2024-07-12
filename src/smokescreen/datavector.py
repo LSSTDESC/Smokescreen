@@ -13,12 +13,11 @@ from firecrown.likelihood.likelihood import NamedParameters
 from firecrown.parameters import ParamsMap
 from firecrown.utils import save_to_sacc
 
-from blinding.param_shifts import draw_flat_or_deterministic_param_shifts
-from blinding.utils import load_module_from_path
+from smokescreen.param_shifts import draw_flat_or_deterministic_param_shifts
+from smokescreen.utils import load_module_from_path
 
 
-# creates the smokescreen object
-class Smokescreen():
+class ConcealDataVector():
     """
     Class for calling a smokescreen on the measured data-vector.
     """
@@ -40,7 +39,7 @@ class Smokescreen():
             widths. If the shifts are tuples of values, the dictionary values
             should be the (lower, upper) bounds of the shift widths.
         sacc_data : sacc.sacc.Sacc
-            Data-vector to be blinded.
+            Data-vector to be concealed (blinded).
             If None, the data-vector will be loaded from the likelihood.
         seed : int or str
             Random seed.
@@ -80,13 +79,13 @@ class Smokescreen():
         else:
             self.__shifts = self._load_shifts(seed)
 
-        # create blinded cosmology object:
-        self.__blinded_cosmo = self._create_blinded_cosmo()
+        # create concealed cosmology object:
+        self.__concealed_cosmo = self._create_concealed_cosmo()
 
         if 'debug' in kwargs and kwargs['debug']:
             self.__debug = True
             print(f"[DEBUG] Shifts: {self.__shifts}")
-            print(f"[DEBUG] Blinded Cosmology: {self.__blinded_cosmo}")
+            print(f"[DEBUG] Concealed Cosmology: {self.__concealed_cosmo}")
         else:
             self.__debug = False
         # # create the smokescreen data-vector
@@ -197,26 +196,26 @@ class Smokescreen():
         else:
             raise NotImplementedError('Only flat shifts are implemented')
 
-    def _create_blinded_cosmo(self):
+    def _create_concealed_cosmo(self):
         """
         Creates a blinded cosmology object with the shifts applied.
 
         FIXME: Unsure this is the best way of doing this but it is similar to what is done in Augur.
         """
-        blinded_cosmo_dict = deepcopy(self.cosmo.to_dict())
+        concealed_cosmo_dict = deepcopy(self.cosmo.to_dict())
         # sometimes we have this extra paramters that can cause problems:
         try:
-            del blinded_cosmo_dict['extra_parameters']
+            del concealed_cosmo_dict['extra_parameters']
         except KeyError:
             pass
         for k in self.__shifts.keys():
-            blinded_cosmo_dict[k] = self.__shifts[k]
-        blinded_cosmo = ccl.Cosmology(**blinded_cosmo_dict)
-        return blinded_cosmo
+            concealed_cosmo_dict[k] = self.__shifts[k]
+        concealed_cosmo = ccl.Cosmology(**concealed_cosmo_dict)
+        return concealed_cosmo
 
-    def calculate_blinding_factor(self, factor_type="add"):
+    def calculate_concealing_factor(self, factor_type="add"):
         """
-        Calculates the blinding factor for the data-vector, according to Muir et al. 2019:
+        Calculates the concealing (blinding) factor for the data-vector, according to Muir et al. 2019:
 
         type='add':
             $f^add = d(\theta_blind) - d(\theta_fid)$
@@ -226,7 +225,7 @@ class Smokescreen():
         Parameters
         ----------
         type : str
-            Type of blinding factor to be calculated. Default is "add".
+            Type of concealing (blinding) factor to be calculated. Default is "add".
         """
         self.factor_type = factor_type
         # update the tools:
@@ -245,38 +244,38 @@ class Smokescreen():
         # update the tools:
         self.tools.update({})
         # prepare the original cosmology tools:
-        self.tools.prepare(self.__blinded_cosmo)
+        self.tools.prepare(self.__concealed_cosmo)
         # update the likelihood with the systematics parameters:
         self.likelihood.update(self.systematics)
-        # blinded theory vector:
-        self.theory_vec_blind = self.likelihood.compute_theory_vector(self.tools)
+        # concealed theory vector:
+        self.theory_vec_conceal = self.likelihood.compute_theory_vector(self.tools)
 
         if self.factor_type == "add":
-            self.__blinding_factor = self.theory_vec_blind - self.theory_vec_fid
+            self.__concealing_factor = self.theory_vec_conceal- self.theory_vec_fid
         elif self.factor_type == "mult":
-            self.__blinding_factor = self.theory_vec_blind / self.theory_vec_fid
+            self.__concealing_factor = self.theory_vec_conceal / self.theory_vec_fid
         else:
-            raise NotImplementedError('Only "add" and "mult" blinding factor is implemented')
+            raise NotImplementedError('Only "add" and "mult" concealing (blinding) factor is implemented')
         if self.__debug:
-            return self.__blinding_factor
+            return self.__concealing_factor
 
-    def apply_blinding_to_likelihood_datavec(self):
+    def apply_concealing_to_likelihood_datavec(self):
         """
-        Applies the blinding factor to the data-vector.
+        Applies the concealing (blinding) factor to the data-vector.
         """
         self.data_vector = self.likelihood.get_data_vector()
         if self.factor_type == "add":
-            self.blinded_data_vector = self.data_vector + self.__blinding_factor
+            self.concealed_data_vector = self.data_vector + self.__concealing_factor
         elif self.factor_type == "mult":
-            self.blinded_data_vector = self.data_vector * self.__blinding_factor
+            self.concealed_data_vector = self.data_vector * self.__concealing_factor
         else:
             raise NotImplementedError('Only "add" and "mult" blinding factor is implemented')
-        return self.blinded_data_vector
+        return self.concealed_data_vector
 
-    def save_blinded_datavector(self, path_to_save, file_root,
+    def save_concealed_datavector(self, path_to_save, file_root,
                                 return_sacc=False):
         """
-        Saves the blinded data-vector to a file.
+        Saves the concealed (blinded) data-vector to a file.
 
         Parameters
         ----------
@@ -291,11 +290,11 @@ class Smokescreen():
         {path_to_save}/{file_root}_blinded_data_vector.fits
         """
         idx = self.likelihood.get_sacc_indices()
-        blinded_sacc = save_to_sacc(self.sacc_data,
-                                    self.blinded_data_vector,
+        concealed_sacc = save_to_sacc(self.sacc_data,
+                                    self.concealed_data_vector,
                                     idx)
-        blinded_sacc.save_fits(f"{path_to_save}/{file_root}_blinded_data_vector.fits", overwrite=True)
+        concealed_sacc.save_fits(f"{path_to_save}/{file_root}_concealed_data_vector.fits", overwrite=True)
         if return_sacc:
-            return blinded_sacc
+            return concealed_sacc
         else:
             return None

@@ -3,15 +3,15 @@
 [![License: BSD 3-Clause](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://github.com/yourusername/yourrepository/blob/main/LICENSE)
 [![LSST DESC Blinding Slack](https://img.shields.io/badge/join-Slack-4A154B)](https://lsstc.slack.com/archives/CT14ZF2AH)
 
-# DESC Blinding Modules
-This repostory (under development) contains the blinding modules for blinding at the following levels of the analysis:
+# Smokescreen: DESC Modules for data concealment (blinding)
+This repostory (under development) contains the modules for data concealment (blinding) at the following levels of the analysis:
 - Data-vector measurements
 - Posterior distribution [not yet developed]
 - (TBC) Catalogues
 
 Other info: the previous README can be found [here](bckp_README.md)
 
-> :warning: Important notice :warning: : the term "blinding" and the name "smokescreen" are used as placeholders and are not final. The final name will be decided by the DESC Blinding Working Group in discussions with the collaboration.
+> :warning: Important notice :warning: : the term "blinding" is used in the context of data concealment for scientific analysis. We understand this is an outdated term and we are working to update it to a more appropriate term. If you have any suggestions, please let us know.
 
 ## Installation
 **Creating a new environment:**
@@ -20,20 +20,20 @@ You can create a new conda environment with the required packages using the `env
 ```bash
 conda env create -f environment.yml
 ```
-This will create a new environment called `desc_blinding` with the required packages. You can activate the environment with:
+This will create a new environment called `desc_smokescreen` with the required packages. You can activate the environment with:
 ```bash
-conda activate desc_blinding
+conda activate desc_smokescreen
 ```
 
 **Using an existing environment:**
 
-If you want to install the `blinding` package in an existing environment, you can install it using:
+If you want to install the `Smokescreen` package in an existing environment, you can install it using:
 ```bash
 conda activate myenv
 conda env update --name myenv --file environment.yml --prune
 ```
 
-After installing the dependencies from `environment.yml`, you can install the `blinding` package using:
+After installing the dependencies from `environment.yml`, you can install the `Smokescreen` package using:
 ```bash
 python -m pip install [-e] .
 ```
@@ -45,7 +45,7 @@ You can test the installation by running the tests:
 pytest .
 ```
 
-## Usage: Data-vector Blinding
+## Usage: Data-vector Concealment (Blinding)
 ### Likelihood Requirements
 The blinding module requires the Firecrown likelihoods to be built with certain requirements. First we bust be able to build the likelihoods providing a [sacc](https://github.com/LSSTDESC/sacc/tree/master) object with the measurements for the data-vector:
 ```python
@@ -62,18 +62,18 @@ The likelihood module also must have a method `.compute_theory_vector(ModellingT
 
 The likelihood can be provided either as a path to the python file containing the `build_likelihood` function or as a python module. In the latter case, the module must be imported.
 
-### Blinding a data vector
+### Concealing (blinding) a data vector
 TL;DR: Check the `notebooks/test_blinding_prototype.ipynb` for a working example using the 
 `des_y1_3x2pt_PT` [example from firecrown](https://github.com/LSSTDESC/firecrown/tree/master/examples/des_y1_3x2pt).
 
 #### From the commandline:
 The blinding module can be used to blind the data-vector measurements. The module can be used as follows:
 ```bash
-python blinding --config configuration_file.yaml
+python smokescreen --config configuration_file.yaml
 ```
 You can find an example of a configuration file in `examples/cosmic_shear/blind_cosmic_shear_example.yaml`. Or you can use the following command to create a template configuration file:
 ```bash
-python blinding --print_config > template_config.yaml
+python smokescreen --print_config > template_config.yaml
 ```
 Note that the `reference_cosmology` is optional. If not provided, the CCL `VanillaLCDM` reference cosmology will be the one used to compute the data vector.
 
@@ -82,7 +82,7 @@ The blinding module can be used to blind the data-vector measurements. The modul
 ```python
 # import the module
 import pyccl as ccl
-from blinding import Smokescreen
+from smokescreen import ConcealDataVector
 # import the likelihood that contains the model and data vector
 [...]
 import my_likelihood
@@ -108,11 +108,11 @@ syst_dict = {
             "src0_delta_z": 0.000,
             "lens0_delta_z": 0.000,}
 # create the smokescreen object
-smoke = Smokescreen(cosmo, syst_dict, sacc_data, my_likelihood, 
-                    {'Omega_c': (0.22, 0.32), 'sigma8': (0.7, 0.9)})
-# blind the data vector
-smoke.calculate_blinding_factor()
-blinded_dv = smoke.apply_blinding_to_likelihood_datavec()
+smoke = ConcealDataVector(cosmo, syst_dict, sacc_data, my_likelihood, 
+                          {'Omega_c': (0.22, 0.32), 'sigma8': (0.7, 0.9)})
+# conceals (blinds) the data vector
+smoke.calculate_concealing_factor()
+concealed_dv = smoke.apply_concealing_to_likelihood_datavec()
 ```
 
 

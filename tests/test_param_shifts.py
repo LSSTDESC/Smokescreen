@@ -1,6 +1,6 @@
 import pytest
 import numpy as np
-from blinding.param_shifts import draw_flat_param_shifts
+from smokescreen.param_shifts import draw_flat_param_shifts
 
 def test_single_value_shifts():
     shift_dict = {'param1': 1, 'param2': 2}

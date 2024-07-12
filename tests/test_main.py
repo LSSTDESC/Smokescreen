@@ -2,11 +2,11 @@ import pytest
 from unittest.mock import patch, MagicMock
 from pyccl import CosmologyVanillaLCDM
 import sacc
-from blinding.utils import load_cosmology_from_partial_dict
-from blinding import __main__
+from smokescreen.utils import load_cosmology_from_partial_dict
+from smokescreen import __main__
 
 @patch('builtins.print')
-@patch('blinding.__main__.Smokescreen')
+@patch('smokescreen.__main__.ConcealDataVector')
 @patch('sacc.Sacc.load_fits')
 def test_main(mock_load_fits, mock_smokescreen, mock_print):
     # Arrange
@@ -31,12 +31,12 @@ def test_main(mock_load_fits, mock_smokescreen, mock_print):
     # Assert
     mock_load_fits.assert_called_once_with(path_to_sacc)
     mock_smokescreen.assert_called_once_with(reference_cosmology, systematics, likelihood_path, shifts_dict, sacc_file, seed)
-    mock_smokescreen_instance.calculate_blinding_factor.assert_called_once()
-    mock_smokescreen_instance.apply_blinding_to_likelihood_datavec.assert_called_once()
-    mock_smokescreen_instance.save_blinded_sacc.assert_called_once()
+    mock_smokescreen_instance.calculate_concealing_factor.assert_called_once()
+    mock_smokescreen_instance.apply_concealing_to_likelihood_datavec.assert_called_once()
+    mock_smokescreen_instance.save_concealed_datavector.assert_called_once()
 
 @patch('builtins.print')
-@patch('blinding.__main__.Smokescreen')
+@patch('smokescreen.__main__.ConcealDataVector')
 @patch('sacc.Sacc.load_fits')
 def test_main_loads_cosmology_from_dict(mock_load_fits, mock_smokescreen, mock_print):
     # Arrange
@@ -62,6 +62,6 @@ def test_main_loads_cosmology_from_dict(mock_load_fits, mock_smokescreen, mock_p
     mod_ref_cosmo = load_cosmology_from_partial_dict(reference_cosmology)
     mock_load_fits.assert_called_once_with(path_to_sacc)
     mock_smokescreen.assert_called_once_with(mod_ref_cosmo, systematics, likelihood_path, shifts_dict, sacc_file, seed)
-    mock_smokescreen_instance.calculate_blinding_factor.assert_called_once()
-    mock_smokescreen_instance.apply_blinding_to_likelihood_datavec.assert_called_once()
-    mock_smokescreen_instance.save_blinded_sacc.assert_called_once()
+    mock_smokescreen_instance.calculate_concealing_factor.assert_called_once()
+    mock_smokescreen_instance.apply_concealing_to_likelihood_datavec.assert_called_once()
+    mock_smokescreen_instance.save_concealed_datavector.assert_called_once()
