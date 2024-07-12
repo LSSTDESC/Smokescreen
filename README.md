@@ -69,11 +69,11 @@ TL;DR: Check the `notebooks/test_blinding_prototype.ipynb` for a working example
 #### From the commandline:
 The blinding module can be used to blind the data-vector measurements. The module can be used as follows:
 ```bash
-python smokescreen --config configuration_file.yaml
+python -m smokescreen --config configuration_file.yaml
 ```
 You can find an example of a configuration file in `examples/cosmic_shear/blind_cosmic_shear_example.yaml`. Or you can use the following command to create a template configuration file:
 ```bash
-python smokescreen --print_config > template_config.yaml
+python -m smokescreen --print_config > template_config.yaml
 ```
 Note that the `reference_cosmology` is optional. If not provided, the CCL `VanillaLCDM` reference cosmology will be the one used to compute the data vector.
 
