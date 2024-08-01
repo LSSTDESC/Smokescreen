@@ -85,10 +85,12 @@ jobs:
           slug: LSSTDESC/Smokescreen
 
       - name: flake8
-        shell: bash -l {0}
-        run: |
-          conda activate desc_smokescreen
-          flake8 src/smokescreen
+        uses: py-actions/flake8@v2
+        with:
+          max-line-length: "100"
+        # run: |
+        #   conda activate desc_smokescreen
+        #   flake8 src/smokescreen
 
       # # Install our package.
       # - name: Install legacy_blinding
