@@ -1,3 +1,21 @@
+# author: Arthur Loureiro <arthur.loureiro@fysik.su.se>
+# license: BSD 3-Clause
+'''
+Parameter Shifts (:mod:`smokescreen.param_shifts`)
+===================================================
+
+.. currentmodule:: smokescreen.param_shifts
+
+The :mod:`smokescreen.param_shifts` module provides modules
+to perform shifts in the cosmological parameters.
+
+
+Parameter Shifts
+-----------------
+
+.. autofunction:: draw_flat_param_shifts
+.. autofunction:: draw_flat_or_deterministic_param_shifts
+'''
 import numpy as np
 from .utils import string_to_seed
 
