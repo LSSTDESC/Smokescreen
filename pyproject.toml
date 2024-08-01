@@ -1,6 +1,6 @@
 [build-system]
-requires = ["setuptools", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
 
 [project]
 name = "Smokescreen"
@@ -13,7 +13,7 @@ maintainers = [
 ]
 classifiers = [
     "Programming Language :: Python :: 3",
-    "License :: OSI Approved ::  BSD-3-Clause license",
+    "License :: OSI Approved :: BSD License",
     "Operating System :: OS Independent",
 ]
 dependencies = [
@@ -36,3 +36,13 @@ where = ["src"]
 
 [tool.flake8]
 max-line-length = 100
+
+[project.urls]
+Homepage = "https://github.com/LSSTDESC/Smokescreen"
+Issues = "https://github.com/LSSTDESC/Smokescreen/issues"
+
+# [tool.hatch]
+# version.source = "vcs"
+
+[tool.hatch.version]
+path = "src/smokescreen/_version.py"
