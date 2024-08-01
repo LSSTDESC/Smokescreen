@@ -17,12 +17,13 @@ else:
     from firecrown.likelihood.gauss_family.statistic.two_point import TwoPoint
     from firecrown.likelihood.gauss_family.gaussian import ConstGaussian
 from firecrown.modeling_tools import ModelingTools
-from firecrown.likelihood.likelihood import NamedParameters
+# from firecrown.likelihood.likelihood import NamedParameters
+
 
 def build_likelihood(build_parameters):
     """
     Create a firecrown likelihood for a cosmic shear analysis.
-    
+
     Parameters
     ----------
     build_parameters : dict

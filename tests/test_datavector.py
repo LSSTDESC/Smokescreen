@@ -11,6 +11,7 @@ ccl.gsl_params.LENSING_KERNEL_SPLINE_INTEGRATION = False
 
 COSMO = ccl.CosmologyVanillaLCDM()
 
+
 class EmptyLikelihood(Likelihood):
     """
     empty mock likelihood based on:
@@ -19,12 +20,16 @@ class EmptyLikelihood(Likelihood):
     def __init__(self):
         self.nothing = 1.0
         super().__init__()
+
     def read(self, sacc_data: sacc.Sacc):
         pass
+
     def compute_loglike(self, ModellingTools):
         return -self.nothing*2.0
+
     def compute_theory_vector(self, ModellingTools):
         return self.nothing
+
     def get_data_vector(self):
         return self.nothing
 
@@ -38,12 +43,14 @@ class MockLikelihoodModule(types.ModuleType):
     def compute_theory_vector(self, ModellingTools):
         return self.mocklike.compute_theory_vector(ModellingTools)
 
+
 class MockCosmo:
     def __init__(self, params):
         self._params = params
 
     def __getitem__(self, key):
         return self._params[key]
+
 
 def test_smokescreen_init():
     # Create mock inputs
@@ -62,13 +69,14 @@ def test_smokescreen_init():
     with pytest.raises(AttributeError):
         invalid_likelihood = types.ModuleType("invalid_likelihood")
         ConcealDataVector(cosmo, systematics_dict, invalid_likelihood,
-                          shifts_dict,sacc_data,)
+                          shifts_dict, sacc_data,)
 
     # check if breaks if given a shift with a key not in the cosmology parameters
     with pytest.raises(ValueError):
         invalid_shifts_dict = {"Omega_c": 1, "invalid_key": 1}
-        ConcealDataVector(cosmo, systematics_dict,likelihood,
+        ConcealDataVector(cosmo, systematics_dict, likelihood,
                           invalid_shifts_dict, sacc_data)
+
 
 def test_load_shifts():
     # Create mock inputs
@@ -108,6 +116,7 @@ def test_load_shifts():
                                         likelihood, shifts_dict, sacc_data,
                                         **{'shift_type': 'invalid'})
 
+
 def test_debug_mode(capfd):
     # Create mock inputs
     cosmo = COSMO
@@ -117,15 +126,16 @@ def test_debug_mode(capfd):
     shifts_dict = {"Omega_c": 1}
 
     # Check that Smokescreen can be instantiated with valid inputs
-    smokescreen = ConcealDataVector(cosmo, systematics_dict, likelihood, 
-                                   shifts_dict, sacc_data,  **{'debug': True})
-     # Capture the output
+    _ = ConcealDataVector(cosmo, systematics_dict, likelihood,
+                          shifts_dict, sacc_data,  **{'debug': True})
+    # Capture the output
     out, err = capfd.readouterr()
 
     # Check that the debug output is correct
     assert "[DEBUG] Shifts: " in out
     assert "[DEBUG] Concealed Cosmology: " in out
     assert f"{shifts_dict}" in out
+
 
 def test_calculate_concealing_factor_add():
     # Create mock inputs
@@ -136,7 +146,7 @@ def test_calculate_concealing_factor_add():
     shifts_dict = {"Omega_c": 1}
 
     # Instantiate Smokescreen
-    smokescreen = ConcealDataVector(cosmo, systematics_dict, likelihood, 
+    smokescreen = ConcealDataVector(cosmo, systematics_dict, likelihood,
                                     shifts_dict, sacc_data, **{'debug': True})
 
     # Call calculate_concealing_factor with type="add"
@@ -144,6 +154,7 @@ def test_calculate_concealing_factor_add():
 
     # Check that the concealing (blinding) factor is correct
     assert concealing_factor == smokescreen.theory_vec_conceal - smokescreen.theory_vec_fid
+
 
 def test_calculate_concealing_factor_mult():
     # Create mock inputs
@@ -154,14 +165,15 @@ def test_calculate_concealing_factor_mult():
     shifts_dict = {"Omega_c": 1}
 
     # Instantiate Smokescreen
-    smokescreen = ConcealDataVector(cosmo, systematics_dict, likelihood, 
-                                   shifts_dict, sacc_data, **{'debug': True})
+    smokescreen = ConcealDataVector(cosmo, systematics_dict, likelihood,
+                                    shifts_dict, sacc_data, **{'debug': True})
 
     # Call calculate_concealing_factor with type="add"
     concealing_factor = smokescreen.calculate_concealing_factor(factor_type="mult")
 
     # Check that the concealing (blinding) factor is correct
     assert concealing_factor == smokescreen.theory_vec_conceal / smokescreen.theory_vec_fid
+
 
 def test_calculate_concealing_factor_invalid_type():
     # Create mock inputs
@@ -178,6 +190,7 @@ def test_calculate_concealing_factor_invalid_type():
     # Call calculate_concealing_factor with an invalid type
     with pytest.raises(NotImplementedError):
         smokescreen.calculate_concealing_factor(factor_type="invalid")
+
 
 def test_apply_concealing_to_likelihood_datavec_add():
     # Create mock inputs
@@ -201,6 +214,7 @@ def test_apply_concealing_to_likelihood_datavec_add():
 
     # Check that the blinded data vector is correct
     assert concealed_data_vector == expected_concealed
+
 
 def test_apply_concealing_to_likelihood_datavec_mult():
     # Create mock inputs
@@ -236,15 +250,16 @@ def test_apply_concealing_to_likelihood_datavec_invalid_type():
 
     # Instantiate Smokescreen
     smokescreen = ConcealDataVector(cosmo, systematics_dict, likelihood,
-                                   shifts_dict, sacc_data, **{'debug': True})
+                                    shifts_dict, sacc_data, **{'debug': True})
 
     # Set the expected_concealing factor and type
     # Call calculate_concealing_factor with type="add"
-    concealing_factor = smokescreen.calculate_concealing_factor(factor_type="mult")
+    _ = smokescreen.calculate_concealing_factor(factor_type="mult")
     # Set an invalid type
     smokescreen.factor_type = "invalid"
     with pytest.raises(NotImplementedError):
         smokescreen.apply_concealing_to_likelihood_datavec()
+
 
 def test_load_likelihood():
     # Create mock inputs
@@ -289,6 +304,7 @@ def test_load_likelihood():
     invalid_likelihood.build_likelihood = lambda: None
     with pytest.raises(AssertionError):
         smokescreen._load_likelihood(invalid_likelihood, sacc_data)
+
 
 def test_save_concealed_datavector():
     # Create mock inputs

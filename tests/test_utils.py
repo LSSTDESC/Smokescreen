@@ -1,10 +1,11 @@
-import pytest
+import pytest  # noqa  F401
 import tempfile
 import os
 import numpy as np
 import pyccl as ccl
 from smokescreen.utils import string_to_seed, load_module_from_path
 from smokescreen.utils import load_cosmology_from_partial_dict
+
 
 def test_load_module_from_path():
     # Create a temporary Python module
@@ -21,18 +22,20 @@ def test_load_module_from_path():
     # Clean up the temporary file
     os.remove(temp_path)
 
+
 def test_string_to_seed():
     seed_string = "test_seed"
     result = string_to_seed(seed_string)
-    
+
     # Check that the result is an integer
     assert isinstance(result, int)
-    
+
     # Check that the same string produces the same seed
     assert string_to_seed(seed_string) == result
 
     # Check that a different string produces a different seed
     assert string_to_seed("different_seed") != result
+
 
 def test_load_cosmology_from_partial_dict():
     # Test with valid cosmological parameters

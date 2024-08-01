@@ -84,6 +84,14 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: LSSTDESC/Smokescreen
 
+      - name: flake8
+        uses: py-actions/flake8@v2
+        with:
+          max-line-length: "100"
+        # run: |
+        #   conda activate desc_smokescreen
+        #   flake8 src/smokescreen
+
       # # Install our package.
       # - name: Install legacy_blinding
       #   run: |

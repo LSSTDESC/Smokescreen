@@ -1,9 +1,6 @@
-import numpy as np
 import os
-import sys
 import types
 import inspect
-import warnings
 from copy import deepcopy
 import pyccl as ccl
 import sacc
@@ -63,7 +60,7 @@ class ConcealDataVector():
         # checks if the sacc_data is in the correct format:
         assert isinstance(self.sacc_data, sacc.sacc.Sacc), "sacc_data must be a sacc object"
         # load the likelihood
-        self.likelihood, self.tools = self._load_likelihood(likelihood, 
+        self.likelihood, self.tools = self._load_likelihood(likelihood,
                                                             self.sacc_data)
 
         # save the shifts
@@ -104,7 +101,7 @@ class ConcealDataVector():
 
         build_parameters = NamedParameters({'sacc_data': sacc_data})
 
-        if type(likelihood) == str:
+        if type(likelihood) is str:
             # check if the file can be found
             if not os.path.isfile(likelihood):
                 raise FileNotFoundError(f'Could not find file {likelihood}')
@@ -124,7 +121,7 @@ class ConcealDataVector():
             self.__test_likelihood(likelihood, 'module')
 
             # tries to load the likelihood from the module
-            likelihood, tools = load_likelihood_from_module_type(likelihood, 
+            likelihood, tools = load_likelihood_from_module_type(likelihood,
                                                                  build_parameters)
             # check if the likehood has a compute_vector method
             if not hasattr(likelihood, 'compute_theory_vector'):
@@ -157,7 +154,7 @@ class ConcealDataVector():
         if self.sacc_data is not None:
             sig = inspect.signature(likelihood.build_likelihood)
             likefunc_params = sig.parameters
-            assert len(likefunc_params) >= 1, ("A sacc was provided, ", 
+            assert len(likefunc_params) >= 1, ("A sacc was provided, ",
                                                "the likelihood must require a",
                                                "build_parameters NamedParameters object!")
 
@@ -215,7 +212,8 @@ class ConcealDataVector():
 
     def calculate_concealing_factor(self, factor_type="add"):
         """
-        Calculates the concealing (blinding) factor for the data-vector, according to Muir et al. 2019:
+        Calculates the concealing (blinding) factor for the data-vector,
+            according to Muir et al. 2019:
 
         type='add':
             $f^add = d(\theta_blind) - d(\theta_fid)$
@@ -251,11 +249,11 @@ class ConcealDataVector():
         self.theory_vec_conceal = self.likelihood.compute_theory_vector(self.tools)
 
         if self.factor_type == "add":
-            self.__concealing_factor = self.theory_vec_conceal- self.theory_vec_fid
+            self.__concealing_factor = self.theory_vec_conceal - self.theory_vec_fid
         elif self.factor_type == "mult":
             self.__concealing_factor = self.theory_vec_conceal / self.theory_vec_fid
         else:
-            raise NotImplementedError('Only "add" and "mult" concealing (blinding) factor is implemented')
+            raise NotImplementedError('Only "add" and "mult" concealing factor is implemented')
         if self.__debug:
             return self.__concealing_factor
 
@@ -273,7 +271,7 @@ class ConcealDataVector():
         return self.concealed_data_vector
 
     def save_concealed_datavector(self, path_to_save, file_root,
-                                return_sacc=False):
+                                  return_sacc=False):
         """
         Saves the concealed (blinded) data-vector to a file.
 
@@ -291,9 +289,10 @@ class ConcealDataVector():
         """
         idx = self.likelihood.get_sacc_indices()
         concealed_sacc = save_to_sacc(self.sacc_data,
-                                    self.concealed_data_vector,
-                                    idx)
-        concealed_sacc.save_fits(f"{path_to_save}/{file_root}_concealed_data_vector.fits", overwrite=True)
+                                      self.concealed_data_vector,
+                                      idx)
+        concealed_sacc.save_fits(f"{path_to_save}/{file_root}_concealed_data_vector.fits",
+                                 overwrite=True)
         if return_sacc:
             return concealed_sacc
         else:

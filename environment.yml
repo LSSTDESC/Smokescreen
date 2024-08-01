@@ -16,6 +16,7 @@ dependencies:
     - pyccl >=3.0.2
     - pip:
       - argparse
+      - flake8
       - sacc
       #- git+https://github.com/LSSTDESC/firecrown.git@master
     - cosmosis 

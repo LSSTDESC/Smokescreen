@@ -1,9 +1,9 @@
-import pytest
+import pytest  # noqa: F401
 from unittest.mock import patch, MagicMock
 from pyccl import CosmologyVanillaLCDM
-import sacc
 from smokescreen.utils import load_cosmology_from_partial_dict
 from smokescreen import __main__
+
 
 @patch('builtins.print')
 @patch('smokescreen.__main__.ConcealDataVector')
@@ -26,14 +26,17 @@ def test_main(mock_load_fits, mock_smokescreen, mock_print):
     mock_load_fits.return_value = sacc_file  # Make load_fits return the mock sacc_file
 
     # Act
-    __main__.main(path_to_sacc, likelihood_path, systematics, shifts_dict, shift_type, seed, reference_cosmology, path_to_output)
+    __main__.main(path_to_sacc, likelihood_path, systematics, shifts_dict,
+                  shift_type, seed, reference_cosmology, path_to_output)
 
     # Assert
     mock_load_fits.assert_called_once_with(path_to_sacc)
-    mock_smokescreen.assert_called_once_with(reference_cosmology, systematics, likelihood_path, shifts_dict, sacc_file, seed)
+    mock_smokescreen.assert_called_once_with(reference_cosmology, systematics,
+                                             likelihood_path, shifts_dict, sacc_file, seed)
     mock_smokescreen_instance.calculate_concealing_factor.assert_called_once()
     mock_smokescreen_instance.apply_concealing_to_likelihood_datavec.assert_called_once()
     mock_smokescreen_instance.save_concealed_datavector.assert_called_once()
+
 
 @patch('builtins.print')
 @patch('smokescreen.__main__.ConcealDataVector')
@@ -56,12 +59,14 @@ def test_main_loads_cosmology_from_dict(mock_load_fits, mock_smokescreen, mock_p
     mock_load_fits.return_value = sacc_file  # Make load_fits return the mock sacc_file
 
     # Act
-    __main__.main(path_to_sacc, likelihood_path, systematics, shifts_dict, shift_type, seed, reference_cosmology, path_to_output)
+    __main__.main(path_to_sacc, likelihood_path, systematics, shifts_dict, shift_type,
+                  seed, reference_cosmology, path_to_output)
 
     # Assert
     mod_ref_cosmo = load_cosmology_from_partial_dict(reference_cosmology)
     mock_load_fits.assert_called_once_with(path_to_sacc)
-    mock_smokescreen.assert_called_once_with(mod_ref_cosmo, systematics, likelihood_path, shifts_dict, sacc_file, seed)
+    mock_smokescreen.assert_called_once_with(mod_ref_cosmo, systematics,
+                                             likelihood_path, shifts_dict, sacc_file, seed)
     mock_smokescreen_instance.calculate_concealing_factor.assert_called_once()
     mock_smokescreen_instance.apply_concealing_to_likelihood_datavec.assert_called_once()
     mock_smokescreen_instance.save_concealed_datavector.assert_called_once()

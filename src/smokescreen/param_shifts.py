@@ -1,6 +1,7 @@
 import numpy as np
 from .utils import string_to_seed
 
+
 def draw_flat_param_shifts(shift_dict, seed):
     """
     Draw flat parameter shifts from a dictionary of parameter names and
@@ -21,16 +22,17 @@ def draw_flat_param_shifts(shift_dict, seed):
     dict
         Dictionary of parameter names and corresponding flat parameter shifts.
     """
-    if type(seed) == str:
+    if type(seed) is str:
         seed = string_to_seed(seed)
     np.random.seed(seed)
     # check the if the shifts are single value or a tuple of values
-    if type(list(shift_dict.values())[0]) == tuple:
+    if type(list(shift_dict.values())[0]) is tuple:
         return {par: np.random.uniform(shift_dict[par][0], shift_dict[par][1])
-            for par in shift_dict}
+                for par in shift_dict}
     else:
         return {par: np.random.uniform(-shift_dict[par], shift_dict[par])
                 for par in shift_dict}
+
 
 def draw_flat_or_deterministic_param_shifts(cosmo, shifts_dict, seed):
     """
@@ -57,7 +59,7 @@ def draw_flat_or_deterministic_param_shifts(cosmo, shifts_dict, seed):
         Dictionary of parameter names and corresponding flat or deterministic
         parameter shifts.
     """
-    if type(seed) == str:
+    if type(seed) is str:
         seed = string_to_seed(seed)
     np.random.seed(seed)
     # check the if the shifts are single value or a tuple of values
@@ -66,9 +68,9 @@ def draw_flat_or_deterministic_param_shifts(cosmo, shifts_dict, seed):
             cosmo._params[key]
         except (AttributeError, KeyError) as error:
             # remove the key from the shifts_dict
-            #print(f"Key {key} not in cosmology parameters")
-            #failed_keys.append(key)
-            raise ValueError(f"Key {key} not in cosmology parameters")
+            # print(f"Key {key} not in cosmology parameters")
+            # failed_keys.append(key)
+            raise ValueError(f"[{error}]Key {key} not in cosmology parameters")
     shifts = {}
     for key, value in shifts_dict.items():
         if isinstance(value, tuple):
@@ -83,4 +85,3 @@ def draw_flat_or_deterministic_param_shifts(cosmo, shifts_dict, seed):
         else:
             shifts[key] = value
     return shifts
-

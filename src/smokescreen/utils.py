@@ -1,11 +1,11 @@
 import hashlib
-import numpy as np
 import importlib.util
 import pyccl as ccl
 
+
 def load_cosmology_from_partial_dict(cosmo_dict):
     """
-    Given a partial dictionary with cosmological parameters, return a Cosmology 
+    Given a partial dictionary with cosmological parameters, return a Cosmology
     object setting the unspecified parameters to their default values.
     """
     # sets the default values for the cosmological parameters
@@ -14,6 +14,7 @@ def load_cosmology_from_partial_dict(cosmo_dict):
     if "A_s" in cosmo_dict.keys():
         cosmo_dict_default["sigma8"] = None
     return ccl.Cosmology(**{**cosmo_dict_default, **cosmo_dict})
+
 
 def load_module_from_path(path):
     """
@@ -33,6 +34,7 @@ def load_module_from_path(path):
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
+
 
 def string_to_seed(seedstring):
     """
