@@ -16,10 +16,11 @@ else:
 from firecrown.modeling_tools import ModelingTools
 from firecrown.likelihood.likelihood import NamedParameters
 
+
 def build_likelihood(build_parameters: NamedParameters):
     """
-    Create a firecrown likelihood for a cosmic shear analysis.
-    
+    Create a firecrown likelihood for a supernovae type Ia analysis.
+
     Parameters
     ----------
     build_parameters : NamedParameters
