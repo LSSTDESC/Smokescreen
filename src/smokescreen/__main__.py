@@ -85,5 +85,5 @@ def main(path_to_sacc: Path_fr,
     print(f"\nConcealed sacc file saved as {path_to_output}/{root_name}_concealed_data_vector.fits")
 
 
-if __name__ == "__main__": # pragma: no cover
+if __name__ == "__main__":  # pragma: no cover
     CLI(main, as_positional=False)
