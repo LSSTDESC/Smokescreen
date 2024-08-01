@@ -33,3 +33,6 @@ dynamic = ["version"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.flake8]
+max-line-length = 100
