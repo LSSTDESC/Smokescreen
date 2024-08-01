@@ -8,12 +8,12 @@ import pyccl as ccl
 import sacc
 # warnings related to sacc files
 import warnings
-warnings.filterwarnings("ignore")
-
 from smokescreen import ConcealDataVector
 from smokescreen.utils import load_cosmology_from_partial_dict
 from . import __version__
+warnings.filterwarnings("ignore")
 
+# banner to be printed in the terminal
 banner = rf"""
 
  (                                                          
@@ -29,6 +29,7 @@ banner = rf"""
                        Version {__version__}
 """
 
+
 def main(path_to_sacc: Path_fr,
          likelihood_path: str,
          systematics: dict,
@@ -43,11 +44,13 @@ def main(path_to_sacc: Path_fr,
         path_to_sacc (str): Path to the sacc file to blind.
         likelihood_path (str): Path to the firecrown likelihood module file.
         systematics (dict): Dictionary with fixed values for the firecrown systematics parameters.
-        shifts_dict (dict): Dictionary with fixed values for the firecrown shifts parameters. 
+        shifts_dict (dict): Dictionary with fixed values for the firecrown shifts parameters.
             Example: {"Omega_c": (0.20, 0.39), "sigma8": (0.70, 0.90)}
-        shift_type (str): Type of shift to apply to the data vector. Options are 'add' and 'mult'. Defaults to 'add'.
+        shift_type (str): Type of shift to apply to the data vector. 
+            Options are 'add' and 'mult'. Defaults to 'add'.
         seed (int, str): Seed for the blinding process. Defaults to 2112.
-        reference_cosmology (Union[CosmologyType, dict]): Cosmology object or dictionary with cosmological 
+        reference_cosmology (Union[CosmologyType, dict]): 
+            Cosmology object or dictionary with cosmological 
             parameters you want different than the VanillaLCDM as reference cosmology.
             Defaults to ccl.CosmologyVanillaLCDM().
         path_to_output (str): Path to save the blinded sacc file. Defaults to None.
@@ -68,7 +71,8 @@ def main(path_to_sacc: Path_fr,
     smoke.calculate_concealing_factor(factor_type=shift_type)
     # applies the blinding factor to the sacc file
     smoke.apply_concealing_to_likelihood_datavec()
-    print(f">> User {getpass.getuser()} used Smokescreen on {path_to_sacc} ... it is super effective!")
+    print(f">> User {getpass.getuser()}",
+          "used Smokescreen on {path_to_sacc} ... it is super effective!")
     # get root name of the input file
     root_name = os.path.splitext(os.path.basename(path_to_sacc))[0]
     # saves the blinded sacc file
@@ -79,6 +83,7 @@ def main(path_to_sacc: Path_fr,
         path_to_output = os.path.dirname(path_to_sacc)
         smoke.save_concealed_datavector(path_to_output, root_name)
     print(f"\nConcealed sacc file saved as {path_to_output}/{root_name}_concealed_data_vector.fits")
+
 
 if __name__ == "__main__":
     CLI(main, as_positional=False)
