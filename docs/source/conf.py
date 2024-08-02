@@ -7,14 +7,14 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'Smokescreen'
-copyright = '2024, Arthur Loureiro'
-author = 'Arthur Loureiro'
+copyright = 'LSST Dark Energy Science Collaboration '
+author = 'LSST DESC (Maintainer: Arthur Loureiro <arthur.loureiro@fysik.su.se>)'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = [
-    "sphinx_rtd_theme",
+    "sphinx_wagtail_theme",
     "sphinx.ext.autodoc",
     'sphinx.ext.napoleon',
     'sphinxcontrib.autoprogram',
@@ -24,28 +24,28 @@ extensions = [
 templates_path = ['_templates']
 exclude_patterns = []
 
-
-
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
 # Set the theme
-html_theme = "sphinx_rtd_theme"
+html_theme = "sphinx_wagtail_theme"
 
 # Optionally, you can customize the theme further with theme-specific options
-html_theme_options = {
-    'logo_only': False,
-    'display_version': True,
-    'prev_next_buttons_location': 'bottom',
-    'style_external_links': False,
-    'vcs_pageview_mode': '',
-    'style_nav_header_background': 'white',
-    # Toc options
-    'collapse_navigation': False,
-    'sticky_navigation': True,
-    'navigation_depth': 2,
-    'includehidden': True,
-    'titles_only': False,
-}
+# These are options specifically for the Wagtail Theme.
+# more info here: https://sphinx-wagtail-theme.readthedocs.io/en/latest/index.html
+html_theme_options = dict(
+    project_name = "DESC Smokescreen",
+    logo = "logo.png",
+    logo_alt = "DESC",
+    logo_height = 59,
+    logo_url = "index.html",
+    logo_width = 45,
+    #header_links = "Top 1|http://example.com/one, Top 2|http://example.com/two",
+    footer_links = ",".join([
+        "DESC LSST|https://lsstdesc.org/",
+        "Vera C. Rubin Observatory|https://rubinobservatory.org/",
+        "Legal|http://example.com/dev/null",
+    ]),
+)
 
 html_static_path = ['_static']
