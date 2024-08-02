@@ -31,6 +31,15 @@ dependencies = [
 keywords = ["desc", "python", "blinding", "firecrown", "cosmology"]
 dynamic = ["version"]
 
+[project.optional-dependencies]
+docs = [
+    "sphinx>=7.3.0",
+    "sphinxcontrib.datatemplates",
+    "sphinxcontrib-autoprogram",
+    "sphinx.ext.autodoc",
+    "sphinx-wagtail-theme",
+]
+
 [tool.setuptools.packages.find]
 where = ["src"]
 
