@@ -6,7 +6,7 @@ Utils (:mod:`smokescreen.utils`)
 
 .. currentmodule:: smokescreen.utils
 
-The :mod:`smokescreen.utils` module provides utility functions 
+The :mod:`smokescreen.utils` module provides utility functions
 for the smokescreen package.
 
 
