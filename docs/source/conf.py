@@ -44,7 +44,7 @@ html_theme_options = dict(
     footer_links = ",".join([
         "DESC LSST|https://lsstdesc.org/",
         "Vera C. Rubin Observatory|https://rubinobservatory.org/",
-        "Legal|http://example.com/dev/null",
+        "DESC Github|https://github.com/LSSTDESC",
     ]),
 )
 
