@@ -1,5 +1,5 @@
-API References
-==============
+Function References
+===================
 
 .. automodule:: smokescreen.datavector
 .. automodule:: smokescreen.param_shifts

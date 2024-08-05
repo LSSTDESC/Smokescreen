@@ -1,0 +1,88 @@
+Usage
+======
+
+Currently, only data vector concealment is implemented in Smokescreen. Posterior level concealment is under development.
+
+Data Vector Concealment (blinding)
+-----------------------------------
+
+The `Smokescreen` library provides a method for blinding data vectors. This method is based on the `Muir et al. (2021) <https://arxiv.org/abs/1911.05929>`_ data-vector blinding method.
+
+.. attention::
+   **Likelihood Requirements**
+
+   The blinding module requires the Firecrown likelihoods to be built with certain requirements. First we bust be able to build the likelihoods providing a `sacc <https://github.com/LSSTDESC/sacc/tree/master>`_ object with the measurements for the data-vector:
+
+    .. code-block:: python
+
+        def build_likelihood(build_parameters):
+            """
+            This is a generic likelihood theory model 
+            for a generic data vector.
+            """
+            sacc_data = build_parameters['sacc_data']
+
+    This is simular to what is currently done in `TXPipe <https://github.com/LSSTDESC/TXPipe/blob/df0dcc8c1e974576dd1942624ab5ff7bd0fbbaa0/txpipe/utils/theory_model.py#L19>`_.
+
+    The likelihood module also must have a method ``.compute_theory_vector(ModellingTools)`` which calls for the calculation of the theory vector inside the likelihood object. 
+
+    The likelihood can be provided either as a path to the python file containing the ``build_likelihood`` function or as a python module. In the latter case, the module must be imported.
+
+TL;DR: Check the `Smokescreen notebooks folder <https://github.com/LSSTDESC/Smokescreen/tree/main/notebooks>`_ for a couple of examples.
+
+From the commandline
+~~~~~~~~~~~~~~~~~~~~
+The blinding module can be used to blind the data-vector measurements. The module can be used as follows:
+
+.. code-block:: bash
+
+   python -m smokescreen --config configuration_file.yaml
+
+You can find an example of a configuration file in `examples/cosmic_shear/blind_cosmic_shear_example.yaml`. Or you can use the following command to create a template configuration file:
+
+.. code-block:: bash
+
+   python -m smokescreen --print_config > template_config.yaml
+
+Note that the `reference_cosmology` is optional. If not provided, the CCL `VanillaLCDM` reference cosmology will be the one used to compute the data vector.
+
+From a notebook/your code
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The smokescreen module can be used to blind the data-vector measurements. The module can be used as follows:
+
+.. code-block:: python
+
+   # import the module
+   import pyccl as ccl
+   from smokescreen import ConcealDataVector
+   # import the likelihood that contains the model and data vector
+   [...]
+   import my_likelihood
+
+   # create the cosmology ccl object
+   cosmo = ccl.Cosmology(Omega_c=0.27, 
+                         Omega_b=0.045, 
+                         h=0.67, 
+                         sigma8=0.8, 
+                         n_s=0.96, 
+                         transfer_function='bbks')
+   # load a sacc object with the data vector [FIXME: this is a placeholder, the sacc object should be loaded from the likelihood]
+   sacc_data = sacc.Sacc.load_fits('path/to/data_vector.sacc')
+   # create a dictionary of the necessary firecrown nuisance parameters
+   syst_dict = {
+               "ia_a_1": 1.0,
+               "ia_a_2": 0.5,
+               "ia_a_d": 0.5,
+               "lens0_bias": 2.0,
+               "lens0_b_2": 1.0,
+               "lens0_b_s": 1.0,
+               "lens0_mag_bias": 1.0,
+               "src0_delta_z": 0.000,
+               "lens0_delta_z": 0.000,}
+   # create the smokescreen object
+   smoke = ConcealDataVector(cosmo, syst_dict, sacc_data, my_likelihood, 
+                             {'Omega_c': (0.22, 0.32), 'sigma8': (0.7, 0.9)})
+   # conceals (blinds) the data vector
+   smoke.calculate_concealing_factor()
+   concealed_dv = smoke.apply_concealing_to_likelihood_datavec()

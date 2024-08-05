@@ -19,9 +19,10 @@ Smokescreen's  data-vector blinding methodis based on the `Muir et al. (2021) <h
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: Contents
 
    installation
+   usage
    reference
 
 
