@@ -44,9 +44,11 @@ jobs:
         conda activate desc_smokescreen
         cd docs
         python -m sphinx -b html source build
-    - name: Upload documentation to Read the Docs
-      env:
-        READTHEDOCS_PROJECT: ${{ secrets.READTHEDOCS_PROJECT }}
-        READTHEDOCS_TOKEN: ${{ secrets.READTHEDOCS_TOKEN }}
-      run: |
-        curl -X POST -d "project=${{ env.READTHEDOCS_PROJECT }}" -d "token=${{ env.READTHEDOCS_TOKEN }}" https://readthedocs.org/api/v2/webhook/${{ env.READTHEDOCS_PROJECT }}/
+    - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main/docs' }}
+        with:
+          publish_branch: gh-pages
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: build/
+          force_orphan: true

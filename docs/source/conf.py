@@ -37,7 +37,6 @@ html_logo = 'bkp_logo.png'
 # more info here: https://sphinx-wagtail-theme.readthedocs.io/en/latest/index.html
 html_theme_options = {
     'display_version': True,
-    'prev_next_buttons_location': 'bottom',
     'titles_only': False,
     'sticky_navigation': True,
     'navigation_depth': 4,
