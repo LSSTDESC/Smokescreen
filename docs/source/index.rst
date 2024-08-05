@@ -7,7 +7,7 @@
 *Smokescreen* -- DESC Library for concealing results
 *****************************************************
 
-This repostory (under development) contains the modules for data concealment (blinding) at the following levels of the analysis:
+`Smokescreen <https://github.com/LSSTDESC/Smokescreen>`_ (currently under development) contains the modules for data concealment (blinding) at the following levels of the analysis:
 * Data-vector measurements
 * Posterior distribution [not yet developed]
 * (TBC) Catalogues

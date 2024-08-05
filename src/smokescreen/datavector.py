@@ -1,3 +1,23 @@
+# author: Arthur Loureiro <arthur.loureiro@fysik.su.se>
+# license: BSD 3-Clause
+'''
+Conceal Data Vector (:mod:`smokescreen.datavector`)
+====================================================
+
+.. currentmodule:: smokescreen.datavector
+
+The :mod:`smokescreen.datavector` module provides functionalities
+to conceal data vectors in the context of cosmological analysis.
+
+
+Conceal Data Vector Class
+-------------------------
+
+.. autoclass:: ConcealDataVector
+   :members:
+   :undoc-members:
+   :inherited-members:
+'''
 import os
 import types
 import inspect
@@ -17,39 +37,43 @@ from smokescreen.utils import load_module_from_path
 class ConcealDataVector():
     """
     Class for calling a smokescreen on the measured data-vector.
+
+    FIXME: Only cosmological parameters are supported for now for the shifts
+
+    Parameters
+    ----------
+    cosmo : pyccl.Cosmology
+        Cosmology object from CCL with a fiducial cosmology.
+    systm_dict : dict
+        Dictionary of systematics names and corresponding fiducial values.
+    likelihood : str or module
+        path to the likelihood or a module containing the likelihood
+        must contain both `build_likelihood` and `compute_theory_vector` methods
+    shifts_dict : dict
+        Dictionary of parameter names and corresponding shift widths. If the
+        shifts are single values, the dictionary values should be the shift
+        widths. If the shifts are tuples of values, the dictionary values
+        should be the (lower, upper) bounds of the shift widths.
+    sacc_data : sacc.sacc.Sacc
+        Data-vector to be concealed (blinded).
+        If None, the data-vector will be loaded from the likelihood.
+    seed : int or str
+        Random seed.
+
+    Keyword Arguments
+    -----------------
+    shift_type : str
+        Type of shift to be applied. Default is "flat".
+        ``FIXME: Only flat shifts are implemented for now.``
+    debug : bool
+        If True, prints debug information. Default is False.
+
+
     """
     def __init__(self, cosmo, systm_dict, likelihood, shifts_dict, sacc_data,
                  seed="2112", **kwargs):
         """
-        Parameters
-        ----------
-        cosmo : pyccl.Cosmology
-            Cosmology object from CCL with a fiducial cosmology.
-        systm_dict : dict
-            Dictionary of systematics names and corresponding fiducial values.
-        likelihood : str or module
-            path to the likelihood or a module containing the likelihood
-            must contain both `build_likelihood` and `compute_theory_vector` methods
-        shifts_dict : dict
-            Dictionary of parameter names and corresponding shift widths. If the
-            shifts are single values, the dictionary values should be the shift
-            widths. If the shifts are tuples of values, the dictionary values
-            should be the (lower, upper) bounds of the shift widths.
-        sacc_data : sacc.sacc.Sacc
-            Data-vector to be concealed (blinded).
-            If None, the data-vector will be loaded from the likelihood.
-        seed : int or str
-            Random seed.
-
-        kwargs
-        ------
-        shift_type : str
-            Type of shift to be applied. Default is "flat".
-            FIXME: Only flat shifts are implemented for now.
-        debug : bool
-            If True, prints debug information. Default is False.
-
-        # FIXME: Only cosmological parameters are supported for now for the shifts
+        unit
         """
         # save the cosmology
         self.cosmo = cosmo
@@ -211,19 +235,29 @@ class ConcealDataVector():
         return concealed_cosmo
 
     def calculate_concealing_factor(self, factor_type="add"):
-        """
+        r"""
         Calculates the concealing (blinding) factor for the data-vector,
             according to Muir et al. 2019:
 
-        type='add':
-            $f^add = d(\theta_blind) - d(\theta_fid)$
-
-        type='mult':
-            $f^mult = d(\theta_blind) / d(\theta_fid)$
         Parameters
         ----------
-        type : str
-            Type of concealing (blinding) factor to be calculated. Default is "add".
+        factor_type : str
+            Type of concealing (blinding) factor to be calculated. Default is ``add``.
+
+        Returns
+        -------
+        .__concealing_factor : np.ndarray
+            Concealing factor.
+
+        Notes
+        -----
+        type="add":
+            .. math::
+                f^{\rm add} = d(\theta_{\rm blind}) - d(\theta_{\rm fid})
+
+        type="mult":
+            .. math::
+                f^{\rm mult} = d(\theta_{\rm blind}) / d(\theta_{\rm fid})
         """
         self.factor_type = factor_type
         # update the tools:
@@ -275,6 +309,9 @@ class ConcealDataVector():
         """
         Saves the concealed (blinded) data-vector to a file.
 
+        Saves the blinded data-vector to a file with the name:
+        ``{path_to_save}/{file_root}_blinded_data_vector.fits``
+
         Parameters
         ----------
         path_to_save : str
@@ -284,8 +321,7 @@ class ConcealDataVector():
         return_sacc : bool
             If True, returns the sacc object with the blinded data-vector.
 
-        Saves the blinded data-vector to a file with the name:
-        {path_to_save}/{file_root}_blinded_data_vector.fits
+
         """
         idx = self.likelihood.get_sacc_indices()
         concealed_sacc = save_to_sacc(self.sacc_data,
