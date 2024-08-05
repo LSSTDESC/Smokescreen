@@ -1,4 +1,4 @@
-Some reference
+API References
 ==============
 
 .. automodule:: smokescreen.param_shifts

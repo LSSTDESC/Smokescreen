@@ -1,126 +1,109 @@
 <!DOCTYPE html>
-<html class="no-js" lang="en">
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-    <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    
-        <title>Some reference &mdash; Smokescreen  documentation</title>
-    
-    <link rel="stylesheet" type="text/css" href="_static/dist/fontawesome.css" />
-      <link rel="stylesheet" type="text/css" href="_static/dist/theme.css?v=ea6a6c20" />
-            <link rel="index" title="Index" href="genindex.html" />
-            <link rel="search" title="Search" href="search.html" />
-            <link rel="top" title="Smokescreen  documentation" href="#" />
-            <link rel="prev" title="Welcome to Smokescreen’s documentation!" href="index.html" />
-    </head>
-<body>
-    <script type="text/javascript" src="_static/dist/blocking.js"></script>
-    <header class="container-fluid bg-primary">
-        <a class="btn btn-sm btn-light skip-to-content-link" href="#main">Skip to content</a>
-        <div class="container-fluid">
-            <div class="navbar navbar-expand-lg navbar-dark font-weight-bold">
-                    <a href="index.html"
-                        title="DESC"
-                        class="logo navbar-brand"
-                    >
-                        <img src="_static/logo.png" width="45" height="59" alt="DESC"
-                            class="logo-img"
-                        />
-                        DESC Smokescreen
-                    </a>
-                
-                
-                <button class="navbar-toggler btn btn-primary d-lg-none" type="button" data-toggle="collapse" data-target="#collapseSidebar" aria-expanded="false" aria-controls="collapseExample">
-                    <span class="navbar-toggler-icon"></span>
-                    <span class="sr-only">menu</span>
-                </button>
-            </div>
-        </div>
-    </header>
-    <div class="container-fluid">
-        <div class="row">
-            <aside class="col-12 col-lg-3 sidebar-container">
-                <div id="collapseSidebar" class="collapse sticky-top d-lg-block pt-5 pr-lg-4">
-<div id="searchbox" class="searchbox mb-6 px-1" role="search">
-    <form id="search-form" action="search.html" autocomplete="off" method="get" role="search">
-        <div class="input-group">
-            <div class="input-group-prepend">
-                <div class="input-group-text border-right-0 bg-white py-3 pl-3 pr-2"><span class="fas fa-search"></span></div>
-            </div>
-            <input class="form-control py-3 pr-3 pl-1 h-100 border-left-0" type="search" name="q" placeholder="Search documentation" aria-label="Search documentation" id="searchinput" />
-        </div>
-        <input type="hidden" name="check_keywords" value="yes" />
-        <input type="hidden" name="area" value="default" />
-    </form>
-</div><div class="site-toc">
-    <nav class="toc mt-3" aria-label="Main menu">
-        <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>API References &mdash; Smokescreen  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Installation" href="installation.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Smokescreen
+              <img src="_static/bkp_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Some reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API References</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#parameter-shifts-smokescreen-param-shifts">Parameter Shifts (<code class="xref py py-mod docutils literal notranslate"><span class="pre">smokescreen.param_shifts</span></code>)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#parameter-shifts">Parameter Shifts</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#smokescreen.param_shifts.draw_flat_param_shifts"><code class="docutils literal notranslate"><span class="pre">draw_flat_param_shifts()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#smokescreen.param_shifts.draw_flat_or_deterministic_param_shifts"><code class="docutils literal notranslate"><span class="pre">draw_flat_or_deterministic_param_shifts()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#utils-smokescreen-utils">Utils (<code class="xref py py-mod docutils literal notranslate"><span class="pre">smokescreen.utils</span></code>)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#smokescreen-utils">Smokescreen Utils</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#smokescreen.utils.load_cosmology_from_partial_dict"><code class="docutils literal notranslate"><span class="pre">load_cosmology_from_partial_dict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#smokescreen.utils.load_module_from_path"><code class="docutils literal notranslate"><span class="pre">load_module_from_path()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#smokescreen.utils.string_to_seed"><code class="docutils literal notranslate"><span class="pre">string_to_seed()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 
+        </div>
+      </div>
     </nav>
-    <template data-toggle-item-template>
-        <button class="btn btn-sm btn-link toctree-expand" type="button">
-            <span class="sr-only">Toggle menu contents</span>
-        </button>
-    </template>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Smokescreen</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">API References</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/reference.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
 </div>
-                    <div class="d-lg-none border-bottom">
-                        
-                    </div>
-                </div>
-            </aside>
-            <div class="col-12 col-lg-9 pt-5">
-                <header class="row align-items-baseline">
-                    <div class="col">
-                        <nav aria-label="breadcrumb">
-    <ol class="breadcrumb m-0 p-0 bg-transparent">
-        <li class="breadcrumb-item"><a href="index.html">Docs</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Some reference</li>
-    </ol>
-</nav>
-                    </div>
-                    <div class="col-sm-12 col-lg-auto mt-3 mt-lg-3">
-                        <noscript>
-                            <p>JavaScript is required to toggle light/dark mode..</p>
-                        </noscript>
-                        <button id="wagtail-theme" class="btn btn-sm btn-light text-decoration-none" type="button">
-                            <span class="dark-only"><i class="fas fa-sun"></i> Light mode</span>
-                            <span class="light-only"><i class="fas fa-moon"></i> Dark mode</span>
-                        </button>
-    <a class="btn btn-sm btn-light text-decoration-none" href="https://github.com/wagtail/sphinx_wagtail_theme/blob/main/docs/reference.rst" rel="nofollow">
-        <span class="btn-icon"><span class="fab fa-github"></span></span>
-        <span class="btn-text">Edit on GitHub</span>
-    </a>
-    <a class="btn btn-sm btn-light text-decoration-none" href="_sources/reference.rst.txt" rel="nofollow">
-        <span class="btn-icon"><span class="fas fa-code"></span></span>
-        <span class="btn-text">View source</span>
-    </a>
-                        
-                    </div>
-                </header>
-                <div class="row" >
-                    <div class="col-12">
-                        <hr class="w-100 my-4">
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-12 col-lg-9 order-last order-lg-first rst-content">
-                        <main role="main" id="main">
-    <section id="module-smokescreen.param_shifts">
-<span id="some-reference"></span><h1>Some reference<a class="headerlink" href="#module-smokescreen.param_shifts" title="Link to this heading">¶</a></h1>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-smokescreen.param_shifts">
+<span id="api-references"></span><h1>API References<a class="headerlink" href="#module-smokescreen.param_shifts" title="Link to this heading"></a></h1>
 <section id="parameter-shifts-smokescreen-param-shifts">
-<h2>Parameter Shifts (<a class="reference internal" href="#module-smokescreen.param_shifts" title="smokescreen.param_shifts"><code class="xref py py-mod docutils literal notranslate"><span class="pre">smokescreen.param_shifts</span></code></a>)<a class="headerlink" href="#parameter-shifts-smokescreen-param-shifts" title="Link to this heading">¶</a></h2>
+<h2>Parameter Shifts (<a class="reference internal" href="#module-smokescreen.param_shifts" title="smokescreen.param_shifts"><code class="xref py py-mod docutils literal notranslate"><span class="pre">smokescreen.param_shifts</span></code></a>)<a class="headerlink" href="#parameter-shifts-smokescreen-param-shifts" title="Link to this heading"></a></h2>
 <p>The <a class="reference internal" href="#module-smokescreen.param_shifts" title="smokescreen.param_shifts"><code class="xref py py-mod docutils literal notranslate"><span class="pre">smokescreen.param_shifts</span></code></a> module provides modules
 to perform shifts in the cosmological parameters.</p>
 <section id="parameter-shifts">
-<h3>Parameter Shifts<a class="headerlink" href="#parameter-shifts" title="Link to this heading">¶</a></h3>
+<h3>Parameter Shifts<a class="headerlink" href="#parameter-shifts" title="Link to this heading"></a></h3>
 <dl class="py function">
 <dt class="sig sig-object py" id="smokescreen.param_shifts.draw_flat_param_shifts">
-<span class="sig-prename descclassname"><span class="pre">smokescreen.param_shifts.</span></span><span class="sig-name descname"><span class="pre">draw_flat_param_shifts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shift_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smokescreen.param_shifts.draw_flat_param_shifts" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">smokescreen.param_shifts.</span></span><span class="sig-name descname"><span class="pre">draw_flat_param_shifts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shift_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smokescreen.param_shifts.draw_flat_param_shifts" title="Link to this definition"></a></dt>
 <dd><p>Draw flat parameter shifts from a dictionary of parameter names and
 corresponding shift widths.</p>
 <dl class="field-list simple">
@@ -144,7 +127,7 @@ should be the (lower, upper) bounds of the shift widths.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="smokescreen.param_shifts.draw_flat_or_deterministic_param_shifts">
-<span class="sig-prename descclassname"><span class="pre">smokescreen.param_shifts.</span></span><span class="sig-name descname"><span class="pre">draw_flat_or_deterministic_param_shifts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cosmo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shifts_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smokescreen.param_shifts.draw_flat_or_deterministic_param_shifts" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">smokescreen.param_shifts.</span></span><span class="sig-name descname"><span class="pre">draw_flat_or_deterministic_param_shifts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cosmo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shifts_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smokescreen.param_shifts.draw_flat_or_deterministic_param_shifts" title="Link to this definition"></a></dt>
 <dd><p>Draw flat or deterministic parameter shifts from a dictionary of parameter
 names and corresponding shift widths.</p>
 <dl class="field-list simple">
@@ -173,14 +156,14 @@ parameter shifts.</p>
 </section>
 </section>
 <section id="utils-smokescreen-utils">
-<span id="module-smokescreen.utils"></span><h2>Utils (<a class="reference internal" href="#module-smokescreen.utils" title="smokescreen.utils"><code class="xref py py-mod docutils literal notranslate"><span class="pre">smokescreen.utils</span></code></a>)<a class="headerlink" href="#utils-smokescreen-utils" title="Link to this heading">¶</a></h2>
+<span id="module-smokescreen.utils"></span><h2>Utils (<a class="reference internal" href="#module-smokescreen.utils" title="smokescreen.utils"><code class="xref py py-mod docutils literal notranslate"><span class="pre">smokescreen.utils</span></code></a>)<a class="headerlink" href="#utils-smokescreen-utils" title="Link to this heading"></a></h2>
 <p>The <a class="reference internal" href="#module-smokescreen.utils" title="smokescreen.utils"><code class="xref py py-mod docutils literal notranslate"><span class="pre">smokescreen.utils</span></code></a> module provides utility functions
 for the smokescreen package.</p>
 <section id="smokescreen-utils">
-<h3>Smokescreen Utils<a class="headerlink" href="#smokescreen-utils" title="Link to this heading">¶</a></h3>
+<h3>Smokescreen Utils<a class="headerlink" href="#smokescreen-utils" title="Link to this heading"></a></h3>
 <dl class="py function">
 <dt class="sig sig-object py" id="smokescreen.utils.load_cosmology_from_partial_dict">
-<span class="sig-prename descclassname"><span class="pre">smokescreen.utils.</span></span><span class="sig-name descname"><span class="pre">load_cosmology_from_partial_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cosmo_dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smokescreen.utils.load_cosmology_from_partial_dict" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">smokescreen.utils.</span></span><span class="sig-name descname"><span class="pre">load_cosmology_from_partial_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cosmo_dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smokescreen.utils.load_cosmology_from_partial_dict" title="Link to this definition"></a></dt>
 <dd><p>Given a partial dictionary with cosmological parameters, return a Cosmology
 object setting the unspecified parameters to their default values.</p>
 <dl class="field-list simple">
@@ -198,7 +181,7 @@ object setting the unspecified parameters to their default values.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="smokescreen.utils.load_module_from_path">
-<span class="sig-prename descclassname"><span class="pre">smokescreen.utils.</span></span><span class="sig-name descname"><span class="pre">load_module_from_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smokescreen.utils.load_module_from_path" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">smokescreen.utils.</span></span><span class="sig-name descname"><span class="pre">load_module_from_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smokescreen.utils.load_module_from_path" title="Link to this definition"></a></dt>
 <dd><p>Load a module from a given path.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -215,7 +198,7 @@ object setting the unspecified parameters to their default values.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="smokescreen.utils.string_to_seed">
-<span class="sig-prename descclassname"><span class="pre">smokescreen.utils.</span></span><span class="sig-name descname"><span class="pre">string_to_seed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seedstring</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smokescreen.utils.string_to_seed" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">smokescreen.utils.</span></span><span class="sig-name descname"><span class="pre">string_to_seed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seedstring</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smokescreen.utils.string_to_seed" title="Link to this definition"></a></dt>
 <dd><p>Convert a string to a random seed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -234,94 +217,34 @@ object setting the unspecified parameters to their default values.</p>
 </section>
 </section>
 
-</main>
-                        <nav aria-label="Page navigation" class="py-4 my-5 clearfix font-weight-bold border-top">
-    <a class="float-left" href="index.html" title="Previous">
-        <span aria-hidden="true">←&nbsp;</span>Welcome to Smokescreen’s documentation!
-    </a>
-</nav>
-                    </div>
-                    
-                    <nav class="col-12 col-lg-3 pb-4">
-                        <div class="sticky-top toc page-toc" aria-labelledby="page-toc-heading">
-                            <p class="font-weight-bold" id="page-toc-heading">Page contents</p>
-                            <ul>
-<li><a class="reference internal" href="#">Some reference</a><ul>
-<li><a class="reference internal" href="#parameter-shifts-smokescreen-param-shifts">Parameter Shifts (<code class="xref py py-mod docutils literal notranslate"><span class="pre">smokescreen.param_shifts</span></code>)</a><ul>
-<li><a class="reference internal" href="#parameter-shifts">Parameter Shifts</a><ul>
-<li><a class="reference internal" href="#smokescreen.param_shifts.draw_flat_param_shifts"><code class="docutils literal notranslate"><span class="pre">draw_flat_param_shifts()</span></code></a></li>
-<li><a class="reference internal" href="#smokescreen.param_shifts.draw_flat_or_deterministic_param_shifts"><code class="docutils literal notranslate"><span class="pre">draw_flat_or_deterministic_param_shifts()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a class="reference internal" href="#utils-smokescreen-utils">Utils (<code class="xref py py-mod docutils literal notranslate"><span class="pre">smokescreen.utils</span></code>)</a><ul>
-<li><a class="reference internal" href="#smokescreen-utils">Smokescreen Utils</a><ul>
-<li><a class="reference internal" href="#smokescreen.utils.load_cosmology_from_partial_dict"><code class="docutils literal notranslate"><span class="pre">load_cosmology_from_partial_dict()</span></code></a></li>
-<li><a class="reference internal" href="#smokescreen.utils.load_module_from_path"><code class="docutils literal notranslate"><span class="pre">load_module_from_path()</span></code></a></li>
-<li><a class="reference internal" href="#smokescreen.utils.string_to_seed"><code class="docutils literal notranslate"><span class="pre">string_to_seed()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
 
-                        </div>
-                    </nav>
-                    
-                </div>
-            </div>
-        </div>
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-    <footer class="container-fluid bg-primary text-light">
-        <div class="container">
-            <div class="row">
-        <div class="col p-4">
-            
-                <nav aria-label="Footer">
-                    <ul class="nav justify-content-center mb-2">
-                        
-                            
-                            
-                            <li class="nav-item"><a class="nav-link text-light"  href="https://lsstdesc.org/">DESC LSST</a></li>
-                        
-                            
-                            
-                            <li class="nav-item"><a class="nav-link text-light"  href="https://rubinobservatory.org/">Vera C. Rubin Observatory</a></li>
-                        
-                            
-                            
-                            <li class="nav-item"><a class="nav-link text-light"  href="https://github.com/LSSTDESC">DESC Github</a></li>
-                        
-                    </ul>
-                </nav>
-            
-            <div class="text-center">
-                <p style="display: none">
-                    <a class="text-light" href="https://github.com/wagtail/sphinx_wagtail_theme" rel="nofollow" target="_blank">
-                        Wagtail Sphinx Theme 6.3.0
-                    </a>
-                </p>
-            </div>
-            <div class="text-center">
-                    &copy; Copyright LSST Dark Energy Science Collaboration 
-            </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright LSST Dark Energy Science Collaboration .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
         </div>
-    </div>
-        </div>
-    </footer>
-        <script src="_static/documentation_options.js?v=5929fcd5"></script>
-        <script src="_static/doctools.js?v=9a2dae69"></script>
-        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
-        <script type="text/javascript" src="_static/dist/theme.js"></script>
-        <script type="text/javascript" src="_static/dist/vendor.js"></script>
-        <script type="text/javascript" src="_static/searchtools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
-        <script type="text/javascript">
-            document.addEventListener('DOMContentLoaded', function() { Search.loadIndex("searchindex.js"); });
-        </script>
-        <script type="text/javascript" id="searchindexloader"></script>
-    </body>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
 </html>
