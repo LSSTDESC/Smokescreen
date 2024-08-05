@@ -43,4 +43,10 @@ html_theme_options = {
     'navigation_depth': 4,
 }
 
+html_css_files = [
+    'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css',
+]
 html_static_path = ['_static']
+html_js_files = [
+    'custom.js',
+]

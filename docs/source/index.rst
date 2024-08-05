@@ -3,9 +3,9 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-*****************************************************
-*Smokescreen* -- DESC Library for concealing results
-*****************************************************
+********************************************************************
+**Smokescreen** -- DESC Library for concealing cosmological results
+********************************************************************
 
 `Smokescreen <https://github.com/LSSTDESC/Smokescreen>`_ (currently under development) contains the modules for data concealment (blinding) at the following levels of the analysis:
 * Data-vector measurements
