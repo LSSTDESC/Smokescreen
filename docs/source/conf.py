@@ -31,7 +31,7 @@ exclude_patterns = []
 
 # Set the theme
 html_theme = 'sphinx_rtd_theme'
-html_logo = 'bkp_logo.png'
+html_logo = '_static/bkp_logo.png'
 # Optionally, you can customize the theme further with theme-specific options
 # These are options specifically for the Wagtail Theme.
 # more info here: https://sphinx-wagtail-theme.readthedocs.io/en/latest/index.html
