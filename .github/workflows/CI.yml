@@ -17,7 +17,7 @@ on:
 
 jobs:
   # Our pytest job.
-  blinding-pytest:
+  smokescreen-pytest:
     # Our strategy lists the OS and Python versions we want to test on.
     strategy:
       # Don't quit all jobs if only one job fails.

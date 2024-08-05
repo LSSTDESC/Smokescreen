@@ -1,0 +1,54 @@
+name: Documentation
+on:
+  push:
+    branches:
+      - main
+      - docs
+  pull_request:
+    branches:
+      - main
+      - docs
+jobs:
+  build-docs:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.12'
+    - name: Install Miniconda
+      uses: conda-incubator/setup-miniconda@v2
+      with:
+        miniconda-version: "latest"
+        python-version: '3.12'
+        channels: conda-forge
+        channel-priority: true
+        auto-update-conda: true
+        auto-activate-base: true
+    - name: Create and activate conda environment
+      shell: bash -l {0}
+      run: |
+        conda env create -f environment.yml
+        conda activate desc_smokescreen
+    - name: Install package with docs extra
+      shell: bash -l {0}
+      run: |
+        conda activate desc_smokescreen
+        python -m pip install --upgrade pip
+        python -m pip install .[docs]
+    - name: Build Sphinx documentation
+      shell: bash -l {0}
+      run: |
+        conda activate desc_smokescreen
+        cd docs
+        python -m sphinx -b html source build
+    - name: Deploy
+      uses: peaceiris/actions-gh-pages@v3
+      if: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/docs') }}
+      with:
+        publish_branch: gh-pages
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: docs/build/
+        force_orphan: true

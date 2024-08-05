@@ -1,3 +1,22 @@
+# author: Arthur Loureiro <arthur.loureiro@fysik.su.se>
+# license: BSD 3-Clause
+'''
+Utils (:mod:`smokescreen.utils`)
+===================================================
+
+.. currentmodule:: smokescreen.utils
+
+The :mod:`smokescreen.utils` module provides utility functions
+for the smokescreen package.
+
+
+Smokescreen Utils
+-----------------
+
+.. autofunction:: load_cosmology_from_partial_dict
+.. autofunction:: load_module_from_path
+.. autofunction:: string_to_seed
+'''
 import hashlib
 import importlib.util
 import pyccl as ccl
@@ -7,6 +26,16 @@ def load_cosmology_from_partial_dict(cosmo_dict):
     """
     Given a partial dictionary with cosmological parameters, return a Cosmology
     object setting the unspecified parameters to their default values.
+
+    Parameters
+    ----------
+    cosmo_dict : dict
+        Dictionary with the cosmological parameters.
+
+    Returns
+    -------
+    Cosmology
+        Cosmology object with the specified parameters.
     """
     # sets the default values for the cosmological parameters
     cosmo_dict_default = ccl.CosmologyVanillaLCDM().to_dict()

@@ -2,3 +2,4 @@
 max-line-length = 100
 per-file-ignores =
     __main__.py: W291, W293
+    conf.py: E303
