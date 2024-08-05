@@ -1,0 +1,6 @@
+sphinx
+numpy
+sphinxcontrib.datatemplates
+sphinxcontrib-autoprogram
+sphinx_rtd_theme
+scipy
