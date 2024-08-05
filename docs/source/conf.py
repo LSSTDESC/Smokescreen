@@ -16,7 +16,7 @@ author = 'LSST DESC (Maintainer: Arthur Loureiro <arthur.loureiro@fysik.su.se>)'
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = [
-    "sphinx_wagtail_theme",
+    "sphinx_rtd_theme",
     "sphinx.ext.autodoc",
     'sphinx.ext.napoleon',
     'sphinxcontrib.autoprogram',
