@@ -35,11 +35,13 @@ jobs:
     - name: Install package with docs extra
       shell: bash -l {0}
       run: |
+        conda activate desc_smokescreen
         python -m pip install --upgrade pip
         python -m pip install .[docs]
     - name: Build Sphinx documentation
       shell: bash -l {0}
       run: |
+        conda activate desc_smokescreen
         cd docs
         python -m sphinx -b html source build
     - name: Upload documentation to Read the Docs
