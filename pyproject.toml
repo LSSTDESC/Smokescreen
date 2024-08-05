@@ -36,7 +36,6 @@ docs = [
     "sphinx>=7.3.0",
     "sphinxcontrib.datatemplates",
     "sphinxcontrib-autoprogram",
-    "sphinx.ext.autodoc",
     "sphinx_rtd_theme",
 ]
 
