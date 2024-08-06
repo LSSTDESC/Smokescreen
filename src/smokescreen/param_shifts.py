@@ -62,12 +62,10 @@ def draw_flat_or_deterministic_param_shifts(cosmo, shifts_dict, seed):
     cosmo : pyccl.Cosmology
         Cosmology object.
     shift_dict : dict
-        Dictionary of parameter names and corresponding shift widths. If the
+        Dictionary of parameter names and corresponding shift. If the
         shifts are single values, it does a deterministic shift: PARAM = FIDUCIAL + SHIFT
         If the shifts are tuples of values, the dictionary values
         should be the (lower, upper) bounds of the shift widths: PARAM = U(a, b)
-        If the first valuee is negative, it is assumed that the parameter
-        is to be shifted from the fiducial value: PARAM = FIDUCIAL + U(-a, b)
     seed : int or str
         Random seed.
 
@@ -94,10 +92,7 @@ def draw_flat_or_deterministic_param_shifts(cosmo, shifts_dict, seed):
         if isinstance(value, tuple):
             # check if the tuple is of length 2
             if len(value) == 2:
-                if value[0] < 0:
-                    shifts[key] = cosmo[key] + np.random.uniform(value[0], value[1])
-                else:
-                    shifts[key] = np.random.uniform(value[0], value[1])
+                shifts[key] = np.random.uniform(value[0], value[1])
             else:
                 raise ValueError(f"Tuple {value} has to be of length 2")
         else:
