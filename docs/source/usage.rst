@@ -14,7 +14,7 @@ To conceal a data-vector you need the following elements:
 
 * A dictionary of the nuisance parameters used in the likelihood (soon to be deprecated)
 
-* A Firecrown Likelihood, which takes a SACC data-vector (see more below)
+* A Firecrown Likelihood, which takes a SACC data-vector (see more below). It can be either a path to the python file containing the likelihood or the module itself.
 
 * A dictionary of cosmological parameters to be shifted in the format:
     
@@ -25,7 +25,9 @@ To conceal a data-vector you need the following elements:
         # or for a determinist shift (used for debugging):
         {'PARAM_Y': Y_VALUE, 'PARAM_Z': Z_VALUE}
 
-* A random seed
+* A SACC data-vector
+
+* A random seed as int or string
 
 .. attention::
    **Likelihood Requirements**
@@ -45,7 +47,12 @@ To conceal a data-vector you need the following elements:
 
     The likelihood module also must have a method ``.compute_theory_vector(ModellingTools)`` which calls for the calculation of the theory vector inside the likelihood object. 
 
-    The likelihood can be provided either as a path to the python file containing the ``build_likelihood`` function or as a python module. In the latter case, the module must be imported.
+.. danger::
+    **Likelihoods with hardcoded sacc files:**
+
+    If you provide a Firecrown likelihood with a hardcoded path to a sacc file as the data-vector, **Smokescreen will conceal the hardcoded sacc file and not the one you provided**. This is because the likelihood is built with the hardcoded path. Firecrown currently has not checks to avoid a hardcoded sacc file in the ``build_likelihood(...)`` function. To avoid this, please build the likelihood as described above.
+
+The likelihood can be provided either as a path to the python file containing the ``build_likelihood`` function or as a python module. In the latter case, the module must be imported.
 
 TL;DR: Check the `Smokescreen notebooks folder <https://github.com/LSSTDESC/Smokescreen/tree/main/notebooks>`_ for a couple of examples.
 
