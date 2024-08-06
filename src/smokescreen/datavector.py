@@ -21,6 +21,8 @@ Conceal Data Vector Class
 import os
 import types
 import inspect
+import datetime
+import getpass
 from copy import deepcopy
 import pyccl as ccl
 import sacc
@@ -81,6 +83,8 @@ class ConcealDataVector():
         self.systematics_dict = systm_dict
         # save the data-vector
         self.sacc_data = sacc_data
+        # seed for the random number generator
+        self.seed = seed
         # checks if the sacc_data is in the correct format:
         assert isinstance(self.sacc_data, sacc.sacc.Sacc), "sacc_data must be a sacc object"
         # load the likelihood
@@ -327,6 +331,14 @@ class ConcealDataVector():
         concealed_sacc = save_to_sacc(self.sacc_data,
                                       self.concealed_data_vector,
                                       idx)
+        # copies the metadata from the original sacc file:
+        concealed_sacc.metadata = self.sacc_data.metadata
+        # adds metadata to the sacc file:
+        concealed_sacc.metadata['concealed'] = True
+        concealed_sacc.metadata['creator'] = getpass.getuser()
+        concealed_sacc.metadata['creation'] = datetime.datetime.now().isoformat()
+        concealed_sacc.metadata['info'] = 'Concealed (blinded) data-vector, created by Smokescreen.'
+        concealed_sacc.metadata['seed_smokescreen'] = self.seed
         concealed_sacc.save_fits(f"{path_to_save}/{file_root}_concealed_data_vector.fits",
                                  overwrite=True)
         if return_sacc:
