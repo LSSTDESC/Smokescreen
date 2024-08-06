@@ -135,8 +135,8 @@ class ConcealDataVector():
             # load the likelihood from the file
             likelihood, tools = load_likelihood(likelihood, build_parameters)
 
-            # check if the likehood has a compute_vector method
-            if not hasattr(likelihood, 'compute_theory_vector'):
+            # check if the likelihood has a compute_vector method
+            if not hasattr(likelihood, 'compute_theory_vector'):  # pragma: no cover
                 raise AttributeError('Likelihood does not have a compute_vector method')
             return likelihood, tools
 
@@ -147,8 +147,8 @@ class ConcealDataVector():
             # tries to load the likelihood from the module
             likelihood, tools = load_likelihood_from_module_type(likelihood,
                                                                  build_parameters)
-            # check if the likehood has a compute_vector method
-            if not hasattr(likelihood, 'compute_theory_vector'):
+            # check if the likelihood has a compute_vector method
+            if not hasattr(likelihood, 'compute_theory_vector'):  # pragma: no cover
                 raise AttributeError('Likelihood does not have a compute_vector method')
             return likelihood, tools
         else:
