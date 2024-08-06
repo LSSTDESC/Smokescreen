@@ -1,17 +1,36 @@
 Usage
 ======
 
-Currently, only data vector concealment is implemented in Smokescreen. Posterior level concealment is under development.
+Currently, only data vector concealment is implemented in Smokescreen. Posterior-level concealment is under development.
 
 Data Vector Concealment (blinding)
 -----------------------------------
 
 The `Smokescreen` library provides a method for blinding data vectors. This method is based on the `Muir et al. (2021) <https://arxiv.org/abs/1911.05929>`_ data-vector blinding method.
 
+To conceal a data-vector you need the following elements:
+
+* A CCL cosmology object
+
+* A dictionary of the nuisance parameters used in the likelihood (soon to be deprecated)
+
+* A Firecrown Likelihood, which takes a SACC data-vector (see more below)
+
+* A dictionary of cosmological parameters to be shifted in the format:
+    
+      .. code-block:: python
+
+        # for a random uniform parameter shift:
+        {'PARAM_Y': (Y_MIN, Y_MAX), 'PARAM_Z': (Z_MIN, Z_MAX)}
+        # or for a determinist shift (used for debugging):
+        {'PARAM_Y': Y_VALUE, 'PARAM_Z': Z_VALUE}
+
+* A random seed
+
 .. attention::
    **Likelihood Requirements**
 
-   The blinding module requires the Firecrown likelihoods to be built with certain requirements. First we bust be able to build the likelihoods providing a `sacc <https://github.com/LSSTDESC/sacc/tree/master>`_ object with the measurements for the data-vector:
+   The blinding module requires the Firecrown likelihood to be built with certain requirements. First, we must be able to build the likelihood by providing a `sacc <https://github.com/LSSTDESC/sacc/tree/master>`_ object with the measurements for the data-vector:
 
     .. code-block:: python
 
@@ -30,15 +49,33 @@ The `Smokescreen` library provides a method for blinding data vectors. This meth
 
 TL;DR: Check the `Smokescreen notebooks folder <https://github.com/LSSTDESC/Smokescreen/tree/main/notebooks>`_ for a couple of examples.
 
-From the commandline
-~~~~~~~~~~~~~~~~~~~~
+From the command line
+~~~~~~~~~~~~~~~~~~~~~~
 The blinding module can be used to blind the data-vector measurements. The module can be used as follows:
 
 .. code-block:: bash
 
    python -m smokescreen --config configuration_file.yaml
 
-You can find an example of a configuration file in `examples/cosmic_shear/blind_cosmic_shear_example.yaml`. Or you can use the following command to create a template configuration file:
+You can find an example of a configuration file here: 
+
+.. code-block:: yaml
+
+    path_to_sacc: "./cosmicshear_sacc.fits"
+    likelihood_path: "./cosmicshear_likelihood.py"
+    systematics:
+        trc1_delta_z: 0.1
+        trc0_delta_z: 0.1
+    shifts_dict:
+        Omega_c: [0.20, 0.42]
+        sigma8: [0.67, 0.92]
+    seed: 2112
+    # only needed if you want a different reference cosmology
+    # than ccl.VanillaLCDM
+    reference_cosmology: 
+        sigma8: 0.85
+
+Or you can use the following command to create a template configuration file:
 
 .. code-block:: bash
 
