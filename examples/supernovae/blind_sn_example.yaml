@@ -3,8 +3,8 @@ likelihood_path: "./sn_likelihood.py"
 systematics:
   sn_ddf_sample_M: -19.3
 shifts_dict:
-  h: [-0.3, 0.3]
-  sigma8: [-0.1, 0.1]
+  h: [0.60, 0.80]
+  sigma8: [0.67, 0.95]
 seed: 2112
 # only needed if you want a different reference cosmology
 # than ccl.VanillaLCDM
