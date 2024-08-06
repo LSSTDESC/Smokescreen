@@ -336,6 +336,13 @@ def test_save_concealed_datavector(mock_getuser):
     # checks if the return is a sacc object
     assert isinstance(returned_sacc, sacc.Sacc)
 
+    returned_sacc = sck.save_concealed_datavector(temp_file_path,
+                                                  temp_file_root,
+                                                  return_sacc=False)
+
+    # Check that the return is None
+    assert returned_sacc is None
+
     # Check that the file was created
     assert os.path.exists(temp_file_name)
 
