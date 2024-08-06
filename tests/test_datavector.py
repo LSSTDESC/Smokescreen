@@ -1,6 +1,8 @@
-import pytest
+import pytest  # noqa: F401
 import types
 import os
+import datetime
+from unittest.mock import patch, MagicMock  # noqa: F401
 import numpy as np
 import sacc
 import pyccl as ccl
@@ -306,7 +308,8 @@ def test_load_likelihood():
         smokescreen._load_likelihood(invalid_likelihood, sacc_data)
 
 
-def test_save_concealed_datavector():
+@patch('src.smokescreen.datavector.getpass.getuser', return_value='test_user')
+def test_save_concealed_datavector(mock_getuser):
     # Create mock inputs
     cosmo = COSMO
     likelihood = "./examples/cosmic_shear/cosmicshear_likelihood.py"
@@ -316,7 +319,8 @@ def test_save_concealed_datavector():
     }
     shift_dict = {"Omega_c": 0.34, "sigma8": 0.85}
     sacc_data = sacc.Sacc.load_fits("./examples/cosmic_shear/cosmicshear_sacc.fits")
-    sck = ConcealDataVector(cosmo, syst_dict, likelihood, shift_dict, sacc_data)
+    sck = ConcealDataVector(cosmo, syst_dict, likelihood,
+                            shift_dict, sacc_data, seed=1234)
 
     # Calculate the concealing factor and apply it to the likelihood data vector
     sck.calculate_concealing_factor()
@@ -326,7 +330,18 @@ def test_save_concealed_datavector():
     temp_file_path = "./tests/"
     temp_file_root = "temp_sacc"
     temp_file_name = f"{temp_file_path}{temp_file_root}_concealed_data_vector.fits"
-    sck.save_concealed_datavector(temp_file_path, temp_file_root)
+    returned_sacc = sck.save_concealed_datavector(temp_file_path,
+                                                  temp_file_root,
+                                                  return_sacc=True)
+    # checks if the return is a sacc object
+    assert isinstance(returned_sacc, sacc.Sacc)
+
+    returned_sacc = sck.save_concealed_datavector(temp_file_path,
+                                                  temp_file_root,
+                                                  return_sacc=False)
+
+    # Check that the return is None
+    assert returned_sacc is None
 
     # Check that the file was created
     assert os.path.exists(temp_file_name)
@@ -335,5 +350,11 @@ def test_save_concealed_datavector():
     loaded_sacc = sacc.Sacc.load_fits(temp_file_name)
     np.testing.assert_array_equal(loaded_sacc.mean, blinded_dv)
 
+    info_str = 'Concealed (blinded) data-vector, created by Smokescreen.'
+    assert loaded_sacc.metadata['concealed'] is True
+    assert loaded_sacc.metadata['creator'] == mock_getuser.return_value
+    assert loaded_sacc.metadata['creation'][:10] == datetime.date.today().isoformat()
+    assert loaded_sacc.metadata['info'] == info_str
+    assert loaded_sacc.metadata['seed_smokescreen'] == 1234
     # Clean up the temporary file
     os.remove(temp_file_name)
