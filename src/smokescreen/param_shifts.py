@@ -88,13 +88,17 @@ def draw_flat_or_deterministic_param_shifts(cosmo, shifts_dict, seed):
             # failed_keys.append(key)
             raise ValueError(f"[{error}]Key {key} not in cosmology parameters")
     shifts = {}
-    for key, value in shifts_dict.items():
-        if isinstance(value, tuple):
-            # check if the tuple is of length 2
-            if len(value) == 2:
-                shifts[key] = np.random.uniform(value[0], value[1])
+    # we loop over the ccl dict keys to ensure params are drawn in the same order!
+    for key in cosmo.to_dict().keys():
+        if key in shifts_dict.keys():
+            if isinstance(shifts_dict[key], tuple):
+                # check if the tuple is of length 2
+                if len(shifts_dict[key]) == 2:
+                    shifts[key] = np.random.uniform(shifts_dict[key][0], shifts_dict[key][1])
+                else:
+                    raise ValueError(f"Tuple {shifts_dict[key]} has to be of length 2")
             else:
-                raise ValueError(f"Tuple {value} has to be of length 2")
+                shifts[key] = shifts_dict[key]
         else:
-            shifts[key] = value
+            pass
     return shifts
