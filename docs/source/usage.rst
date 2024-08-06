@@ -130,3 +130,10 @@ The smokescreen module can be used to blind the data-vector measurements. The mo
    # conceals (blinds) the data vector
    smoke.calculate_concealing_factor()
    concealed_dv = smoke.apply_concealing_to_likelihood_datavec()
+
+Posterior Concealment (blinding)
+---------------------------------
+
+.. warning::
+
+    **UNDER DEVELOPMENT**
