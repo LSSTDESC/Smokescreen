@@ -330,7 +330,11 @@ def test_save_concealed_datavector(mock_getuser):
     temp_file_path = "./tests/"
     temp_file_root = "temp_sacc"
     temp_file_name = f"{temp_file_path}{temp_file_root}_concealed_data_vector.fits"
-    sck.save_concealed_datavector(temp_file_path, temp_file_root)
+    returned_sacc = sck.save_concealed_datavector(temp_file_path,
+                                                  temp_file_root,
+                                                  return_sacc=True)
+    # checks if the return is a sacc object
+    assert isinstance(returned_sacc, sacc.Sacc)
 
     # Check that the file was created
     assert os.path.exists(temp_file_name)

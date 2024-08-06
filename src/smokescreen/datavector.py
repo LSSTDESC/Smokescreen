@@ -231,7 +231,7 @@ class ConcealDataVector():
         # sometimes we have this extra paramters that can cause problems:
         try:
             del concealed_cosmo_dict['extra_parameters']
-        except KeyError:
+        except KeyError:  # pragma: no cover
             pass
         for k in self.__shifts.keys():
             concealed_cosmo_dict[k] = self.__shifts[k]
