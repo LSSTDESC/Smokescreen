@@ -5,20 +5,29 @@
 [![LSST DESC Blinding Slack](https://img.shields.io/badge/join-Slack-4A154B)](https://lsstc.slack.com/archives/CT14ZF2AH)
 
 # Smokescreen: DESC Modules for data concealment (blinding)
-This repostory (under development) contains the modules for data concealment (blinding) at the following levels of the analysis:
+> :warning: Important notice :warning: : the term "blinding" is used in the context of data concealment for scientific analysis. We understand this is an outdated term and we are working to update it to a more appropriate term. If you have any suggestions, please let us know.
+This repository (under development) contains the modules for data concealment (blinding) at the following levels of the analysis:
 - Data-vector measurements
 - Posterior distribution [not yet developed]
 - (TBC) Catalogues
 
 **You can find the documentation for Smokescreen [here](https://lsstdesc.org/Smokescreen/).**
 
-> :warning: Important notice :warning: : the term "blinding" is used in the context of data concealment for scientific analysis. We understand this is an outdated term and we are working to update it to a more appropriate term. If you have any suggestions, please let us know.
+## Quick Installation
+You can install Smokescreen using conda:
+```bash
+conda install -c conda-forge lsstdesc-smokescreen
+```
 
+For developer installation or other instructions check the [documentation](https://lsstdesc.org/Smokescreen/installation.html).
 
 For questions contact @arthurmloureiro, @jessmuir, or @jablazek
 
-**Legacy Blinding**
-> Legacy Blinding scripts for 2pt data vector blinding with Cosmosis moved to a [new repository](https://github.com/LSSTDESC/legacy_blinding).
+---
+
+**Legacy 2pt Cosmosis Blinding**
+
+Legacy Blinding scripts for 2pt data vector blinding with Cosmosis moved to a [new repository](https://github.com/LSSTDESC/legacy_blinding).
 
 
 

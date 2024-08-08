@@ -2,7 +2,7 @@ name: desc_smokescreen
 channels:
   - conda-forge
 dependencies:
-    - python>=3.9
+    - python>=3.12
     - numpy
     - ipykernel
     - scipy
@@ -19,5 +19,4 @@ dependencies:
       - flake8
       - sacc
       #- git+https://github.com/LSSTDESC/firecrown.git@master
-    - cosmosis 
     - cosmosis-build-standard-library
