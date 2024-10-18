@@ -125,7 +125,7 @@ def test_load_shifts_gaussian():
     sacc_data = sacc.Sacc()
     likelihood = MockLikelihoodModule("mock_likelihood")
     systematics_dict = {"systematic1": 0.1}
-    shifts_dict = {"Omega_c": (0.1, 0.2), "Omega_b": (0.01, 0.02), "sigma8": (0.02, 0.03)}
+    shifts_dict = {"Omega_c": (0.3, 0.02), "Omega_b": (0.05, 0.002), "sigma8": (0.82, 0.02)}
 
     # Instantiate Smokescreen
     smokescreen = ConcealDataVector(cosmo, systematics_dict, likelihood,
@@ -135,9 +135,9 @@ def test_load_shifts_gaussian():
     shifts = smokescreen._load_shifts(seed="2112", shift_type="gaussian")
 
     # Check that the shifts are correct
-    assert shifts["Omega_c"] >= 0.1 and shifts["Omega_c"] <= 0.2
-    assert shifts["Omega_b"] >= 0.01 and shifts["Omega_b"] <= 0.02
-    assert shifts["sigma8"] >= 0.02 and shifts["sigma8"] <= 0.03
+    assert shifts["Omega_c"] >= 0.1 and shifts["Omega_c"] <= 0.4
+    assert shifts["Omega_b"] >= 0.01 and shifts["Omega_b"] <= 0.05
+    assert shifts["sigma8"] >= 0.5 and shifts["sigma8"] <= 1.2
 
 
 def test_debug_mode(capfd):
@@ -185,7 +185,7 @@ def test_calculate_concealing_factor_add_gaussian():
     sacc_data = sacc.Sacc()
     likelihood = MockLikelihoodModule("mock_likelihood")
     systematics_dict = {"systematic1": 0.1}
-    shifts_dict = {"Omega_c": (0.1, 0.2), "Omega_b": (0.01, 0.02), "sigma8": (0.02, 0.03)}
+    shifts_dict = {"Omega_c": (0.3, 0.02), "Omega_b": (0.05, 0.002), "sigma8": (0.82, 0.02)}
 
     # Instantiate Smokescreen
     smokescreen = ConcealDataVector(cosmo, systematics_dict, likelihood,
