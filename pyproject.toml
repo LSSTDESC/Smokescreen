@@ -26,6 +26,7 @@ dependencies = [
     "jsonargparse[signatures]>=4.0",
     "pytest",
     "pytest-cov",
+    "cryptography>=3.4.7",
 ]
 keywords = ["desc", "python", "blinding", "firecrown", "cosmology"]
 dynamic = ["version"]
