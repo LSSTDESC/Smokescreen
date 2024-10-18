@@ -10,6 +10,7 @@ import sacc
 import warnings
 from smokescreen import ConcealDataVector
 from smokescreen.utils import load_cosmology_from_partial_dict
+from smokescreen.datavector import decrypt_sacc_file
 from . import __version__
 warnings.filterwarnings("ignore")
 
@@ -37,7 +38,10 @@ def main(path_to_sacc: Path_fr,
          shift_type: str = 'add',
          seed: Union[int, str] = 2112,
          reference_cosmology: Union[CosmologyType, dict] = ccl.CosmologyVanillaLCDM(),
-         path_to_output: Path_drw = None):
+         path_to_output: Path_drw = None,
+         decrypt: bool = False,
+         encrypted_file_path: str = None,
+         encryption_key_path: str = None):
     """Main function to conceal a sacc file using a firecrown likelihood.
 
     Args:
@@ -54,12 +58,23 @@ def main(path_to_sacc: Path_fr,
             parameters you want different than the VanillaLCDM as reference cosmology.
             Defaults to ccl.CosmologyVanillaLCDM().
         path_to_output (str): Path to save the blinded sacc file. Defaults to None.
+        decrypt (bool): Flag to indicate whether to decrypt the SACC file. Defaults to False.
+        encrypted_file_path (str): Path to the encrypted SACC file. Required if decrypt is True.
+        encryption_key_path (str): Path to the encryption key file. Required if decrypt is True.
     """
     print(banner)
     if isinstance(reference_cosmology, dict):
         cosmo = load_cosmology_from_partial_dict(reference_cosmology)
     else:
         cosmo = reference_cosmology
+
+    if decrypt:
+        assert encrypted_file_path is not None, "Encrypted file path is required for decryption."
+        assert encryption_key_path is not None, "Encryption key path is required for decryption."
+        decrypted_sacc = decrypt_sacc_file(encrypted_file_path, encryption_key_path)
+        print(f"Decrypted SACC file: {decrypted_sacc}")
+        return
+
     # tests if the sacc file exists
     assert os.path.exists(path_to_sacc), f"File {path_to_sacc} does not exist."
     assert os.path.exists(likelihood_path), f"File {likelihood_path} does not exist."

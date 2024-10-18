@@ -35,6 +35,7 @@ from firecrown.utils import save_to_sacc
 from smokescreen.param_shifts import draw_flat_or_deterministic_param_shifts
 from smokescreen.utils import load_module_from_path
 
+from cryptography.fernet import Fernet
 
 class ConcealDataVector():
     """
@@ -339,9 +340,96 @@ class ConcealDataVector():
         concealed_sacc.metadata['creation'] = datetime.datetime.now().isoformat()
         concealed_sacc.metadata['info'] = 'Concealed (blinded) data-vector, created by Smokescreen.'
         concealed_sacc.metadata['seed_smokescreen'] = self.seed
-        concealed_sacc.save_fits(f"{path_to_save}/{file_root}_concealed_data_vector.fits",
-                                 overwrite=True)
+
+        # Encrypt the SACC data
+        encryption_key = self.generate_encryption_key()
+        encrypted_data = self.encrypt_data(concealed_sacc.to_fits(), encryption_key)
+
+        # Save the encrypted data and encryption key
+        encrypted_file_path = f"{path_to_save}/{file_root}_concealed_data_vector.fits"
+        encryption_key_path = f"{path_to_save}/{file_root}_encryption_key.txt"
+        with open(encrypted_file_path, "wb") as f:
+            f.write(encrypted_data)
+        with open(encryption_key_path, "wb") as f:
+            f.write(encryption_key)
+
         if return_sacc:
             return concealed_sacc
         else:
             return None
+
+    def generate_encryption_key(self):
+        """
+        Generates a random encryption key.
+
+        Returns
+        -------
+        bytes
+            Encryption key.
+        """
+        return Fernet.generate_key()
+
+    def encrypt_data(self, data, encryption_key):
+        """
+        Encrypts the data using the encryption key.
+
+        Parameters
+        ----------
+        data : bytes
+            Data to be encrypted.
+        encryption_key : bytes
+            Encryption key.
+
+        Returns
+        -------
+        bytes
+            Encrypted data.
+        """
+        fernet = Fernet(encryption_key)
+        return fernet.encrypt(data)
+
+    def decrypt_data(self, encrypted_data, encryption_key):
+        """
+        Decrypts the data using the encryption key.
+
+        Parameters
+        ----------
+        encrypted_data : bytes
+            Encrypted data.
+        encryption_key : bytes
+            Encryption key.
+
+        Returns
+        -------
+        bytes
+            Decrypted data.
+        """
+        fernet = Fernet(encryption_key)
+        return fernet.decrypt(encrypted_data)
+
+
+def decrypt_sacc_file(encrypted_file_path, encryption_key_path):
+    """
+    Decrypts the SACC file using the encryption key.
+
+    Parameters
+    ----------
+    encrypted_file_path : str
+        Path to the encrypted SACC file.
+    encryption_key_path : str
+        Path to the encryption key file.
+
+    Returns
+    -------
+    sacc.Sacc
+        Decrypted SACC object.
+    """
+    with open(encrypted_file_path, "rb") as f:
+        encrypted_data = f.read()
+    with open(encryption_key_path, "rb") as f:
+        encryption_key = f.read()
+
+    fernet = Fernet(encryption_key)
+    decrypted_data = fernet.decrypt(encrypted_data)
+
+    return sacc.Sacc.from_fits(decrypted_data)

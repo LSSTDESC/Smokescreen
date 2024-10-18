@@ -131,9 +131,27 @@ The smokescreen module can be used to blind the data-vector measurements. The mo
    smoke.calculate_concealing_factor()
    concealed_dv = smoke.apply_concealing_to_likelihood_datavec()
 
-Posterior Concealment (blinding)
----------------------------------
+Encryption and Decryption
+-------------------------
 
-.. warning::
+The `Smokescreen` library now includes functionality to encrypt and decrypt the SACC files to avoid accidental unblinding.
 
-    **UNDER DEVELOPMENT**
+To encrypt the SACC file before saving it to disk, the `save_concealed_datavector` method in the `ConcealDataVector` class has been updated. The method now generates an encryption key, encrypts the SACC data, and saves the encrypted data along with the encryption key in separate files.
+
+To decrypt the SACC file, you can use the `decrypt_sacc_file` function provided in the `smokescreen.datavector` module. This function uses the saved encryption key to decrypt the SACC file.
+
+Example usage:
+
+.. code-block:: python
+
+   from smokescreen.datavector import decrypt_sacc_file
+
+   # Path to the encrypted SACC file and the encryption key file
+   encrypted_sacc_path = "path/to/encrypted_sacc_file.fits"
+   encryption_key_path = "path/to/encryption_key.txt"
+
+   # Decrypt the SACC file
+   decrypted_sacc = decrypt_sacc_file(encrypted_sacc_path, encryption_key_path)
+
+   # Now you can use the decrypted SACC file as needed
+   print(decrypted_sacc)

@@ -8,7 +8,7 @@ import sacc
 import pyccl as ccl
 from firecrown.likelihood.likelihood import Likelihood
 from firecrown.modeling_tools import ModelingTools
-from smokescreen.datavector import ConcealDataVector
+from smokescreen.datavector import ConcealDataVector, decrypt_sacc_file
 ccl.gsl_params.LENSING_KERNEL_SPLINE_INTEGRATION = False
 
 COSMO = ccl.CosmologyVanillaLCDM()
@@ -358,3 +358,115 @@ def test_save_concealed_datavector(mock_getuser):
     assert loaded_sacc.metadata['seed_smokescreen'] == 1234
     # Clean up the temporary file
     os.remove(temp_file_name)
+
+
+def test_generate_encryption_key():
+    # Create mock inputs
+    cosmo = COSMO
+    sacc_data = sacc.Sacc()
+    likelihood = MockLikelihoodModule("mock_likelihood")
+    systematics_dict = {"systematic1": 0.1}
+    shifts_dict = {"Omega_c": 1}
+
+    # Instantiate Smokescreen
+    smokescreen = ConcealDataVector(cosmo, systematics_dict, likelihood,
+                                    shifts_dict, sacc_data)
+
+    # Generate encryption key
+    encryption_key = smokescreen.generate_encryption_key()
+
+    # Check that the encryption key is a byte string
+    assert isinstance(encryption_key, bytes)
+    assert len(encryption_key) > 0
+
+
+def test_encrypt_data():
+    # Create mock inputs
+    cosmo = COSMO
+    sacc_data = sacc.Sacc()
+    likelihood = MockLikelihoodModule("mock_likelihood")
+    systematics_dict = {"systematic1": 0.1}
+    shifts_dict = {"Omega_c": 1}
+
+    # Instantiate Smokescreen
+    smokescreen = ConcealDataVector(cosmo, systematics_dict, likelihood,
+                                    shifts_dict, sacc_data)
+
+    # Generate encryption key
+    encryption_key = smokescreen.generate_encryption_key()
+
+    # Encrypt data
+    data = b"test data"
+    encrypted_data = smokescreen.encrypt_data(data, encryption_key)
+
+    # Check that the encrypted data is a byte string
+    assert isinstance(encrypted_data, bytes)
+    assert len(encrypted_data) > 0
+    assert encrypted_data != data
+
+
+def test_decrypt_data():
+    # Create mock inputs
+    cosmo = COSMO
+    sacc_data = sacc.Sacc()
+    likelihood = MockLikelihoodModule("mock_likelihood")
+    systematics_dict = {"systematic1": 0.1}
+    shifts_dict = {"Omega_c": 1}
+
+    # Instantiate Smokescreen
+    smokescreen = ConcealDataVector(cosmo, systematics_dict, likelihood,
+                                    shifts_dict, sacc_data)
+
+    # Generate encryption key
+    encryption_key = smokescreen.generate_encryption_key()
+
+    # Encrypt data
+    data = b"test data"
+    encrypted_data = smokescreen.encrypt_data(data, encryption_key)
+
+    # Decrypt data
+    decrypted_data = smokescreen.decrypt_data(encrypted_data, encryption_key)
+
+    # Check that the decrypted data matches the original data
+    assert isinstance(decrypted_data, bytes)
+    assert decrypted_data == data
+
+
+def test_decrypt_sacc_file():
+    # Create mock inputs
+    cosmo = COSMO
+    sacc_data = sacc.Sacc()
+    likelihood = MockLikelihoodModule("mock_likelihood")
+    systematics_dict = {"systematic1": 0.1}
+    shifts_dict = {"Omega_c": 1}
+
+    # Instantiate Smokescreen
+    smokescreen = ConcealDataVector(cosmo, systematics_dict, likelihood,
+                                    shifts_dict, sacc_data)
+
+    # Generate encryption key
+    encryption_key = smokescreen.generate_encryption_key()
+
+    # Encrypt data
+    data = b"test data"
+    encrypted_data = smokescreen.encrypt_data(data, encryption_key)
+
+    # Save encrypted data and encryption key to temporary files
+    temp_file_path = "./tests/"
+    encrypted_file_path = f"{temp_file_path}encrypted_sacc_file.fits"
+    encryption_key_path = f"{temp_file_path}encryption_key.txt"
+    with open(encrypted_file_path, "wb") as f:
+        f.write(encrypted_data)
+    with open(encryption_key_path, "wb") as f:
+        f.write(encryption_key)
+
+    # Decrypt SACC file
+    decrypted_sacc = decrypt_sacc_file(encrypted_file_path, encryption_key_path)
+
+    # Check that the decrypted SACC file matches the original data
+    assert isinstance(decrypted_sacc, sacc.Sacc)
+    assert decrypted_sacc.to_fits() == data
+
+    # Clean up the temporary files
+    os.remove(encrypted_file_path)
+    os.remove(encryption_key_path)
