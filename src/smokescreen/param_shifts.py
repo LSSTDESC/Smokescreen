@@ -15,6 +15,7 @@ Parameter Shifts
 
 .. autofunction:: draw_flat_param_shifts
 .. autofunction:: draw_flat_or_deterministic_param_shifts
+.. autofunction:: draw_gaussian_param_shifts
 '''
 import numpy as np
 from .utils import string_to_seed
@@ -101,4 +102,37 @@ def draw_flat_or_deterministic_param_shifts(cosmo, shifts_dict, seed):
                 shifts[key] = shifts_dict[key]
         else:
             pass
+    return shifts
+
+
+def draw_gaussian_param_shifts(shifts_dict, seed):
+    """
+    Draw Gaussian parameter shifts from a dictionary of parameter names and
+    corresponding shift widths.
+
+    Parameters
+    ----------
+    shift_dict : dict
+        Dictionary of parameter names and corresponding shift widths. The
+        dictionary values should be the (mean, std) of the Gaussian distribution.
+    seed : int or str
+        Random seed.
+
+    Returns
+    -------
+    dict
+        Dictionary of parameter names and corresponding Gaussian parameter shifts.
+    """
+    if type(seed) is str:
+        seed = string_to_seed(seed)
+    np.random.seed(seed)
+    shifts = {}
+    for key in shifts_dict.keys():
+        if isinstance(shifts_dict[key], tuple):
+            if len(shifts_dict[key]) == 2:
+                shifts[key] = np.random.normal(shifts_dict[key][0], shifts_dict[key][1])
+            else:
+                raise ValueError(f"Tuple {shifts_dict[key]} has to be of length 2")
+        else:
+            shifts[key] = shifts_dict[key]
     return shifts

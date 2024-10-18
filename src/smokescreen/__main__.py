@@ -37,7 +37,8 @@ def main(path_to_sacc: Path_fr,
          shift_type: str = 'add',
          seed: Union[int, str] = 2112,
          reference_cosmology: Union[CosmologyType, dict] = ccl.CosmologyVanillaLCDM(),
-         path_to_output: Path_drw = None):
+         path_to_output: Path_drw = None,
+         shift_distribution: str = 'flat'):
     """Main function to conceal a sacc file using a firecrown likelihood.
 
     Args:
@@ -54,6 +55,8 @@ def main(path_to_sacc: Path_fr,
             parameters you want different than the VanillaLCDM as reference cosmology.
             Defaults to ccl.CosmologyVanillaLCDM().
         path_to_output (str): Path to save the blinded sacc file. Defaults to None.
+        shift_distribution (str): Distribution type for the parameter shifts. 
+            Options are 'flat' and 'gaussian'. Defaults to 'flat'.
     """
     print(banner)
     if isinstance(reference_cosmology, dict):
@@ -66,7 +69,7 @@ def main(path_to_sacc: Path_fr,
     # reads the sacc file
     sacc_data = sacc.Sacc.load_fits(path_to_sacc)
     # creates the smokescreen object
-    smoke = ConcealDataVector(cosmo, systematics, likelihood_path, shifts_dict, sacc_data, seed)
+    smoke = ConcealDataVector(cosmo, systematics, likelihood_path, shifts_dict, sacc_data, seed, shift_type=shift_distribution)
     # blinds the sacc file
     smoke.calculate_concealing_factor(factor_type=shift_type)
     # applies the blinding factor to the sacc file

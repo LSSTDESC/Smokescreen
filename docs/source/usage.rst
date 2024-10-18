@@ -25,6 +25,9 @@ To conceal a data-vector you need the following elements:
         # or for a determinist shift (used for debugging):
         {'PARAM_Y': Y_VALUE, 'PARAM_Z': Z_VALUE}
 
+        # for a Gaussian parameter shift:
+        {'PARAM_Y': (MEAN_Y, STD_Y), 'PARAM_Z': (MEAN_Z, STD_Z)}
+
 * A SACC data-vector
 
 * A random seed as int or string
@@ -77,6 +80,7 @@ You can find an example of a configuration file here:
         Omega_c: [0.20, 0.42]
         sigma8: [0.67, 0.92]
     seed: 2112
+    shift_distribution: "flat"
     # only needed if you want a different reference cosmology
     # than ccl.VanillaLCDM
     reference_cosmology: 
@@ -126,10 +130,17 @@ The smokescreen module can be used to blind the data-vector measurements. The mo
                "lens0_delta_z": 0.000,}
    # create the smokescreen object
    smoke = ConcealDataVector(cosmo, syst_dict, sacc_data, my_likelihood, 
-                             {'Omega_c': (0.22, 0.32), 'sigma8': (0.7, 0.9)})
+                             {'Omega_c': (0.22, 0.32), 'sigma8': (0.7, 0.9)}, shift_type='flat')
    # conceals (blinds) the data vector
    smoke.calculate_concealing_factor()
    concealed_dv = smoke.apply_concealing_to_likelihood_datavec()
+
+   # create the smokescreen object with Gaussian shifts
+   smoke_gaussian = ConcealDataVector(cosmo, syst_dict, sacc_data, my_likelihood, 
+                                      {'Omega_c': (0.27, 0.05), 'sigma8': (0.8, 0.02)}, shift_type='gaussian')
+   # conceals (blinds) the data vector with Gaussian shifts
+   smoke_gaussian.calculate_concealing_factor()
+   concealed_dv_gaussian = smoke_gaussian.apply_concealing_to_likelihood_datavec()
 
 Posterior Concealment (blinding)
 ---------------------------------
