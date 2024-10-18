@@ -32,7 +32,7 @@ from firecrown.likelihood.likelihood import NamedParameters
 from firecrown.parameters import ParamsMap
 from firecrown.utils import save_to_sacc
 
-from smokescreen.param_shifts import draw_flat_or_deterministic_param_shifts
+from smokescreen.param_shifts import draw_flat_or_deterministic_param_shifts, draw_gaussian_param_shifts
 from smokescreen.utils import load_module_from_path
 
 
@@ -218,8 +218,10 @@ class ConcealDataVector():
         """
         if shift_type == "flat":
             return draw_flat_or_deterministic_param_shifts(self.cosmo, self.shifts_dict, seed)
+        elif shift_type == "gaussian":
+            return draw_gaussian_param_shifts(self.shifts_dict, seed)
         else:
-            raise NotImplementedError('Only flat shifts are implemented')
+            raise NotImplementedError('Only flat and gaussian shifts are implemented')
 
     def _create_concealed_cosmo(self):
         """

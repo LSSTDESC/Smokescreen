@@ -119,6 +119,27 @@ def test_load_shifts():
                                         **{'shift_type': 'invalid'})
 
 
+def test_load_shifts_gaussian():
+    # Create mock inputs
+    cosmo = COSMO
+    sacc_data = sacc.Sacc()
+    likelihood = MockLikelihoodModule("mock_likelihood")
+    systematics_dict = {"systematic1": 0.1}
+    shifts_dict = {"Omega_c": (0.3, 0.02), "Omega_b": (0.05, 0.002), "sigma8": (0.82, 0.02)}
+
+    # Instantiate Smokescreen
+    smokescreen = ConcealDataVector(cosmo, systematics_dict, likelihood,
+                                    shifts_dict, sacc_data, **{'shift_type': 'gaussian'})
+
+    # Call load_shifts and get the result
+    shifts = smokescreen._load_shifts(seed="2112", shift_type="gaussian")
+
+    # Check that the shifts are correct
+    assert shifts["Omega_c"] >= 0.1 and shifts["Omega_c"] <= 0.4
+    assert shifts["Omega_b"] >= 0.01 and shifts["Omega_b"] <= 0.05
+    assert shifts["sigma8"] >= 0.5 and shifts["sigma8"] <= 1.2
+
+
 def test_debug_mode(capfd):
     # Create mock inputs
     cosmo = COSMO
@@ -150,6 +171,25 @@ def test_calculate_concealing_factor_add():
     # Instantiate Smokescreen
     smokescreen = ConcealDataVector(cosmo, systematics_dict, likelihood,
                                     shifts_dict, sacc_data, **{'debug': True})
+
+    # Call calculate_concealing_factor with type="add"
+    concealing_factor = smokescreen.calculate_concealing_factor(factor_type="add")
+
+    # Check that the concealing (blinding) factor is correct
+    assert concealing_factor == smokescreen.theory_vec_conceal - smokescreen.theory_vec_fid
+
+
+def test_calculate_concealing_factor_add_gaussian():
+    # Create mock inputs
+    cosmo = COSMO
+    sacc_data = sacc.Sacc()
+    likelihood = MockLikelihoodModule("mock_likelihood")
+    systematics_dict = {"systematic1": 0.1}
+    shifts_dict = {"Omega_c": (0.3, 0.02), "Omega_b": (0.05, 0.002), "sigma8": (0.82, 0.02)}
+
+    # Instantiate Smokescreen
+    smokescreen = ConcealDataVector(cosmo, systematics_dict, likelihood,
+                                    shifts_dict, sacc_data, **{'debug': True, 'shift_type': 'gaussian'})
 
     # Call calculate_concealing_factor with type="add"
     concealing_factor = smokescreen.calculate_concealing_factor(factor_type="add")
