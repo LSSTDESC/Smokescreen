@@ -130,14 +130,14 @@ The smokescreen module can be used to blind the data-vector measurements. The mo
                "lens0_delta_z": 0.000,}
    # create the smokescreen object
    smoke = ConcealDataVector(cosmo, syst_dict, sacc_data, my_likelihood, 
-                             {'Omega_c': (0.22, 0.32), 'sigma8': (0.7, 0.9)}, shift_type='flat')
+                             {'Omega_c': (0.22, 0.32), 'sigma8': (0.7, 0.9)}, shift_distr='flat')
    # conceals (blinds) the data vector
    smoke.calculate_concealing_factor()
    concealed_dv = smoke.apply_concealing_to_likelihood_datavec()
 
    # create the smokescreen object with Gaussian shifts
    smoke_gaussian = ConcealDataVector(cosmo, syst_dict, sacc_data, my_likelihood, 
-                                      {'Omega_c': (0.27, 0.05), 'sigma8': (0.8, 0.02)}, shift_type='gaussian')
+                                      {'Omega_c': (0.27, 0.05), 'sigma8': (0.8, 0.02)}, shift_distr='gaussian')
    # conceals (blinds) the data vector with Gaussian shifts
    smoke_gaussian.calculate_concealing_factor()
    concealed_dv_gaussian = smoke_gaussian.apply_concealing_to_likelihood_datavec()
