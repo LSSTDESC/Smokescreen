@@ -26,7 +26,7 @@ banner = rf"""
 |___/|_|_|_| \___/|_\_\ \___|/__/\__||_|  \___|\___||_||_|  
                                                             
      - DESC Pipeline for Concealing your data-vector -
-                       Version {__version__}
+                 Version {__version__}
 """
 
 
@@ -35,10 +35,11 @@ def main(path_to_sacc: Path_fr,
          systematics: dict,
          shifts_dict: Dict[str, Tuple[float, float]],
          shift_type: str = 'add',
+         shift_distribution: str = 'flat',
          seed: Union[int, str] = 2112,
          reference_cosmology: Union[CosmologyType, dict] = ccl.CosmologyVanillaLCDM(),
          path_to_output: Path_drw = None,
-         shift_distribution: str = 'flat'):
+         ):
     """Main function to conceal a sacc file using a firecrown likelihood.
 
     Args:
@@ -49,14 +50,14 @@ def main(path_to_sacc: Path_fr,
             Example: {"Omega_c": (0.20, 0.39), "sigma8": (0.70, 0.90)}
         shift_type (str): Type of shift to apply to the data vector. 
             Options are 'add' and 'mult'. Defaults to 'add'.
+        shift_distribution (str): Distribution type for the parameter shifts. 
+            Options are 'flat' and 'gaussian'. Defaults to 'flat'.
         seed (int, str): Seed for the blinding process. Defaults to 2112.
         reference_cosmology (Union[CosmologyType, dict]): 
             Cosmology object or dictionary with cosmological 
             parameters you want different than the VanillaLCDM as reference cosmology.
             Defaults to ccl.CosmologyVanillaLCDM().
         path_to_output (str): Path to save the blinded sacc file. Defaults to None.
-        shift_distribution (str): Distribution type for the parameter shifts. 
-            Options are 'flat' and 'gaussian'. Defaults to 'flat'.
     """
     print(banner)
     if isinstance(reference_cosmology, dict):
@@ -69,7 +70,8 @@ def main(path_to_sacc: Path_fr,
     # reads the sacc file
     sacc_data = sacc.Sacc.load_fits(path_to_sacc)
     # creates the smokescreen object
-    smoke = ConcealDataVector(cosmo, systematics, likelihood_path, shifts_dict, sacc_data, seed, shift_type=shift_distribution)
+    smoke = ConcealDataVector(cosmo, systematics, likelihood_path, shifts_dict, sacc_data, seed,
+                              shift_distr=shift_distribution)
     # blinds the sacc file
     smoke.calculate_concealing_factor(factor_type=shift_type)
     # applies the blinding factor to the sacc file
