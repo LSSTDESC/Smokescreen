@@ -75,6 +75,7 @@ def test_main_loads_cosmology_from_dict(mock_load_fits, mock_smokescreen, mock_p
     mock_smokescreen_instance.apply_concealing_to_likelihood_datavec.assert_called_once()
     mock_smokescreen_instance.save_concealed_datavector.assert_called_once()
 
+
 @patch('builtins.print')
 @patch('smokescreen.__main__.ConcealDataVector')
 @patch('sacc.Sacc.load_fits')

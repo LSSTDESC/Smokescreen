@@ -32,7 +32,8 @@ from firecrown.likelihood.likelihood import NamedParameters
 from firecrown.parameters import ParamsMap
 from firecrown.utils import save_to_sacc
 
-from smokescreen.param_shifts import draw_flat_or_deterministic_param_shifts, draw_gaussian_param_shifts
+from smokescreen.param_shifts import draw_flat_or_deterministic_param_shifts
+from smokescreen.param_shifts import draw_gaussian_param_shifts
 from smokescreen.utils import load_module_from_path
 
 

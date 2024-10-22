@@ -1,9 +1,9 @@
 import pytest  # noqa  F401
-import numpy as np
 import pyccl as ccl
 from smokescreen.param_shifts import draw_flat_param_shifts
 from smokescreen.param_shifts import draw_flat_or_deterministic_param_shifts
 from smokescreen.param_shifts import draw_gaussian_param_shifts
+
 
 # tests for draw_flat_param_shifts
 def test_single_value_shifts():
@@ -35,6 +35,7 @@ def test_string_seed():
     for key, value in result.items():
         assert -shift_dict[key] <= value <= shift_dict[key]
 
+
 # tests for draw_flat_or_deterministic_param_shifts
 def test_draw_flat_or_deterministic_param_shifts_deterministic():
     cosmo = ccl.CosmologyVanillaLCDM()
@@ -46,6 +47,7 @@ def test_draw_flat_or_deterministic_param_shifts_deterministic():
     assert shifts["Omega_c"] == 0.01
     assert shifts["sigma8"] == 0.02
 
+
 def test_draw_flat_or_deterministic_param_shifts_flat():
     cosmo = ccl.CosmologyVanillaLCDM()
     shifts_dict = {"Omega_c": (0.01, 0.02), "sigma8": (0.02, 0.03)}
@@ -56,6 +58,7 @@ def test_draw_flat_or_deterministic_param_shifts_flat():
     assert 0.01 <= shifts["Omega_c"] <= 0.02
     assert 0.02 <= shifts["sigma8"] <= 0.03
 
+
 def test_draw_flat_or_deterministic_param_shifts_invalid_key():
     cosmo = ccl.CosmologyVanillaLCDM()
     shifts_dict = {"invalid_param": 0.01}
@@ -64,6 +67,7 @@ def test_draw_flat_or_deterministic_param_shifts_invalid_key():
     with pytest.raises(ValueError, match=r"Key invalid_param not in cosmology parameters"):
         draw_flat_or_deterministic_param_shifts(cosmo, shifts_dict, seed)
 
+
 def test_draw_flat_or_deterministic_param_shifts_invalid_tuple_length():
     cosmo = ccl.CosmologyVanillaLCDM()
     shifts_dict = {"Omega_c": (0.01, 0.02, 0.03)}
@@ -71,6 +75,7 @@ def test_draw_flat_or_deterministic_param_shifts_invalid_tuple_length():
 
     with pytest.raises(ValueError, match=r"Tuple \(0.01, 0.02, 0.03\) has to be of length 2"):
         draw_flat_or_deterministic_param_shifts(cosmo, shifts_dict, seed)
+
 
 def test_draw_flat_or_deterministic_param_shifts_string_seed():
     cosmo = ccl.CosmologyVanillaLCDM()
@@ -81,6 +86,7 @@ def test_draw_flat_or_deterministic_param_shifts_string_seed():
 
     assert 0.01 <= shifts["Omega_c"] <= 0.02
     assert 0.02 <= shifts["sigma8"] <= 0.03
+
 
 # tests for draw_gaussian_param_shifts
 def test_draw_gaussian_param_shifts_single_value():
@@ -96,6 +102,7 @@ def test_draw_gaussian_param_shifts_single_value():
         mean, std = shifts_dict[key]
         assert mean - 3 * std <= value <= mean + 3 * std
 
+
 def test_draw_gaussian_param_shifts_invalid_key():
     cosmo = ccl.CosmologyVanillaLCDM()
     shifts_dict = {"invalid_param": (0.3, 0.01)}
@@ -103,6 +110,7 @@ def test_draw_gaussian_param_shifts_invalid_key():
 
     with pytest.raises(ValueError, match=r"Key invalid_param not in cosmology parameters"):
         draw_gaussian_param_shifts(cosmo, shifts_dict, seed)
+
 
 def test_draw_gaussian_param_shifts_invalid_tuple_length():
     cosmo = ccl.CosmologyVanillaLCDM()
@@ -112,6 +120,7 @@ def test_draw_gaussian_param_shifts_invalid_tuple_length():
     with pytest.raises(ValueError, match=r"Tuple \(0.3, 0.01, 0.02\) has to be of length 2"):
         draw_gaussian_param_shifts(cosmo, shifts_dict, seed)
 
+
 def test_draw_gaussian_param_shifts_non_tuple_value():
     cosmo = ccl.CosmologyVanillaLCDM()
     shifts_dict = {"Omega_c": 0.3}
@@ -119,6 +128,7 @@ def test_draw_gaussian_param_shifts_non_tuple_value():
 
     with pytest.raises(ValueError, match=r"Value 0.3 has to be a tuple of length 2"):
         draw_gaussian_param_shifts(cosmo, shifts_dict, seed)
+
 
 def test_draw_gaussian_param_shifts_string_seed():
     cosmo = ccl.CosmologyVanillaLCDM()

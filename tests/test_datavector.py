@@ -189,7 +189,8 @@ def test_calculate_concealing_factor_add_gaussian():
 
     # Instantiate Smokescreen
     smokescreen = ConcealDataVector(cosmo, systematics_dict, likelihood,
-                                    shifts_dict, sacc_data, **{'debug': True, 'shift_distr': 'gaussian'})
+                                    shifts_dict, sacc_data,
+                                    **{'debug': True, 'shift_distr': 'gaussian'})
 
     # Call calculate_concealing_factor with type="add"
     concealing_factor = smokescreen.calculate_concealing_factor(factor_type="add")
