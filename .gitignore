@@ -23,6 +23,9 @@ dist/
 # MacOS stuff:
 .DS_Store
 
+# vscode stuff:
+.vscode/
+
 ## Intermediate documents:
 *.dvi
 *-converted-to.*

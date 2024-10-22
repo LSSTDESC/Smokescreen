@@ -3,6 +3,7 @@ import numpy as np
 import pyccl as ccl
 from smokescreen.param_shifts import draw_flat_param_shifts
 from smokescreen.param_shifts import draw_flat_or_deterministic_param_shifts
+from smokescreen.param_shifts import draw_gaussian_param_shifts
 
 # tests for draw_flat_param_shifts
 def test_single_value_shifts():
@@ -80,3 +81,54 @@ def test_draw_flat_or_deterministic_param_shifts_string_seed():
 
     assert 0.01 <= shifts["Omega_c"] <= 0.02
     assert 0.02 <= shifts["sigma8"] <= 0.03
+
+# tests for draw_gaussian_param_shifts
+def test_draw_gaussian_param_shifts_single_value():
+    cosmo = ccl.CosmologyVanillaLCDM()
+    shifts_dict = {"Omega_c": (0.3, 0.01), "sigma8": (0.8, 0.02)}
+    seed = 1234
+
+    shifts = draw_gaussian_param_shifts(cosmo, shifts_dict, seed)
+
+    assert isinstance(shifts, dict)
+    assert set(shifts.keys()) == set(shifts_dict.keys())
+    for key, value in shifts.items():
+        mean, std = shifts_dict[key]
+        assert mean - 3 * std <= value <= mean + 3 * std
+
+def test_draw_gaussian_param_shifts_invalid_key():
+    cosmo = ccl.CosmologyVanillaLCDM()
+    shifts_dict = {"invalid_param": (0.3, 0.01)}
+    seed = 1234
+
+    with pytest.raises(ValueError, match=r"Key invalid_param not in cosmology parameters"):
+        draw_gaussian_param_shifts(cosmo, shifts_dict, seed)
+
+def test_draw_gaussian_param_shifts_invalid_tuple_length():
+    cosmo = ccl.CosmologyVanillaLCDM()
+    shifts_dict = {"Omega_c": (0.3, 0.01, 0.02)}
+    seed = 1234
+
+    with pytest.raises(ValueError, match=r"Tuple \(0.3, 0.01, 0.02\) has to be of length 2"):
+        draw_gaussian_param_shifts(cosmo, shifts_dict, seed)
+
+def test_draw_gaussian_param_shifts_non_tuple_value():
+    cosmo = ccl.CosmologyVanillaLCDM()
+    shifts_dict = {"Omega_c": 0.3}
+    seed = 1234
+
+    with pytest.raises(ValueError, match=r"Value 0.3 has to be a tuple of length 2"):
+        draw_gaussian_param_shifts(cosmo, shifts_dict, seed)
+
+def test_draw_gaussian_param_shifts_string_seed():
+    cosmo = ccl.CosmologyVanillaLCDM()
+    shifts_dict = {"Omega_c": (0.3, 0.01), "sigma8": (0.8, 0.02)}
+    seed = "1234"
+
+    shifts = draw_gaussian_param_shifts(cosmo, shifts_dict, seed)
+
+    assert isinstance(shifts, dict)
+    assert set(shifts.keys()) == set(shifts_dict.keys())
+    for key, value in shifts.items():
+        mean, std = shifts_dict[key]
+        assert mean - 3 * std <= value <= mean + 3 * std
