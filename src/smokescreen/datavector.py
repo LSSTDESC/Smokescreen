@@ -219,7 +219,7 @@ class ConcealDataVector():
         if shift_type == "flat":
             return draw_flat_or_deterministic_param_shifts(self.cosmo, self.shifts_dict, seed)
         elif shift_type == "gaussian":
-            return draw_gaussian_param_shifts(self.shifts_dict, seed)
+            return draw_gaussian_param_shifts(self.cosmo, self.shifts_dict, seed)
         else:
             raise NotImplementedError('Only flat and gaussian shifts are implemented')
 
