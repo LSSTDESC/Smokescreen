@@ -112,11 +112,11 @@ def test_load_shifts():
 
     # check if break if a a shift type is not flat
     with pytest.raises(NotImplementedError):
-        smokescreen._load_shifts(seed="2112", shift_type="invalid")
+        smokescreen._load_shifts(seed="2112", shift_distr="invalid")
     with pytest.raises(NotImplementedError):
         smokescreen = ConcealDataVector(cosmo, systematics_dict,
                                         likelihood, shifts_dict, sacc_data,
-                                        **{'shift_type': 'invalid'})
+                                        **{'shift_distr': 'invalid'})
 
 
 def test_load_shifts_gaussian():
@@ -129,10 +129,10 @@ def test_load_shifts_gaussian():
 
     # Instantiate Smokescreen
     smokescreen = ConcealDataVector(cosmo, systematics_dict, likelihood,
-                                    shifts_dict, sacc_data, **{'shift_type': 'gaussian'})
+                                    shifts_dict, sacc_data, **{'shift_distr': 'gaussian'})
 
     # Call load_shifts and get the result
-    shifts = smokescreen._load_shifts(seed="2112", shift_type="gaussian")
+    shifts = smokescreen._load_shifts(seed="2112", shift_distr="gaussian")
 
     # Check that the shifts are correct
     assert shifts["Omega_c"] >= 0.1 and shifts["Omega_c"] <= 0.4
@@ -189,7 +189,7 @@ def test_calculate_concealing_factor_add_gaussian():
 
     # Instantiate Smokescreen
     smokescreen = ConcealDataVector(cosmo, systematics_dict, likelihood,
-                                    shifts_dict, sacc_data, **{'debug': True, 'shift_type': 'gaussian'})
+                                    shifts_dict, sacc_data, **{'debug': True, 'shift_distr': 'gaussian'})
 
     # Call calculate_concealing_factor with type="add"
     concealing_factor = smokescreen.calculate_concealing_factor(factor_type="add")
