@@ -33,6 +33,7 @@ from firecrown.parameters import ParamsMap
 from firecrown.utils import save_to_sacc
 
 from smokescreen.param_shifts import draw_flat_or_deterministic_param_shifts
+from smokescreen.param_shifts import draw_gaussian_param_shifts
 from smokescreen.utils import load_module_from_path
 
 
@@ -99,8 +100,8 @@ class ConcealDataVector():
 
         # load the shifts
         # Check for 'shift_type' keyword argument
-        if 'shift_type' in kwargs:
-            self.__shifts = self._load_shifts(seed, shift_type=kwargs['shift_type'])
+        if 'shift_distr' in kwargs:
+            self.__shifts = self._load_shifts(seed, shift_distr=kwargs['shift_distr'])
         else:
             self.__shifts = self._load_shifts(seed)
 
@@ -202,7 +203,7 @@ class ConcealDataVector():
                 raise ValueError(f"Systematic {key} not in likelihood systematics")
         return ParamsMap(systematics_dict)
 
-    def _load_shifts(self, seed, shift_type="flat"):
+    def _load_shifts(self, seed, shift_distr="flat"):
         """
         Loads the shifts from the shifts dictionary.
 
@@ -216,10 +217,12 @@ class ConcealDataVector():
             If the first valuee is negative, it is assumed that the parameter
             is to be shifted from the fiducial value: PARAM = FIDUCIAL + U(-a, b)
         """
-        if shift_type == "flat":
+        if shift_distr == "flat":
             return draw_flat_or_deterministic_param_shifts(self.cosmo, self.shifts_dict, seed)
+        elif shift_distr == "gaussian":
+            return draw_gaussian_param_shifts(self.cosmo, self.shifts_dict, seed)
         else:
-            raise NotImplementedError('Only flat shifts are implemented')
+            raise NotImplementedError('Only flat and gaussian shifts are implemented')
 
     def _create_concealed_cosmo(self):
         """

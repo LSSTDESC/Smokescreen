@@ -6,6 +6,7 @@ shifts_dict:
   h: [0.60, 0.80]
   sigma8: [0.67, 0.95]
 seed: 2112
+shift_distribution: "flat"
 # only needed if you want a different reference cosmology
 # than ccl.VanillaLCDM
 reference_cosmology: 
