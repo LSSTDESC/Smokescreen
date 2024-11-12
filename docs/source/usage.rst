@@ -67,6 +67,12 @@ The blinding module can be used to blind the data-vector measurements. The modul
 
    python -m smokescreen --config configuration_file.yaml
 
+From Smokescreen version 1.3.0 you should call the module as:
+
+.. code-block:: bash
+
+   smokescreen datavector --config configuration_file.yaml
+
 You can find an example of a configuration file here: 
 
 .. code-block:: yaml
@@ -85,12 +91,19 @@ You can find an example of a configuration file here:
     # than ccl.VanillaLCDM
     reference_cosmology: 
         sigma8: 0.85
+    keep_original_sacc: true
+
+.. warning::
+
+    **By default, the original SACC file is deleted after the encryption. If you want to keep the original SACC file, you can set the `keep_original_sacc` parameter to `true` in the configuration file.**
 
 Or you can use the following command to create a template configuration file:
 
 .. code-block:: bash
 
    python -m smokescreen --print_config > template_config.yaml
+   # or in version 1.3.0+
+   smokescreen datavector --print_config > template_config.yaml
 
 Note that the `reference_cosmology` is optional. If not provided, the CCL `VanillaLCDM` reference cosmology will be the one used to compute the data vector.
 
@@ -141,6 +154,53 @@ The smokescreen module can be used to blind the data-vector measurements. The mo
    # conceals (blinds) the data vector with Gaussian shifts
    smoke_gaussian.calculate_concealing_factor()
    concealed_dv_gaussian = smoke_gaussian.apply_concealing_to_likelihood_datavec()
+
+To encrypt the original sacc file, follow the instructions in the next section.
+
+Encryting and Decrypting SACC files
+------------------------------------
+From Smokescreen version 1.3.0, you can encrypt and decrypt SACC files. This is useful when you want to share the data vector with someone else but you don't want them to see the data. The encryption is done using the `cryptography <https://cryptography.io/en/latest/>`_ library. It is important to note that the encryption is done using a symmetric key, so the person you are sharing the data with must have the key to decrypt the file.
+
+When running the data vector concealment module, encryption is performed by default. The decryption key is saved in a file with the same name as the original file but a `.key` extension. The key is saved in the same directory as the encrypted file.
+
+.. warning::
+
+    **By default, the original SACC file is deleted after the encryption. If you want to keep the original SACC file, you can set the `keep_original_sacc` parameter to `true` in the configuration file or set the flag `--keep_original true` via command line**
+
+Encrypting files
+~~~~~~~~~~~~~~~~
+To encrypt a sacc file (or any file), you can use the following command:
+
+.. code-block:: bash
+
+   smokescreen encrypt --path_to_sacc path/to/sacc.fits --path_to_save path/to/save/the/file/ [--keep_original true]
+
+This will generate an encrypted file with the extension `.encrpt` and a key file with the extension `.key` in the same directory as the encrypted file or in the directory specified by `--path_to_save`.
+
+You can also encrypt a file from a notebook/your code:
+
+.. code-block:: python
+
+   from smokescreen.encryption import encrypt_sacc
+   encrypt_sacc('path/to/sacc.fits', 'path/to/save/the/file/', save_file=True, keep_original=False)
+
+Decrypting files
+~~~~~~~~~~~~~~~~
+To decrypt the file, you can use the following command:
+
+.. code-block:: bash
+
+   smokescreen decrypt --path_to_sacc [path_to_encrypted_sacc] --path_to_key [path_to_file_with_key]
+
+or from a notebook/your code:
+
+.. code-block:: python
+
+   from smokescreen.encryption import decrypt_sacc
+   decrypt_sacc('path/to/encrypted_sacc.encrpt', 'path/to/key.key', save_file=True)
+
+The `save_file` parameter is optional and is set to `True` by default. If set to `False`, the decrypted file will not be saved to disk.
+
 
 Posterior Concealment (blinding)
 ---------------------------------
