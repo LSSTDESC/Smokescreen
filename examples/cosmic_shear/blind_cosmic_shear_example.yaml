@@ -1,4 +1,4 @@
-path_to_sacc: "./cosmicshear_sacc.fits"
+path_to_sacc: "./cosmicshear_sacc2.fits"
 likelihood_path: "./cosmicshear_likelihood.py"
 systematics:
   trc1_delta_z: 0.1
@@ -12,3 +12,4 @@ shift_distribution: "flat"
 # than ccl.VanillaLCDM
 reference_cosmology: 
   sigma8: 0.78
+keep_original_sacc: true
