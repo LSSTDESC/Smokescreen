@@ -35,6 +35,7 @@ from firecrown.utils import save_to_sacc
 from smokescreen.param_shifts import draw_flat_or_deterministic_param_shifts
 from smokescreen.param_shifts import draw_gaussian_param_shifts
 from smokescreen.utils import load_module_from_path
+from smokescreen.encryption import encrypt_file
 
 
 class ConcealDataVector():
@@ -348,3 +349,21 @@ class ConcealDataVector():
             return concealed_sacc
         else:
             return None
+
+    # def encrypt_original_datavector(self, original_sacc_file, path_to_save, keep_original=False):
+    #     """
+    #     Encrypts the original data-vector.
+
+    #     Parameters
+    #     ----------
+    #     keep_original : bool
+    #         If True, keeps the original data-vector file. Default is False.
+    #     """
+
+    #     encrypt_file(original_sacc_file, path_to_save, save_file=True,
+    #                  keep_original=keep_original)
+
+    #     if self.__debug:
+    #         print(f"[DEBUG] Original data-vector encrypted successfully.")
+    #         encry_file_name = f"{path_to_save}/{os.path.basename(original_sacc_file).split('.')[0]}"
+    #         print(f"[DEBUG] Key saved as {encry_file_name}.key")

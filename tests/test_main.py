@@ -19,6 +19,7 @@ def test_main(mock_load_fits, mock_smokescreen, mock_print):
     seed = 2112
     reference_cosmology = CosmologyVanillaLCDM()
     path_to_output = "./test_data/test_output.fits"
+    keep_original_sacc = True
 
     mock_smokescreen_instance = MagicMock()
     mock_smokescreen.return_value = mock_smokescreen_instance
@@ -29,7 +30,7 @@ def test_main(mock_load_fits, mock_smokescreen, mock_print):
     # Act
     __main__.datavector_main(path_to_sacc, likelihood_path, systematics, shifts_dict,
                              shift_type, shift_distribution, seed, reference_cosmology,
-                             path_to_output)
+                             path_to_output, keep_original_sacc)
 
     # Assert
     mock_load_fits.assert_called_once_with(path_to_sacc)
@@ -55,6 +56,7 @@ def test_main_loads_cosmology_from_dict(mock_load_fits, mock_smokescreen, mock_p
     seed = 2112
     reference_cosmology = {'sigma8': 0.888}
     path_to_output = "./test_data/test_output.fits"
+    keep_original_sacc = True
 
     mock_smokescreen_instance = MagicMock()
     mock_smokescreen.return_value = mock_smokescreen_instance
@@ -65,7 +67,7 @@ def test_main_loads_cosmology_from_dict(mock_load_fits, mock_smokescreen, mock_p
     # Act
     __main__.datavector_main(path_to_sacc, likelihood_path, systematics, shifts_dict, shift_type,
                              shift_distribution, seed, reference_cosmology,
-                             path_to_output)
+                             path_to_output, keep_original_sacc)
 
     # Assert
     mod_ref_cosmo = load_cosmology_from_partial_dict(reference_cosmology)
@@ -92,6 +94,7 @@ def test_main_gaussian_shift(mock_load_fits, mock_smokescreen, mock_print):
     seed = 2112
     reference_cosmology = CosmologyVanillaLCDM()
     path_to_output = "./test_data/test_output.fits"
+    keep_original_sacc = True
 
     mock_smokescreen_instance = MagicMock()
     mock_smokescreen.return_value = mock_smokescreen_instance
@@ -102,7 +105,7 @@ def test_main_gaussian_shift(mock_load_fits, mock_smokescreen, mock_print):
     # Act
     __main__.datavector_main(path_to_sacc, likelihood_path, systematics, shifts_dict,
                              shift_type, shift_distribution, seed, reference_cosmology,
-                             path_to_output)
+                             path_to_output, keep_original_sacc)
 
     # Assert
     mock_load_fits.assert_called_once_with(path_to_sacc)
