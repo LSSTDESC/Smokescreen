@@ -18,7 +18,7 @@ def test_main(mock_load_fits, mock_smokescreen, mock_print):
     shift_distribution = 'flat'
     seed = 2112
     reference_cosmology = CosmologyVanillaLCDM()
-    path_to_output = "./test_data/test_output.fits"
+    path_to_output = "./tests/test_data/"
     keep_original_sacc = True
 
     mock_smokescreen_instance = MagicMock()
@@ -55,7 +55,7 @@ def test_main_loads_cosmology_from_dict(mock_load_fits, mock_smokescreen, mock_p
     shift_distribution = 'flat'
     seed = 2112
     reference_cosmology = {'sigma8': 0.888}
-    path_to_output = "./test_data/test_output.fits"
+    path_to_output = "./tests/test_data/"
     keep_original_sacc = True
 
     mock_smokescreen_instance = MagicMock()
@@ -93,7 +93,7 @@ def test_main_gaussian_shift(mock_load_fits, mock_smokescreen, mock_print):
     shift_distribution = 'gaussian'
     seed = 2112
     reference_cosmology = CosmologyVanillaLCDM()
-    path_to_output = "./test_data/test_output.fits"
+    path_to_output = "./tests/test_data/"
     keep_original_sacc = True
 
     mock_smokescreen_instance = MagicMock()
