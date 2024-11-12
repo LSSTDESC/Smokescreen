@@ -40,6 +40,7 @@ def datavector_main(path_to_sacc: Path_fr,
                     seed: Union[int, str] = 2112,
                     reference_cosmology: Union[CosmologyType, dict] = ccl.CosmologyVanillaLCDM(),
                     path_to_output: Path_drw = None,
+                    keep_original_sacc: bool = False,
                     ) -> None:
     r"""Main function to conceal a SACC file using a firecrown likelihood.
 
@@ -59,6 +60,8 @@ def datavector_main(path_to_sacc: Path_fr,
             parameters you want different than the VanillaLCDM as reference cosmology.
             Defaults to ccl.CosmologyVanillaLCDM().
         path_to_output (str): Path to save the blinded sacc file. Defaults to None.
+        keep_original_sacc (bool): If True, keeps the original sacc file. 
+            Defaults to False [keeps only the encrypted file].
     """
     print(banner)
     if isinstance(reference_cosmology, dict):
@@ -89,6 +92,14 @@ def datavector_main(path_to_sacc: Path_fr,
         path_to_output = os.path.dirname(path_to_sacc)
         smoke.save_concealed_datavector(path_to_output, root_name)
     print(f"\nConcealed sacc file saved as {path_to_output}/{root_name}_concealed_data_vector.fits")
+
+    print(f"\n Encrypting the original sacc file {path_to_sacc} ...")
+    # encrypt the file
+    encrypted_sacc, key = encrypt_file(path_to_sacc, path_to_output, save_file=True,
+                                       keep_original=keep_original_sacc)
+    print(f"\nSACC file {path_to_sacc} encrypted successfully.")
+    if keep_original_sacc is False:
+        print(f"\nOriginal file {path_to_sacc} removed.")
 
 
 def encrypt_main(path_to_sacc: Path_fr,
