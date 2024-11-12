@@ -91,13 +91,14 @@ def datavector_main(path_to_sacc: Path_fr,
         # get the input file directory
         path_to_output = os.path.dirname(path_to_sacc)
         smoke.save_concealed_datavector(path_to_output, root_name)
-    print(f"\nConcealed sacc file saved as:\n\t{path_to_output}/{root_name}_concealed_data_vector.fits")
+    outprintfile = f"{path_to_output}/{root_name}_concealed_data_vector.fits"
+    print(f"\nConcealed sacc file saved as:\n\t{outprintfile}")
 
     print(f"\nEncrypting the original sacc file {path_to_sacc} ...", end="")
     # encrypt the file
     encrypted_sacc, key = encrypt_file(path_to_sacc, path_to_output, save_file=True,
                                        keep_original=keep_original_sacc)
-    print(f"Done!")
+    print("Done!")
     print(f"Key saved as {path_to_output}/{root_name}.key")
     if keep_original_sacc is False:
         print(f"\nOriginal file {path_to_sacc} removed.")
