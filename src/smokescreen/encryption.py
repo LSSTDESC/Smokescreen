@@ -1,7 +1,8 @@
 import os
 from cryptography.fernet import Fernet
 
-def encrypt_sacc(path_to_sacc: str, path_to_save: str = None, save_file: bool = False) -> bytes:
+def encrypt_sacc(path_to_sacc: str, path_to_save: str = None,
+                 save_file: bool = False, keep_original: bool = False) -> bytes:
     """
     Encrypts a SACC file using Fernet encryption.
 
@@ -58,6 +59,9 @@ def encrypt_sacc(path_to_sacc: str, path_to_save: str = None, save_file: bool = 
         # saves the key in a txt file with the same name and extension .key
         with open(os.path.join(path_to_save, filename.split(".")[0] + ".key"), "wb") as file:
             file.write(key)
+
+    if keep_original is False:
+        os.remove(path_to_sacc)
 
     return encrypted_sacc, key
 
