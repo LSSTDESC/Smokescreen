@@ -55,4 +55,4 @@ Issues = "https://github.com/LSSTDESC/Smokescreen/issues"
 path = "src/smokescreen/_version.py"
 
 [project.scripts]
-smokescreen = "smokescreen.__main__:alt_main"
+smokescreen = "smokescreen.__main__:main"

@@ -1,7 +1,7 @@
 import os
 from cryptography.fernet import Fernet
 
-def encrypt_sacc(path_to_sacc: str, save_file: bool = False) -> bytes:
+def encrypt_sacc(path_to_sacc: str, path_to_save: str = None, save_file: bool = False) -> bytes:
     """
     Encrypts a SACC file using Fernet encryption.
 
@@ -9,6 +9,9 @@ def encrypt_sacc(path_to_sacc: str, save_file: bool = False) -> bytes:
     ----------
     path_to_sacc : str
         Path to the SACC file to be encrypted.
+    path_to_save : str, optional
+        Path to save the key used to encrypt the SACC file, and the encrypted file.
+        by default None [saves in the same directory as the encrypted file].
     save_file : bool, optional
         If True, saves the encrypted file in the same directory as the original file, by default False.
 
@@ -39,15 +42,21 @@ def encrypt_sacc(path_to_sacc: str, save_file: bool = False) -> bytes:
 
     # save the file
     if save_file:
-        # changes the extension of the file to .enc
+        if path_to_save is not None:
+            # check if the path exists and create it if it does not
+            if not os.path.exists(path_to_save):
+                os.makedirs(path_to_save)
+        else:
+            path_to_save = path
+        # changes the extension of the file to .encrpt
         filename = os.path.basename(path_to_sacc)
-        filename = filename.split(".")[0] + ".enc"
+        filename = filename.split(".")[0] + ".encrpt"
         # save the file
-        with open(os.path.join(path, filename), "wb") as file:
+        with open(os.path.join(path_to_save, filename), "wb") as file:
             file.write(encrypted_sacc)
 
         # saves the key in a txt file with the same name and extension .key
-        with open(os.path.join(path, filename.split(".")[0] + ".key"), "wb") as file:
+        with open(os.path.join(path_to_save, filename.split(".")[0] + ".key"), "wb") as file:
             file.write(key)
 
     return encrypted_sacc, key
