@@ -28,7 +28,8 @@ def test_main(mock_load_fits, mock_smokescreen, mock_print):
 
     # Act
     __main__.datavector_main(path_to_sacc, likelihood_path, systematics, shifts_dict,
-                  shift_type, shift_distribution, seed, reference_cosmology, path_to_output)
+                             shift_type, shift_distribution, seed, reference_cosmology,
+                             path_to_output)
 
     # Assert
     mock_load_fits.assert_called_once_with(path_to_sacc)
@@ -63,7 +64,8 @@ def test_main_loads_cosmology_from_dict(mock_load_fits, mock_smokescreen, mock_p
 
     # Act
     __main__.datavector_main(path_to_sacc, likelihood_path, systematics, shifts_dict, shift_type,
-                  shift_distribution, seed, reference_cosmology, path_to_output)
+                             shift_distribution, seed, reference_cosmology,
+                             path_to_output)
 
     # Assert
     mod_ref_cosmo = load_cosmology_from_partial_dict(reference_cosmology)
@@ -99,7 +101,8 @@ def test_main_gaussian_shift(mock_load_fits, mock_smokescreen, mock_print):
 
     # Act
     __main__.datavector_main(path_to_sacc, likelihood_path, systematics, shifts_dict,
-                  shift_type, shift_distribution, seed, reference_cosmology, path_to_output)
+                             shift_type, shift_distribution, seed, reference_cosmology,
+                             path_to_output)
 
     # Assert
     mock_load_fits.assert_called_once_with(path_to_sacc)
