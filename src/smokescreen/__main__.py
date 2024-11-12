@@ -89,6 +89,8 @@ def main(path_to_sacc: Path_fr,
         smoke.save_concealed_datavector(path_to_output, root_name)
     print(f"\nConcealed sacc file saved as {path_to_output}/{root_name}_concealed_data_vector.fits")
 
+def alt_main():
+    CLI(main, as_positional=False)
 
 if __name__ == "__main__":  # pragma: no cover
     CLI(main, as_positional=False)

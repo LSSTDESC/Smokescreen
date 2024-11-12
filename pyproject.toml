@@ -53,3 +53,6 @@ Issues = "https://github.com/LSSTDESC/Smokescreen/issues"
 
 [tool.hatch.version]
 path = "src/smokescreen/_version.py"
+
+[project.scripts]
+smokescreen = "smokescreen.__main__:alt_main"
