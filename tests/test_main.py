@@ -27,7 +27,7 @@ def test_main(mock_load_fits, mock_smokescreen, mock_print):
     mock_load_fits.return_value = sacc_file  # Make load_fits return the mock sacc_file
 
     # Act
-    __main__.main(path_to_sacc, likelihood_path, systematics, shifts_dict,
+    __main__.datavector_main(path_to_sacc, likelihood_path, systematics, shifts_dict,
                   shift_type, shift_distribution, seed, reference_cosmology, path_to_output)
 
     # Assert
@@ -62,7 +62,7 @@ def test_main_loads_cosmology_from_dict(mock_load_fits, mock_smokescreen, mock_p
     mock_load_fits.return_value = sacc_file  # Make load_fits return the mock sacc_file
 
     # Act
-    __main__.main(path_to_sacc, likelihood_path, systematics, shifts_dict, shift_type,
+    __main__.datavector_main(path_to_sacc, likelihood_path, systematics, shifts_dict, shift_type,
                   shift_distribution, seed, reference_cosmology, path_to_output)
 
     # Assert
@@ -98,7 +98,7 @@ def test_main_gaussian_shift(mock_load_fits, mock_smokescreen, mock_print):
     mock_load_fits.return_value = sacc_file  # Make load_fits return the mock sacc_file
 
     # Act
-    __main__.main(path_to_sacc, likelihood_path, systematics, shifts_dict,
+    __main__.datavector_main(path_to_sacc, likelihood_path, systematics, shifts_dict,
                   shift_type, shift_distribution, seed, reference_cosmology, path_to_output)
 
     # Assert
