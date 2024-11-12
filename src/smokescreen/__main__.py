@@ -9,7 +9,7 @@ import sacc
 # warnings related to sacc files
 import warnings
 from smokescreen import ConcealDataVector
-from smokescreen.encryption import encrypt_sacc, decrypt_sacc
+from smokescreen.encryption import encrypt_file, decrypt_file
 from smokescreen.utils import load_cosmology_from_partial_dict
 from . import __version__
 warnings.filterwarnings("ignore")
@@ -90,6 +90,7 @@ def datavector_main(path_to_sacc: Path_fr,
         smoke.save_concealed_datavector(path_to_output, root_name)
     print(f"\nConcealed sacc file saved as {path_to_output}/{root_name}_concealed_data_vector.fits")
 
+
 def encrypt_main(path_to_sacc: Path_fr,
                  path_to_save: Path_fr = None,
                  keep_original: bool = False) -> None:
@@ -114,16 +115,18 @@ def encrypt_main(path_to_sacc: Path_fr,
     assert os.path.exists(path_to_sacc), f"File {path_to_sacc} does not exist."
 
     # encrypt the file
-    encrypted_sacc, key = encrypt_sacc(path_to_sacc, path_to_save, save_file=True,
+    encrypted_sacc, key = encrypt_file(path_to_sacc, path_to_save, save_file=True,
                                        keep_original=keep_original)
     print(f"\nSACC file {path_to_sacc} encrypted successfully.")
     if path_to_save is None:
         path_to_save = os.path.dirname(path_to_sacc)
     print(f"\nKey saved as {path_to_save}/{os.path.basename(path_to_sacc).split('.')[0]}.key")
-    print(f"\nEncrypted file saved as {path_to_save}/{os.path.basename(path_to_sacc).split('.')[0]}.encrpt")
+    file_name = os.path.basename(path_to_sacc).split('.')[0]
+    print(f"\nEncrypted file saved as {path_to_save}/{file_name}.encrpt")
 
     if keep_original is False:
         print(f"\nOriginal file {path_to_sacc} removed.")
+
 
 def decrypt_main(path_to_sacc: Path_fr, path_to_key: Path_fr) -> None:
     """
@@ -139,20 +142,24 @@ def decrypt_main(path_to_sacc: Path_fr, path_to_key: Path_fr) -> None:
     path = os.path.dirname(path_to_sacc)
 
     # decrypt the file
-    decrypted_sacc = decrypt_sacc(path_to_sacc, path_to_key, save_file=True)
+    _ = decrypt_file(path_to_sacc, path_to_key, save_file=True)
     print(f"\nSACC file {path_to_sacc} decrypted successfully.")
     print(f"\nDecrypted file saved as {path}/{os.path.basename(path_to_sacc).split('.')[0]}")
 
-def main():
+
+def main():  # pragma: no cover
     CLI({"datavector": datavector_main,
          "encrypt": encrypt_main,
          "decrypt": decrypt_main,
          },
         as_positional=False,
-        description="Smokescreen CLI Tool",)
+        description="Smokescreen CLI Tool")
+
 
 if __name__ == "__main__":  # pragma: no cover
     CLI({"datavector": datavector_main,
-         "encrypt_sacc": encrypt_main,
-         "decrypt_sacc": decrypt_main,
-         }, as_positional=False)
+         "encrypt": encrypt_main,
+         "decrypt": decrypt_main,
+         },
+        as_positional=False,
+        description="Smokescreen CLI Tool")

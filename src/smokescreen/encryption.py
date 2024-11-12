@@ -1,20 +1,22 @@
 import os
 from cryptography.fernet import Fernet
 
-def encrypt_sacc(path_to_sacc: str, path_to_save: str = None,
+
+def encrypt_file(path_to_file: str, path_to_save: str = None,
                  save_file: bool = False, keep_original: bool = False) -> bytes:
     """
     Encrypts a SACC file using Fernet encryption.
 
     Parameters
     ----------
-    path_to_sacc : str
+    path_to_file : str
         Path to the SACC file to be encrypted.
     path_to_save : str, optional
-        Path to save the key used to encrypt the SACC file, and the encrypted file.
+        Path to save the key used to encrypt the file, and the encrypted file.
         by default None [saves in the same directory as the encrypted file].
     save_file : bool, optional
-        If True, saves the encrypted file in the same directory as the original file, by default False.
+        If True, saves the encrypted file in the same directory
+        as the original file, by default False.
 
     Returns
     -------
@@ -24,10 +26,10 @@ def encrypt_sacc(path_to_sacc: str, path_to_save: str = None,
         Key used to encrypt the file.
     """
     # check if the file exists:
-    if not os.path.exists(path_to_sacc):
-        raise FileNotFoundError(f"File {path_to_sacc} not found")
+    if not os.path.exists(path_to_file):
+        raise FileNotFoundError(f"File {path_to_file} not found")
     # gets the path from the file
-    path = os.path.dirname(path_to_sacc)
+    path = os.path.dirname(path_to_file)
 
     # generate a key
     key = Fernet.generate_key()
@@ -35,7 +37,7 @@ def encrypt_sacc(path_to_sacc: str, path_to_save: str = None,
     cipher = Fernet(key)
 
     # read the file
-    with open(path_to_sacc, "rb") as file:
+    with open(path_to_file, "rb") as file:
         sacc = file.read()
 
     # encrypt the file
@@ -50,7 +52,7 @@ def encrypt_sacc(path_to_sacc: str, path_to_save: str = None,
         else:
             path_to_save = path
         # changes the extension of the file to .encrpt
-        filename = os.path.basename(path_to_sacc)
+        filename = os.path.basename(path_to_file)
         filename = filename.split(".")[0] + ".encrpt"
         # save the file
         with open(os.path.join(path_to_save, filename), "wb") as file:
@@ -61,11 +63,12 @@ def encrypt_sacc(path_to_sacc: str, path_to_save: str = None,
             file.write(key)
 
     if keep_original is False:
-        os.remove(path_to_sacc)
+        os.remove(path_to_file)
 
     return encrypted_sacc, key
 
-def decrypt_sacc(path_to_sacc: str, key: str, save_file: bool = False) -> bytes:
+
+def decrypt_file(path_to_file: str, key: str, save_file: bool = False) -> bytes:
     """
     Decrypts a SACC file using Fernet encryption.
 
@@ -76,13 +79,14 @@ def decrypt_sacc(path_to_sacc: str, key: str, save_file: bool = False) -> bytes:
     key : str
         path to the file with the key used to encrypt the SACC.
     save_file : bool, optional
-        If True, saves the decrypted file in the same directory as the original file, by default False.
+        If True, saves the decrypted file in the same directory as the original file,
+        by default False.
     """
     # check if the file exists:
-    if not os.path.exists(path_to_sacc):
-        raise FileNotFoundError(f"File {path_to_sacc} not found")
+    if not os.path.exists(path_to_file):
+        raise FileNotFoundError(f"File {path_to_file} not found")
     # gets the path from the file
-    path = os.path.dirname(path_to_sacc)
+    path = os.path.dirname(path_to_file)
 
     # check if the key exists:
     if not os.path.exists(key):
@@ -95,7 +99,7 @@ def decrypt_sacc(path_to_sacc: str, key: str, save_file: bool = False) -> bytes:
     cipher = Fernet(key)
 
     # read the file
-    with open(path_to_sacc, "rb") as file:
+    with open(path_to_file, "rb") as file:
         sacc = file.read()
 
     # decrypt the file
@@ -104,7 +108,7 @@ def decrypt_sacc(path_to_sacc: str, key: str, save_file: bool = False) -> bytes:
     # save the file
     if save_file:
         # changes the extension of the file to .dec
-        filename = os.path.basename(path_to_sacc)
+        filename = os.path.basename(path_to_file)
         filename = filename.split(".")[0] + ".fits"
         # save the file
         with open(os.path.join(path, filename), "wb") as file:
