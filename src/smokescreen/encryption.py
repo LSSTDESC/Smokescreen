@@ -1,3 +1,19 @@
+# author: Arthur Loureiro <arthur.loureiro@fysik.su.se>
+# license: BSD 3-Clause
+'''
+Encryption (:mod:`smokescreen.encryption`)
+===================================================
+
+.. currentmodule:: smokescreen.encryption
+
+The :mod:`smokescreen.encryption` module provides functions to encrypt and decrypt files.
+
+Smokescreen Encryption
+----------------------
+.. autofunction:: encrypt_file
+.. autofunction:: decrypt_file
+'''
+
 import os
 from cryptography.fernet import Fernet
 
