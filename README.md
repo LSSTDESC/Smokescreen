@@ -22,12 +22,12 @@ conda install -c conda-forge lsstdesc-smokescreen
 For developer installation or other instructions check the [documentation](https://lsstdesc.org/Smokescreen/installation.html).
 
 For questions contact @arthurmloureiro, @jessmuir, or @jablazek
+**Note:** The deployed documentation now includes the latest release along with the main branch.
 
 ---
 
 **Legacy 2pt Cosmosis Blinding**
 
 Legacy Blinding scripts for 2pt data vector blinding with Cosmosis moved to a [new repository](https://github.com/LSSTDESC/legacy_blinding).
-
 
 
