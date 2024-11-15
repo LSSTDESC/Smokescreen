@@ -11,3 +11,4 @@ shift_distribution: "flat"
 # than ccl.VanillaLCDM
 reference_cosmology: 
   sigma8: 0.82
+keep_original_sacc: true

@@ -14,6 +14,7 @@ dependencies:
     - firecrown>=1.7.5
     - fitsio
     - pyccl >=3.0.2
+    - cryptography
     - pip:
       - argparse
       - flake8

@@ -7,6 +7,10 @@ dist/
 ## Other stuff
 *.png
 
+# encrypted files
+*.encrpt
+*.key
+
 ## Core latex/pdflatex auxiliary files:
 *.aux
 *.lof

@@ -26,6 +26,7 @@ dependencies = [
     "jsonargparse[signatures]>=4.0",
     "pytest",
     "pytest-cov",
+    "cryptography"
 ]
 keywords = ["desc", "python", "blinding", "firecrown", "cosmology"]
 dynamic = ["version"]
@@ -53,3 +54,6 @@ Issues = "https://github.com/LSSTDESC/Smokescreen/issues"
 
 [tool.hatch.version]
 path = "src/smokescreen/_version.py"
+
+[project.scripts]
+smokescreen = "smokescreen.__main__:main"
