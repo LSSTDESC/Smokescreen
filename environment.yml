@@ -11,7 +11,7 @@ dependencies:
     - pytest
     - pip
     - numcosmo
-    - firecrown>=1.7.5
+    - firecrown>=1.8
     - fitsio
     - pyccl >=3.0.2
     - cryptography
