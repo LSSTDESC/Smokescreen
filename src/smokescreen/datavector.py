@@ -92,17 +92,6 @@ class ConcealDataVector():
         assert isinstance(self.sacc_data, sacc.sacc.Sacc), "sacc_data must be a sacc object"
         # save the shifts
         self.shifts_dict = shifts_dict
-        # load the likelihood
-        self.likelihood, self.tools = self._load_likelihood(likelihood,
-                                                            self.sacc_data)
-
-
-
-        # load the systematics
-        if self.systematics_dict is None:
-            self.systematics = self._load_default_systematics(self.likelihood)
-        else:
-            self.systematics = self._load_systematics(self.systematics_dict, self.likelihood)
 
         # load the shifts
         # Check for 'shift_type' keyword argument
@@ -115,13 +104,23 @@ class ConcealDataVector():
         self.__concealed_cosmo = self._create_concealed_cosmo(self.__shifts)
 
         if 'debug' in kwargs and kwargs['debug']:
-            self.__debug = True
+            self._debug = True
             print(f"[DEBUG] Shifts: {self.__shifts}")
             print(f"[DEBUG] Concealed Cosmology: {self.__concealed_cosmo}")
         else:
-            self.__debug = False
+            self._debug = False
+
+        # load the likelihood
+        self.likelihood, self.tools = self._load_likelihood(likelihood,
+                                                            self.sacc_data)
         # # create the smokescreen data-vector
         # self.smokescreen_data = self.create_smokescreen_data()
+
+        # load the systematics
+        if self.systematics_dict is None:
+            self.systematics = self._load_default_systematics(self.likelihood)
+        else:
+            self.systematics = self._load_systematics(self.systematics_dict, self.likelihood)
 
     def _load_likelihood(self, likelihood, sacc_data):
         """
@@ -254,7 +253,7 @@ class ConcealDataVector():
             Dictionary of systematics names and corresponding fiducial values.
         """
         likelihood_req_systematics = list(likelihood.required_parameters().get_params_names())
-        if self.__debug:
+        if self._debug:
             print(f"[DEBUG] Likelihood requires systematics: {likelihood_req_systematics}")
         # test if all keys in the systematics_dict are in the likelihood systematics:
         for key in likelihood_req_systematics:
@@ -366,7 +365,7 @@ class ConcealDataVector():
             self.__concealing_factor = self.theory_vec_conceal / self.theory_vec_fid
         else:
             raise NotImplementedError('Only "add" and "mult" concealing factor is implemented')
-        if self.__debug:
+        if self._debug:
             return self.__concealing_factor
 
     def apply_concealing_to_likelihood_datavec(self):
@@ -433,7 +432,7 @@ class ConcealDataVector():
     #     encrypt_file(original_sacc_file, path_to_save, save_file=True,
     #                  keep_original=keep_original)
 
-    #     if self.__debug:
+    #     if self._debug:
     #         print(f"[DEBUG] Original data-vector encrypted successfully.")
     #         encry_file_name = f"{path_to_save}/{os.path.basename
     # (original_sacc_file).split('.')[0]}"
