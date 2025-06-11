@@ -30,11 +30,12 @@ from firecrown.likelihood.likelihood import load_likelihood
 from firecrown.likelihood.likelihood import load_likelihood_from_module_type
 from firecrown.likelihood.likelihood import NamedParameters
 from firecrown.parameters import ParamsMap
+from firecrown.updatable import get_default_params_map
 from firecrown.utils import save_to_sacc
 
 from smokescreen.param_shifts import draw_flat_or_deterministic_param_shifts
 from smokescreen.param_shifts import draw_gaussian_param_shifts
-from smokescreen.utils import load_module_from_path
+from smokescreen.utils import load_module_from_path, modify_default_params
 
 
 class ConcealDataVector():
@@ -213,10 +214,10 @@ class ConcealDataVector():
             Dictionary of systematics names and corresponding fiducial values.
         """
         likelihood_req_systematics = list(likelihood.required_parameters().get_params_names())
-        print(f"Likelihood requires systematics: {likelihood_req_systematics}")
+        if self.__debug:
+            print(f"[DEBUG] Likelihood requires systematics: {likelihood_req_systematics}")
         # test if all keys in the systematics_dict are in the likelihood systematics:
         for key in likelihood_req_systematics:
-            print(key)
             if key not in systematics_dict.keys():
                 raise ValueError(f"Systematic {key} not in likelihood systematics")
         return ParamsMap(systematics_dict)
@@ -286,14 +287,19 @@ class ConcealDataVector():
                 f^{\rm mult} = d(\theta_{\rm blind}) / d(\theta_{\rm fid})
         """
         self.factor_type = factor_type
+
+        # need to get the defaults from firecrown:
+        _firecrown_defaults = get_default_params_map(self.tools, self.likelihood)
+
+        _params_reference = modify_default_params(_firecrown_defaults,
+                                                  self.cosmo.to_dict(),
+                                                  self.systematics_dict)
         # update the tools:
-        print(f"[DEBUG]")
-        self.tools.update(ParamsMap(self.cosmo.to_dict()))
+        self.tools.update(_params_reference)
         # prepare the original cosmology tools:
-        self.tools.prepare(ParamsMap())
-        print(f"[DEBUG] Original cosmology: {self.cosmo.to_dict()}")
+        self.tools.prepare()
         # update the likelihood with the systematics parameters:
-        self.likelihood.update(self.systematics)
+        self.likelihood.update(_params_reference)
         # fiducial theory vector:
         self.theory_vec_fid = self.likelihood.compute_theory_vector(self.tools)
         # resets the likelihood and tools
@@ -301,12 +307,16 @@ class ConcealDataVector():
         self.tools.reset()
 
         # now calculates the shifted theory vector:
+        # updating the default params with the concealed cosmology:
+        __params_concealed = modify_default_params(_firecrown_defaults,
+                                                   self.__concealed_cosmo.to_dict(),
+                                                   self.systematics_dict)
         # update the tools:
-        self.tools.update(ParamsMap({}))
+        self.tools.update(__params_concealed)
         # prepare the original cosmology tools:
-        self.tools.prepare(self.__concealed_cosmo)
+        self.tools.prepare()
         # update the likelihood with the systematics parameters:
-        self.likelihood.update(self.systematics)
+        self.likelihood.update(__params_concealed)
         # concealed theory vector:
         self.theory_vec_conceal = self.likelihood.compute_theory_vector(self.tools)
 
