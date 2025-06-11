@@ -31,14 +31,14 @@ def test_main(mock_load_fits, mock_smokescreen, mock_print):
     mock_load_fits.return_value = sacc_file  # Make load_fits return the mock sacc_file
 
     # Act
-    __main__.datavector_main(path_to_sacc, likelihood_path, systematics, shifts_dict,
+    __main__.datavector_main(path_to_sacc, likelihood_path, shifts_dict, systematics,
                              shift_type, shift_distribution, seed, reference_cosmology,
                              path_to_output, keep_original_sacc)
 
     # Assert
     mock_load_fits.assert_called_once_with(path_to_sacc)
-    mock_smokescreen.assert_called_once_with(reference_cosmology, systematics,
-                                             likelihood_path, shifts_dict, sacc_file, seed,
+    mock_smokescreen.assert_called_once_with(reference_cosmology, likelihood_path,
+                                             shifts_dict, sacc_file, systematics, seed,
                                              shift_distr=shift_distribution)
     mock_smokescreen_instance.calculate_concealing_factor.assert_called_once()
     mock_smokescreen_instance.apply_concealing_to_likelihood_datavec.assert_called_once()
@@ -68,16 +68,16 @@ def test_main_loads_cosmology_from_dict(mock_load_fits, mock_smokescreen, mock_p
     mock_load_fits.return_value = sacc_file  # Make load_fits return the mock sacc_file
 
     # Act
-    __main__.datavector_main(path_to_sacc, likelihood_path, systematics, shifts_dict, shift_type,
+    __main__.datavector_main(path_to_sacc, likelihood_path, shifts_dict, systematics, shift_type,
                              shift_distribution, seed, reference_cosmology,
                              path_to_output, keep_original_sacc)
 
     # Assert
     mod_ref_cosmo = load_cosmology_from_partial_dict(reference_cosmology)
     mock_load_fits.assert_called_once_with(path_to_sacc)
-    mock_smokescreen.assert_called_once_with(mod_ref_cosmo, systematics,
-                                             likelihood_path, shifts_dict, sacc_file, seed,
-                                             shift_distr=shift_distribution)
+    mock_smokescreen.assert_called_once_with(mod_ref_cosmo, likelihood_path, shifts_dict,
+                                            sacc_file, systematics, seed,
+                                            shift_distr=shift_distribution)
     mock_smokescreen_instance.calculate_concealing_factor.assert_called_once()
     mock_smokescreen_instance.apply_concealing_to_likelihood_datavec.assert_called_once()
     mock_smokescreen_instance.save_concealed_datavector.assert_called_once()
@@ -106,14 +106,16 @@ def test_main_gaussian_shift(mock_load_fits, mock_smokescreen, mock_print):
     mock_load_fits.return_value = sacc_file  # Make load_fits return the mock sacc_file
 
     # Act
-    __main__.datavector_main(path_to_sacc, likelihood_path, systematics, shifts_dict,
-                             shift_type, shift_distribution, seed, reference_cosmology,
+    __main__.datavector_main(path_to_sacc, likelihood_path, shifts_dict,
+                             systematics, shift_type, shift_distribution, seed,
+                             reference_cosmology,
                              path_to_output, keep_original_sacc)
 
     # Assert
     mock_load_fits.assert_called_once_with(path_to_sacc)
-    mock_smokescreen.assert_called_once_with(reference_cosmology, systematics,
-                                             likelihood_path, shifts_dict, sacc_file, seed,
+    mock_smokescreen.assert_called_once_with(reference_cosmology,
+                                             likelihood_path, shifts_dict, sacc_file,
+                                             systematics, seed,
                                              shift_distr=shift_distribution)
     mock_smokescreen_instance.calculate_concealing_factor.assert_called_once()
     mock_smokescreen_instance.apply_concealing_to_likelihood_datavec.assert_called_once()
