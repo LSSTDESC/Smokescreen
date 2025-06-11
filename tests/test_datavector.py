@@ -63,21 +63,21 @@ def test_smokescreen_init():
     shifts_dict = {"Omega_c": 1}
 
     # Check that Smokescreen can be instantiated with valid inputs
-    smokescreen = ConcealDataVector(cosmo, systematics_dict, likelihood,
-                                    shifts_dict, sacc_data)
+    smokescreen = ConcealDataVector(cosmo, likelihood,
+                                    shifts_dict, sacc_data, systematics_dict)
     assert isinstance(smokescreen, ConcealDataVector)
 
     # Check that Smokescreen raises an error when given an invalid likelihood
     with pytest.raises(AttributeError):
         invalid_likelihood = types.ModuleType("invalid_likelihood")
-        ConcealDataVector(cosmo, systematics_dict, invalid_likelihood,
-                          shifts_dict, sacc_data,)
+        ConcealDataVector(cosmo, invalid_likelihood,
+                          shifts_dict, sacc_data, systematics_dict)
 
     # check if breaks if given a shift with a key not in the cosmology parameters
     with pytest.raises(ValueError):
         invalid_shifts_dict = {"Omega_c": 1, "invalid_key": 1}
-        ConcealDataVector(cosmo, systematics_dict, likelihood,
-                          invalid_shifts_dict, sacc_data)
+        ConcealDataVector(cosmo, likelihood,
+                          invalid_shifts_dict, sacc_data, systematics_dict)
 
 
 def test_load_shifts():
@@ -89,8 +89,8 @@ def test_load_shifts():
     shifts_dict = {"Omega_c": 1, "Omega_b": (-1, 2), "sigma8": (2, 3)}
 
     # Instantiate Smokescreen
-    smokescreen = ConcealDataVector(cosmo, systematics_dict, likelihood,
-                                    shifts_dict, sacc_data)
+    smokescreen = ConcealDataVector(cosmo, likelihood,
+                                    shifts_dict, sacc_data, systematics_dict)
 
     # Call load_shifts and get the result
     shifts = smokescreen._load_shifts(seed="2112")
@@ -114,8 +114,8 @@ def test_load_shifts():
     with pytest.raises(NotImplementedError):
         smokescreen._load_shifts(seed="2112", shift_distr="invalid")
     with pytest.raises(NotImplementedError):
-        smokescreen = ConcealDataVector(cosmo, systematics_dict,
-                                        likelihood, shifts_dict, sacc_data,
+        smokescreen = ConcealDataVector(cosmo, likelihood, shifts_dict, sacc_data,
+                                        systematics_dict,
                                         **{'shift_distr': 'invalid'})
 
 
@@ -128,8 +128,9 @@ def test_load_shifts_gaussian():
     shifts_dict = {"Omega_c": (0.3, 0.02), "Omega_b": (0.05, 0.002), "sigma8": (0.82, 0.02)}
 
     # Instantiate Smokescreen
-    smokescreen = ConcealDataVector(cosmo, systematics_dict, likelihood,
-                                    shifts_dict, sacc_data, **{'shift_distr': 'gaussian'})
+    smokescreen = ConcealDataVector(cosmo, likelihood,
+                                    shifts_dict, sacc_data, systematics_dict,
+                                    **{'shift_distr': 'gaussian'})
 
     # Call load_shifts and get the result
     shifts = smokescreen._load_shifts(seed="2112", shift_distr="gaussian")
@@ -149,8 +150,9 @@ def test_debug_mode(capfd):
     shifts_dict = {"Omega_c": 1}
 
     # Check that Smokescreen can be instantiated with valid inputs
-    _ = ConcealDataVector(cosmo, systematics_dict, likelihood,
-                          shifts_dict, sacc_data,  **{'debug': True})
+    _ = ConcealDataVector(cosmo, likelihood,
+                          shifts_dict, sacc_data, systematics_dict,
+                            **{'debug': True})
     # Capture the output
     out, err = capfd.readouterr()
 
@@ -169,8 +171,9 @@ def test_calculate_concealing_factor_add():
     shifts_dict = {"Omega_c": 1}
 
     # Instantiate Smokescreen
-    smokescreen = ConcealDataVector(cosmo, systematics_dict, likelihood,
-                                    shifts_dict, sacc_data, **{'debug': True})
+    smokescreen = ConcealDataVector(cosmo, likelihood,
+                                    shifts_dict, sacc_data, systematics_dict,
+                                    **{'debug': True})
 
     # Call calculate_concealing_factor with type="add"
     concealing_factor = smokescreen.calculate_concealing_factor(factor_type="add")
@@ -188,8 +191,8 @@ def test_calculate_concealing_factor_add_gaussian():
     shifts_dict = {"Omega_c": (0.3, 0.02), "Omega_b": (0.05, 0.002), "sigma8": (0.82, 0.02)}
 
     # Instantiate Smokescreen
-    smokescreen = ConcealDataVector(cosmo, systematics_dict, likelihood,
-                                    shifts_dict, sacc_data,
+    smokescreen = ConcealDataVector(cosmo, likelihood,
+                                    shifts_dict, sacc_data, systematics_dict,
                                     **{'debug': True, 'shift_distr': 'gaussian'})
 
     # Call calculate_concealing_factor with type="add"
@@ -208,8 +211,9 @@ def test_calculate_concealing_factor_mult():
     shifts_dict = {"Omega_c": 1}
 
     # Instantiate Smokescreen
-    smokescreen = ConcealDataVector(cosmo, systematics_dict, likelihood,
-                                    shifts_dict, sacc_data, **{'debug': True})
+    smokescreen = ConcealDataVector(cosmo, likelihood,
+                                    shifts_dict, sacc_data, systematics_dict,
+                                    **{'debug': True})
 
     # Call calculate_concealing_factor with type="add"
     concealing_factor = smokescreen.calculate_concealing_factor(factor_type="mult")
@@ -227,8 +231,8 @@ def test_calculate_concealing_factor_invalid_type():
     shifts_dict = {"Omega_c": 1}
 
     # Instantiate Smokescreen
-    smokescreen = ConcealDataVector(cosmo, systematics_dict, likelihood,
-                                    shifts_dict, sacc_data)
+    smokescreen = ConcealDataVector(cosmo, likelihood,
+                                    shifts_dict, sacc_data, systematics_dict)
 
     # Call calculate_concealing_factor with an invalid type
     with pytest.raises(NotImplementedError):
@@ -244,8 +248,9 @@ def test_apply_concealing_to_likelihood_datavec_add():
     shifts_dict = {"Omega_c": 1}
 
     # Instantiate Smokescreen
-    smokescreen = ConcealDataVector(cosmo, systematics_dict, likelihood,
-                                    shifts_dict, sacc_data, **{'debug': True})
+    smokescreen = ConcealDataVector(cosmo, likelihood,
+                                    shifts_dict, sacc_data, systematics_dict,
+                                    **{'debug': True})
 
     # Set the concealing (blinding) factor and type
     # Call calculate_concealing_factor with type="add"
@@ -268,8 +273,9 @@ def test_apply_concealing_to_likelihood_datavec_mult():
     shifts_dict = {"Omega_c": 1}
 
     # Instantiate Smokescreen
-    smokescreen = ConcealDataVector(cosmo, systematics_dict, likelihood,
-                                    shifts_dict, sacc_data, **{'debug': True})
+    smokescreen = ConcealDataVector(cosmo, likelihood,
+                                    shifts_dict, sacc_data, systematics_dict,
+                                    **{'debug': True})
 
     # Set the concealing (blinding) factor and type
     # Call calculate_concealing_factor with type="add"
@@ -292,8 +298,9 @@ def test_apply_concealing_to_likelihood_datavec_invalid_type():
     shifts_dict = {"Omega_c": 1}
 
     # Instantiate Smokescreen
-    smokescreen = ConcealDataVector(cosmo, systematics_dict, likelihood,
-                                    shifts_dict, sacc_data, **{'debug': True})
+    smokescreen = ConcealDataVector(cosmo, likelihood,
+                                    shifts_dict, sacc_data, systematics_dict,
+                                    **{'debug': True})
 
     # Set the expected_concealing factor and type
     # Call calculate_concealing_factor with type="add"
@@ -313,8 +320,8 @@ def test_load_likelihood():
     shifts_dict = {"Omega_c": 1}
 
     # Instantiate Smokescreen
-    smokescreen = ConcealDataVector(cosmo, systematics_dict, likelihood,
-                                    shifts_dict, sacc_data)
+    smokescreen = ConcealDataVector(cosmo, likelihood,
+                                    shifts_dict, sacc_data, systematics_dict)
 
     # Test with a valid likelihood module
     likelihood, tools = smokescreen._load_likelihood(likelihood, sacc_data)
@@ -360,8 +367,8 @@ def test_save_concealed_datavector(mock_getuser):
     }
     shift_dict = {"Omega_c": 0.34, "sigma8": 0.85}
     sacc_data = sacc.Sacc.load_fits("./examples/cosmic_shear/cosmicshear_sacc.fits")
-    sck = ConcealDataVector(cosmo, syst_dict, likelihood,
-                            shift_dict, sacc_data, seed=1234)
+    sck = ConcealDataVector(cosmo, likelihood,
+                            shift_dict, sacc_data, syst_dict, seed=1234)
 
     # Calculate the concealing factor and apply it to the likelihood data vector
     sck.calculate_concealing_factor()

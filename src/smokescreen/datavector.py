@@ -225,8 +225,9 @@ class ConcealDataVector():
             raise ValueError(f"Cosmology does not have the required parameter {_required_param}{_error_msg}")
 
         # check if the required parameter is in the shifts dictionary
-        if _required_param not in self.shifts_dict.keys():
-            raise ValueError(f"Shifts dictionary does not have the required parameter {_required_param}{_error_msg}")
+        if any(param in self.shifts_dict for param in ['A_s', 'sigma8']):
+            if _required_param not in self.shifts_dict.keys():
+                raise ValueError(f"{self.shifts_dict.keys()}Shifts dictionary does not have the required parameter {_required_param}{_error_msg}")
 
 
     def _load_default_systematics(self, likelihood):
