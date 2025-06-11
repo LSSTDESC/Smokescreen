@@ -67,13 +67,12 @@ class ConcealDataVector():
     -----------------
     shift_type : str
         Type of shift to be applied. Default is "flat".
-        ``FIXME: Only flat shifts are implemented for now.``
     debug : bool
         If True, prints debug information. Default is False.
 
 
     """
-    def __init__(self, cosmo, systm_dict, likelihood, shifts_dict, sacc_data,
+    def __init__(self, cosmo, likelihood, shifts_dict, sacc_data, systm_dict=None,
                  seed="2112", **kwargs):
         """
         unit
@@ -96,7 +95,10 @@ class ConcealDataVector():
         self.shifts_dict = shifts_dict
 
         # load the systematics
-        self.systematics = self._load_systematics(self.systematics_dict, self.likelihood)
+        if self.systematics_dict is None:
+            self.systematics = self._load_default_systematics(self.likelihood)
+        else:
+            self.systematics = self._load_systematics(self.systematics_dict, self.likelihood)
 
         # load the shifts
         # Check for 'shift_type' keyword argument
@@ -106,7 +108,7 @@ class ConcealDataVector():
             self.__shifts = self._load_shifts(seed)
 
         # create concealed cosmology object:
-        self.__concealed_cosmo = self._create_concealed_cosmo()
+        self.__concealed_cosmo = self._create_concealed_cosmo(self.__shifts)
 
         if 'debug' in kwargs and kwargs['debug']:
             self.__debug = True
@@ -187,6 +189,20 @@ class ConcealDataVector():
                                                "the likelihood must require a",
                                                "build_parameters NamedParameters object!")
 
+    def _load_default_systematics(self, likelihood):
+        """
+        Loads the default systematics from the likelihood.
+
+        Parameters
+        ----------
+        likelihood : firecrown.likelihood.Likelihood
+            Likelihood object with required systematics.
+        """
+        # get the required systematics from the likelihood
+        req_systematics = likelihood.required_parameters()
+        default_systematics = req_systematics.get_default_values()
+        return ParamsMap(default_systematics)
+
     def _load_systematics(self, systematics_dict, likelihood):
         """
         Loads the systematics from the systematics dictionary.
@@ -197,8 +213,10 @@ class ConcealDataVector():
             Dictionary of systematics names and corresponding fiducial values.
         """
         likelihood_req_systematics = list(likelihood.required_parameters().get_params_names())
+        print(f"Likelihood requires systematics: {likelihood_req_systematics}")
         # test if all keys in the systematics_dict are in the likelihood systematics:
         for key in likelihood_req_systematics:
+            print(key)
             if key not in systematics_dict.keys():
                 raise ValueError(f"Systematic {key} not in likelihood systematics")
         return ParamsMap(systematics_dict)
@@ -218,13 +236,14 @@ class ConcealDataVector():
             is to be shifted from the fiducial value: PARAM = FIDUCIAL + U(-a, b)
         """
         if shift_distr == "flat":
-            return draw_flat_or_deterministic_param_shifts(self.cosmo, self.shifts_dict, seed)
+            shifts_internal = draw_flat_or_deterministic_param_shifts(self.cosmo, self.shifts_dict, seed)
+            return shifts_internal
         elif shift_distr == "gaussian":
             return draw_gaussian_param_shifts(self.cosmo, self.shifts_dict, seed)
         else:
             raise NotImplementedError('Only flat and gaussian shifts are implemented')
 
-    def _create_concealed_cosmo(self):
+    def _create_concealed_cosmo(self, shifts):
         """
         Creates a blinded cosmology object with the shifts applied.
 
@@ -236,8 +255,8 @@ class ConcealDataVector():
             del concealed_cosmo_dict['extra_parameters']
         except KeyError:  # pragma: no cover
             pass
-        for k in self.__shifts.keys():
-            concealed_cosmo_dict[k] = self.__shifts[k]
+        for k in shifts.keys():
+            concealed_cosmo_dict[k] = shifts[k]
         concealed_cosmo = ccl.Cosmology(**concealed_cosmo_dict)
         return concealed_cosmo
 
@@ -268,9 +287,11 @@ class ConcealDataVector():
         """
         self.factor_type = factor_type
         # update the tools:
-        self.tools.update({})
+        print(f"[DEBUG]")
+        self.tools.update(ParamsMap(self.cosmo.to_dict()))
         # prepare the original cosmology tools:
-        self.tools.prepare(self.cosmo)
+        self.tools.prepare(ParamsMap())
+        print(f"[DEBUG] Original cosmology: {self.cosmo.to_dict()}")
         # update the likelihood with the systematics parameters:
         self.likelihood.update(self.systematics)
         # fiducial theory vector:
@@ -281,7 +302,7 @@ class ConcealDataVector():
 
         # now calculates the shifted theory vector:
         # update the tools:
-        self.tools.update({})
+        self.tools.update(ParamsMap({}))
         # prepare the original cosmology tools:
         self.tools.prepare(self.__concealed_cosmo)
         # update the likelihood with the systematics parameters:
