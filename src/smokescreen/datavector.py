@@ -32,6 +32,8 @@ from firecrown.likelihood.likelihood import NamedParameters
 from firecrown.parameters import ParamsMap
 from firecrown.updatable import get_default_params_map
 from firecrown.utils import save_to_sacc
+from firecrown.ccl_factory import PoweSpecAmplitudeParameter
+
 
 from smokescreen.param_shifts import draw_flat_or_deterministic_param_shifts
 from smokescreen.param_shifts import draw_gaussian_param_shifts
@@ -88,12 +90,13 @@ class ConcealDataVector():
         self.seed = seed
         # checks if the sacc_data is in the correct format:
         assert isinstance(self.sacc_data, sacc.sacc.Sacc), "sacc_data must be a sacc object"
+        # save the shifts
+        self.shifts_dict = shifts_dict
         # load the likelihood
         self.likelihood, self.tools = self._load_likelihood(likelihood,
                                                             self.sacc_data)
 
-        # save the shifts
-        self.shifts_dict = shifts_dict
+
 
         # load the systematics
         if self.systematics_dict is None:
@@ -139,9 +142,13 @@ class ConcealDataVector():
                 raise FileNotFoundError(f'Could not find file {likelihood}')
 
             # test the likelihood
-            self.__test_likelihood(likelihood, 'str')
+            self._test_likelihood(likelihood, 'str')
             # load the likelihood from the file
             likelihood, tools = load_likelihood(likelihood, build_parameters)
+            # because now firecrown needs to know the amplitude parameter
+            # before we build the likelihood, need to check if we are 
+            # concealing the correct parameter
+            self._check_amplitude_parameter(tools)
 
             # check if the likelihood has a compute_vector method
             if not hasattr(likelihood, 'compute_theory_vector'):  # pragma: no cover
@@ -150,11 +157,15 @@ class ConcealDataVector():
 
         elif isinstance(likelihood, types.ModuleType):
             # test the likelihood
-            self.__test_likelihood(likelihood, 'module')
+            self._test_likelihood(likelihood, 'module')
 
             # tries to load the likelihood from the module
             likelihood, tools = load_likelihood_from_module_type(likelihood,
                                                                  build_parameters)
+            # because now firecrown needs to know the amplitude parameter
+            # before we build the likelihood, need to check if we are
+            # concealing the correct parameter
+            self._check_amplitude_parameter(tools)
             # check if the likelihood has a compute_vector method
             if not hasattr(likelihood, 'compute_theory_vector'):  # pragma: no cover
                 raise AttributeError('Likelihood does not have a compute_vector method')
@@ -162,7 +173,7 @@ class ConcealDataVector():
         else:
             raise TypeError('Likelihood must be a string path to a likelihood module or a module')
 
-    def __test_likelihood(self, likelihood, like_type):
+    def _test_likelihood(self, likelihood, like_type):
         """
         Tests if the likelihood has the required methods.
 
@@ -189,6 +200,35 @@ class ConcealDataVector():
             assert len(likefunc_params) >= 1, ("A sacc was provided, ",
                                                "the likelihood must require a",
                                                "build_parameters NamedParameters object!")
+    def _check_amplitude_parameter(self, tools):
+        """
+        Checks if the amplitude parameter is set in the tools is the same 
+        as the one in the cosmology and in the concealing dictionary.
+        If not, raises an error.
+        """
+        _amplitude_param = tools.ccl_factory.amplitude_parameter
+
+        if _amplitude_param is PoweSpecAmplitudeParameter.SIGMA8:
+            _required_param = 'sigma8'
+        elif _amplitude_param is PoweSpecAmplitudeParameter.AS:
+            _required_param = 'A_s'
+        else:
+            raise ValueError(f"Amplitude parameter {_amplitude_param} not supported")
+
+        _error_msg = f"\n You probably need to set the amplitude parameter [A_s/sigma8] that you want to conceal "
+        _error_msg += f"when calling ModelingTools in your likelihood module."
+        _error_msg += f"\n The amplitude parameter is currently set to {_amplitude_param} and Firecrown" 
+        _error_msg += " won't let Smokescreen change that."
+
+        # check if the required parameter is in the cosmology
+        if _required_param not in self.cosmo.to_dict().keys():
+            print(_error_msg)
+            raise ValueError(f"Cosmology does not have the required parameter {_required_param}{_error_msg}")
+
+        # check if the required parameter is in the shifts dictionary
+        if _required_param not in self.shifts_dict.keys():
+            raise ValueError(f"Shifts dictionary does not have the required parameter {_required_param}{_error_msg}")
+
 
     def _load_default_systematics(self, likelihood):
         """
