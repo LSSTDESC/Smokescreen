@@ -50,8 +50,6 @@ class ConcealDataVector():
     ----------
     cosmo : pyccl.Cosmology
         Cosmology object from CCL with a fiducial cosmology.
-    systm_dict : dict
-        Dictionary of systematics names and corresponding fiducial values.
     likelihood : str or module
         path to the likelihood or a module containing the likelihood
         must contain both `build_likelihood` and `compute_theory_vector` methods
@@ -63,6 +61,10 @@ class ConcealDataVector():
     sacc_data : sacc.sacc.Sacc
         Data-vector to be concealed (blinded).
         If None, the data-vector will be loaded from the likelihood.
+    systm_dict : dict
+        Dictionary of systematics names and corresponding fiducial values.
+        Default is None, which means that the systematics will be loaded
+        from firecrown defaults by the likelihood.
     seed : int or str
         Random seed.
 
@@ -205,6 +207,17 @@ class ConcealDataVector():
         Checks if the amplitude parameter is set in the tools is the same
         as the one in the cosmology and in the concealing dictionary.
         If not, raises an error.
+
+        Parameters
+        ----------
+        tools : firecrown.ccl_factory.CCLFactory
+            CCLFactory object with the cosmology and the amplitude parameter.
+
+        Raises
+        ------
+        ValueError
+        If the amplitude parameter is not supported or if the required parameter
+        is not in the cosmology or in the shifts dictionary.
         """
         _amplitude_param = tools.ccl_factory.amplitude_parameter
 
@@ -242,6 +255,11 @@ class ConcealDataVector():
         ----------
         likelihood : firecrown.likelihood.Likelihood
             Likelihood object with required systematics.
+
+        Returns
+        -------
+        ParamsMap : firecrown.parameters.ParamsMap
+            A ParamsMap object with the default values of the required systematics.
         """
         # get the required systematics from the likelihood
         req_systematics = likelihood.required_parameters()
@@ -256,6 +274,14 @@ class ConcealDataVector():
         ----------
         systematics_dict : dict
             Dictionary of systematics names and corresponding fiducial values.
+
+        likelihood : firecrown.likelihood.Likelihood
+            Likelihood object with required systematics.
+
+        Returns
+        -------
+        ParamsMap : firecrown.parameters.ParamsMap
+            A ParamsMap object with the systematics values from the dictionary.
         """
         likelihood_req_systematics = list(likelihood.required_parameters().get_params_names())
         if self._debug:
@@ -272,6 +298,10 @@ class ConcealDataVector():
 
         Parameters
         ----------
+        seed : int or str
+            Seed for the random number generator. If a string is provided,
+            it is converted to an integer using a hash function.
+
         shifts_dict : dict
             Dictionary of parameter names and corresponding shift widths. If the
             shifts are single values, it does a deterministic shift: PARAM = FIDUCIAL + SHIFT
@@ -279,6 +309,11 @@ class ConcealDataVector():
             should be the (lower, upper) bounds of the shift widths: PARAM = U(a, b)
             If the first valuee is negative, it is assumed that the parameter
             is to be shifted from the fiducial value: PARAM = FIDUCIAL + U(-a, b)
+
+        Returns
+        -------
+        dict
+            Dictionary of parameter names and corresponding shifts.
         """
         if shift_distr == "flat":
             shifts_internal = draw_flat_or_deterministic_param_shifts(self.cosmo, self.shifts_dict, seed)
@@ -292,7 +327,15 @@ class ConcealDataVector():
         """
         Creates a blinded cosmology object with the shifts applied.
 
-        FIXME: Unsure this is the best way of doing this but it is similar to what is done in Augur.
+        Parameters
+        ----------
+        shifts : dict
+            Dictionary of parameter names and corresponding shifts.
+
+        Returns
+        -------
+        pyccl.Cosmology
+            A Cosmology object with the shifts applied.
         """
         concealed_cosmo_dict = deepcopy(self.cosmo.to_dict())
         # sometimes we have this extra paramters that can cause problems:
@@ -374,8 +417,20 @@ class ConcealDataVector():
             return self.__concealing_factor
 
     def apply_concealing_to_likelihood_datavec(self):
-        """
+        r"""
         Applies the concealing (blinding) factor to the data-vector.
+
+        Returns
+        -------
+        self.concealed_data_vector : np.ndarray
+            Concealed (blinded) data-vector.
+
+        Notes
+        -----
+        The data-vector is concealed by adding or multiplying the
+        concealing factor to the data-vector, depending on the
+        `factor_type` specified during the calculation of the
+        concealing factor.
         """
         self.data_vector = self.likelihood.get_data_vector()
         if self.factor_type == "add":
@@ -403,7 +458,11 @@ class ConcealDataVector():
         return_sacc : bool
             If True, returns the sacc object with the blinded data-vector.
 
-
+        Returns
+        -------
+        sacc.sacc.Sacc or None
+            If `return_sacc` is True, returns the sacc object with
+            the blinded data-vector. Otherwise, returns None.
         """
         idx = self.likelihood.get_sacc_indices()
         concealed_sacc = save_to_sacc(self.sacc_data,
@@ -423,22 +482,3 @@ class ConcealDataVector():
             return concealed_sacc
         else:
             return None
-
-    # def encrypt_original_datavector(self, original_sacc_file, path_to_save, keep_original=False):
-    #     """
-    #     Encrypts the original data-vector.
-
-    #     Parameters
-    #     ----------
-    #     keep_original : bool
-    #         If True, keeps the original data-vector file. Default is False.
-    #     """
-
-    #     encrypt_file(original_sacc_file, path_to_save, save_file=True,
-    #                  keep_original=keep_original)
-
-    #     if self._debug:
-    #         print(f"[DEBUG] Original data-vector encrypted successfully.")
-    #         encry_file_name = f"{path_to_save}/{os.path.basename
-    # (original_sacc_file).split('.')[0]}"
-    #         print(f"[DEBUG] Key saved as {encry_file_name}.key")
