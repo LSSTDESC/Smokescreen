@@ -23,7 +23,7 @@ jobs:
       # Don't quit all jobs if only one job fails.
       fail-fast: false
       matrix:
-        python-version: ["3.9"]
+        python-version: ["3.11"]
         os: [ubuntu-24.04, macos-latest]
         include:
           - os: ubuntu-24.04
