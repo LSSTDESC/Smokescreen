@@ -93,6 +93,10 @@ You can find an example of a configuration file here:
         sigma8: 0.85
     keep_original_sacc: true
 
+.. note::
+
+    **As of version 1.5.0 of Smokescreen, you no longer need to provide the `systematics` dictionary in the configuration file. The module will automatically extract the systematics from the firecrown likelihood's default values. Of course, you can still provide this dictionary if you want values different than the firecrown defaults**
+
 .. warning::
 
     **By default, the original SACC file is deleted after the encryption. If you want to keep the original SACC file, you can set the `keep_original_sacc` parameter to `true` in the configuration file.**
@@ -131,6 +135,7 @@ The smokescreen module can be used to blind the data-vector measurements. The mo
    # load a sacc object with the data vector [FIXME: this is a placeholder, the sacc object should be loaded from the likelihood]
    sacc_data = sacc.Sacc.load_fits('path/to/data_vector.sacc')
    # create a dictionary of the necessary firecrown nuisance parameters
+   # from version 1.5.0 of Smokescreen, the systematics dictionary can be optional (more info above)
    syst_dict = {
                "ia_a_1": 1.0,
                "ia_a_2": 0.5,
@@ -142,8 +147,10 @@ The smokescreen module can be used to blind the data-vector measurements. The mo
                "src0_delta_z": 0.000,
                "lens0_delta_z": 0.000,}
    # create the smokescreen object
-   smoke = ConcealDataVector(cosmo, syst_dict, sacc_data, my_likelihood, 
-                             {'Omega_c': (0.22, 0.32), 'sigma8': (0.7, 0.9)}, shift_distr='flat')
+   smoke = ConcealDataVector(cosmo, sacc_data, my_likelihood, 
+                             {'Omega_c': (0.22, 0.32), 'sigma8': (0.7, 0.9)},
+                             syst_dict, 
+                             shift_distr='flat')
    # conceals (blinds) the data vector
    smoke.calculate_concealing_factor()
    concealed_dv = smoke.apply_concealing_to_likelihood_datavec()
