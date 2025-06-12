@@ -87,7 +87,7 @@ jobs:
       - name: flake8
         uses: py-actions/flake8@v2
         with:
-          max-line-length: "100"
+          max-line-length: "120"
         # run: |
         #   conda activate desc_smokescreen
         #   flake8 src/smokescreen
