@@ -43,7 +43,7 @@ docs = [
 where = ["src"]
 
 [tool.flake8]
-max-line-length = 100
+max-line-length = 120
 
 [project.urls]
 Homepage = "https://github.com/LSSTDESC/Smokescreen"
