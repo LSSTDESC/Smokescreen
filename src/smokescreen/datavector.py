@@ -145,7 +145,7 @@ class ConcealDataVector():
             # load the likelihood from the file
             likelihood, tools = load_likelihood(likelihood, build_parameters)
             # because now firecrown needs to know the amplitude parameter
-            # before we build the likelihood, need to check if we are 
+            # before we build the likelihood, need to check if we are
             # concealing the correct parameter
             self._check_amplitude_parameter(tools)
 
@@ -199,9 +199,10 @@ class ConcealDataVector():
             assert len(likefunc_params) >= 1, ("A sacc was provided, ",
                                                "the likelihood must require a",
                                                "build_parameters NamedParameters object!")
+
     def _check_amplitude_parameter(self, tools):
         """
-        Checks if the amplitude parameter is set in the tools is the same 
+        Checks if the amplitude parameter is set in the tools is the same
         as the one in the cosmology and in the concealing dictionary.
         If not, raises an error.
         """
@@ -214,21 +215,24 @@ class ConcealDataVector():
         else:
             raise ValueError(f"Amplitude parameter {_amplitude_param} not supported")
 
-        _error_msg = f"\n You probably need to set the amplitude parameter [A_s/sigma8] that you want to conceal "
-        _error_msg += f"when calling ModelingTools in your likelihood module."
-        _error_msg += f"\n The amplitude parameter is currently set to {_amplitude_param} and Firecrown" 
-        _error_msg += " won't let Smokescreen change that."
+        _error_msg = "\n You probably need to set the amplitude parameter [A_s/sigma8] "
+        _error_msg += "that you want to conceal when calling ModelingTools in your likelihood "
+        _error_msg += "module. \n The amplitude parameter is currently set to"
+        _error_msg += f" {_amplitude_param} and Firecrown won't let Smokescreen change that."
 
         # check if the required parameter is in the cosmology
         if _required_param not in self.cosmo.to_dict().keys():
-            print(_error_msg)
-            raise ValueError(f"Cosmology does not have the required parameter {_required_param}{_error_msg}")
+            error_msg = f"Cosmology does not have the required parameter {_required_param}"
+            error_msg += _error_msg
+            raise ValueError(error_msg)
 
         # check if the required parameter is in the shifts dictionary
         if any(param in self.shifts_dict for param in ['A_s', 'sigma8']):
             if _required_param not in self.shifts_dict.keys():
-                raise ValueError(f"{self.shifts_dict.keys()}Shifts dictionary does not have the required parameter {_required_param}{_error_msg}")
-
+                error_msg = "Shifts dictionary does not have the required parameter "
+                error_msg += f"{_required_param}"
+                error_msg += _error_msg
+                raise ValueError(error_msg)
 
     def _load_default_systematics(self, likelihood):
         """

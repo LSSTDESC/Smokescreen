@@ -152,7 +152,7 @@ def test_debug_mode(capfd):
     # Check that Smokescreen can be instantiated with valid inputs
     _ = ConcealDataVector(cosmo, likelihood,
                           shifts_dict, sacc_data, systematics_dict,
-                            **{'debug': True})
+                          **{'debug': True})
     # Capture the output
     out, err = capfd.readouterr()
 

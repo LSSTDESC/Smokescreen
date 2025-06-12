@@ -81,6 +81,7 @@ def string_to_seed(seedstring):
     """
     return int(int(hashlib.md5(seedstring.encode('utf-8')).hexdigest(), 16) % 1.e8)
 
+
 def modify_default_params(default_params, ccl_cosmology, systematics=None):
     """
     Modify the default parameters with the values from the CCL cosmology and
