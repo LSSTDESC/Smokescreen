@@ -17,12 +17,12 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
-    "numpy>=1.24.0",
+    "numpy>=2.2.0",
     "scipy>=1.9.0",
     "astropy>=5.2.0",
     "pytest>=7.2.5",
     "sacc>=0.12",
-    "pyccl>=3.0.2",
+    #"pyccl>=3.0.2",
     "jsonargparse[signatures]>=4.0",
     "pytest",
     "pytest-cov",
@@ -43,7 +43,7 @@ docs = [
 where = ["src"]
 
 [tool.flake8]
-max-line-length = 100
+max-line-length = 120
 
 [project.urls]
 Homepage = "https://github.com/LSSTDESC/Smokescreen"

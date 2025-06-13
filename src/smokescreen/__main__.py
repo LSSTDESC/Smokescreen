@@ -33,8 +33,8 @@ banner = rf"""
 
 def datavector_main(path_to_sacc: Path_fr,
                     likelihood_path: str,
-                    systematics: dict,
                     shifts_dict: Dict[str, Tuple[float, float]],
+                    systematics: dict = None,
                     shift_type: str = 'add',
                     shift_distribution: str = 'flat',
                     seed: Union[int, str] = 2112,
@@ -47,11 +47,11 @@ def datavector_main(path_to_sacc: Path_fr,
     Args:
         path_to_sacc (str): Path to the sacc file to blind.
         likelihood_path (str): Path to the firecrown likelihood module file.
-        systematics (dict): Dictionary with fixed values for the firecrown systematics parameters.
         shifts_dict (dict): Dictionary with fixed values for the firecrown shifts parameters.
             Example: {"Omega_c": (0.20, 0.39), "sigma8": (0.70, 0.90)}
         shift_type (str): Type of shift to apply to the data vector. 
             Options are 'add' and 'mult'. Defaults to 'add'.
+        systematics (dict): Dictionary with fixed values for the firecrown systematics parameters.
         shift_distribution (str): Distribution type for the parameter shifts. 
             Options are 'flat' and 'gaussian'. Defaults to 'flat'.
         seed (int, str): Seed for the blinding process. Defaults to 2112.
@@ -74,7 +74,7 @@ def datavector_main(path_to_sacc: Path_fr,
     # reads the sacc file
     sacc_data = sacc.Sacc.load_fits(path_to_sacc)
     # creates the smokescreen object
-    smoke = ConcealDataVector(cosmo, systematics, likelihood_path, shifts_dict, sacc_data, seed,
+    smoke = ConcealDataVector(cosmo,  likelihood_path, shifts_dict, sacc_data, systematics, seed,
                               shift_distr=shift_distribution)
     # blinds the sacc file
     smoke.calculate_concealing_factor(factor_type=shift_type)
