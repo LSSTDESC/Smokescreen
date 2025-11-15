@@ -3,10 +3,18 @@ import types
 import os
 import datetime
 from unittest.mock import patch, MagicMock  # noqa: F401
+from packaging.version import Version
 import numpy as np
 import sacc
 import pyccl as ccl
-from firecrown.likelihood.likelihood import Likelihood
+import firecrown
+
+# Handle different Firecrown versions
+if Version(firecrown.__version__) >= Version("1.15.0a0"):
+    from firecrown.likelihood import Likelihood
+else:
+    from firecrown.likelihood.likelihood import Likelihood
+
 from firecrown.modeling_tools import ModelingTools
 from smokescreen.datavector import ConcealDataVector
 ccl.gsl_params.LENSING_KERNEL_SPLINE_INTEGRATION = False
