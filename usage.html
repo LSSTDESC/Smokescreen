@@ -1,0 +1,313 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Usage &mdash; Smokescreen  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/custom.js?v=a5a03036"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="API References" href="reference.html" />
+    <link rel="prev" title="Installation" href="installation.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Smokescreen
+              <img src="_static/bkp_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#data-vector-concealment-blinding">Data Vector Concealment (blinding)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#from-the-command-line">From the command line</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#from-a-notebook-your-code">From a notebook/your code</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#encryting-and-decrypting-sacc-files">Encryting and Decrypting SACC files</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#encrypting-files">Encrypting files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#decrypting-files">Decrypting files</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#posterior-concealment-blinding">Posterior Concealment (blinding)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">API References</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Smokescreen</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Usage</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/usage.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="usage">
+<h1>Usage<a class="headerlink" href="#usage" title="Link to this heading"></a></h1>
+<p>Currently, only data vector concealment is implemented in Smokescreen. Posterior-level concealment is under development.</p>
+<section id="data-vector-concealment-blinding">
+<h2>Data Vector Concealment (blinding)<a class="headerlink" href="#data-vector-concealment-blinding" title="Link to this heading"></a></h2>
+<p>The <cite>Smokescreen</cite> library provides a method for blinding data vectors. This method is based on the <a class="reference external" href="https://arxiv.org/abs/1911.05929">Muir et al. (2021)</a> data-vector blinding method.</p>
+<p>To conceal a data-vector you need the following elements:</p>
+<ul>
+<li><p>A CCL cosmology object</p></li>
+<li><p>A dictionary of the nuisance parameters used in the likelihood (soon to be deprecated)</p></li>
+<li><p>A Firecrown Likelihood, which takes a SACC data-vector (see more below). It can be either a path to the python file containing the likelihood or the module itself.</p></li>
+<li><p>A dictionary of cosmological parameters to be shifted in the format:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># for a random uniform parameter shift:</span>
+<span class="p">{</span><span class="s1">&#39;PARAM_Y&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">Y_MIN</span><span class="p">,</span> <span class="n">Y_MAX</span><span class="p">),</span> <span class="s1">&#39;PARAM_Z&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">Z_MIN</span><span class="p">,</span> <span class="n">Z_MAX</span><span class="p">)}</span>
+<span class="c1"># or for a determinist shift (used for debugging):</span>
+<span class="p">{</span><span class="s1">&#39;PARAM_Y&#39;</span><span class="p">:</span> <span class="n">Y_VALUE</span><span class="p">,</span> <span class="s1">&#39;PARAM_Z&#39;</span><span class="p">:</span> <span class="n">Z_VALUE</span><span class="p">}</span>
+
+<span class="c1"># for a Gaussian parameter shift:</span>
+<span class="p">{</span><span class="s1">&#39;PARAM_Y&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">MEAN_Y</span><span class="p">,</span> <span class="n">STD_Y</span><span class="p">),</span> <span class="s1">&#39;PARAM_Z&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">MEAN_Z</span><span class="p">,</span> <span class="n">STD_Z</span><span class="p">)}</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>A SACC data-vector</p></li>
+<li><p>A random seed as int or string</p></li>
+</ul>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p><strong>Likelihood Requirements</strong></p>
+<p>The blinding module requires the Firecrown likelihood to be built with certain requirements. First, we must be able to build the likelihood by providing a <a class="reference external" href="https://github.com/LSSTDESC/sacc/tree/master">sacc</a> object with the measurements for the data-vector:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">build_likelihood</span><span class="p">(</span><span class="n">build_parameters</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This is a generic likelihood theory model</span>
+<span class="sd">    for a generic data vector.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sacc_data</span> <span class="o">=</span> <span class="n">build_parameters</span><span class="p">[</span><span class="s1">&#39;sacc_data&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>This is simular to what is currently done in <a class="reference external" href="https://github.com/LSSTDESC/TXPipe/blob/df0dcc8c1e974576dd1942624ab5ff7bd0fbbaa0/txpipe/utils/theory_model.py#L19">TXPipe</a>.</p>
+<p>The likelihood module also must have a method <code class="docutils literal notranslate"><span class="pre">.compute_theory_vector(ModellingTools)</span></code> which calls for the calculation of the theory vector inside the likelihood object.</p>
+</div></blockquote>
+</div>
+<div class="admonition danger">
+<p class="admonition-title">Danger</p>
+<p><strong>Likelihoods with hardcoded sacc files:</strong></p>
+<p>If you provide a Firecrown likelihood with a hardcoded path to a sacc file as the data-vector, <strong>Smokescreen will conceal the hardcoded sacc file and not the one you provided</strong>. This is because the likelihood is built with the hardcoded path. Firecrown currently has not checks to avoid a hardcoded sacc file in the <code class="docutils literal notranslate"><span class="pre">build_likelihood(...)</span></code> function. To avoid this, please build the likelihood as described above.</p>
+</div>
+<p>The likelihood can be provided either as a path to the python file containing the <code class="docutils literal notranslate"><span class="pre">build_likelihood</span></code> function or as a python module. In the latter case, the module must be imported.</p>
+<p>TL;DR: Check the <a class="reference external" href="https://github.com/LSSTDESC/Smokescreen/tree/main/notebooks">Smokescreen notebooks folder</a> for a couple of examples.</p>
+<section id="from-the-command-line">
+<h3>From the command line<a class="headerlink" href="#from-the-command-line" title="Link to this heading"></a></h3>
+<p>The blinding module can be used to blind the data-vector measurements. The module can be used as follows:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>smokescreen<span class="w"> </span>--config<span class="w"> </span>configuration_file.yaml
+</pre></div>
+</div>
+<p>From Smokescreen version 1.3.0 you should call the module as:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>smokescreen<span class="w"> </span>datavector<span class="w"> </span>--config<span class="w"> </span>configuration_file.yaml
+</pre></div>
+</div>
+<p>You can find an example of a configuration file here:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">path_to_sacc</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;./cosmicshear_sacc.fits&quot;</span>
+<span class="nt">likelihood_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;./cosmicshear_likelihood.py&quot;</span>
+<span class="nt">systematics</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">trc1_delta_z</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.1</span>
+<span class="w">    </span><span class="nt">trc0_delta_z</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.1</span>
+<span class="nt">shifts_dict</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">Omega_c</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.20</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.42</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">sigma8</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.67</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.92</span><span class="p p-Indicator">]</span>
+<span class="nt">seed</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2112</span>
+<span class="nt">shift_distribution</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;flat&quot;</span>
+<span class="c1"># only needed if you want a different reference cosmology</span>
+<span class="c1"># than ccl.VanillaLCDM</span>
+<span class="nt">reference_cosmology</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">sigma8</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.85</span>
+<span class="nt">keep_original_sacc</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>As of version 1.5.0 of Smokescreen, you no longer need to provide the `systematics` dictionary in the configuration file. The module will automatically extract the systematics from the firecrown likelihood’s default values. Of course, you can still provide this dictionary if you want values different than the firecrown defaults</strong></p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><strong>By default, the original SACC file is deleted after the encryption. If you want to keep the original SACC file, you can set the `keep_original_sacc` parameter to `true` in the configuration file.</strong></p>
+</div>
+<p>Or you can use the following command to create a template configuration file:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>smokescreen<span class="w"> </span>--print_config<span class="w"> </span>&gt;<span class="w"> </span>template_config.yaml
+<span class="c1"># or in version 1.3.0+</span>
+smokescreen<span class="w"> </span>datavector<span class="w"> </span>--print_config<span class="w"> </span>&gt;<span class="w"> </span>template_config.yaml
+</pre></div>
+</div>
+<p>Note that the <cite>reference_cosmology</cite> is optional. If not provided, the CCL <cite>VanillaLCDM</cite> reference cosmology will be the one used to compute the data vector.</p>
+</section>
+<section id="from-a-notebook-your-code">
+<h3>From a notebook/your code<a class="headerlink" href="#from-a-notebook-your-code" title="Link to this heading"></a></h3>
+<p>The smokescreen module can be used to blind the data-vector measurements. The module can be used as follows:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># import the module</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pyccl</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ccl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">smokescreen</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConcealDataVector</span>
+<span class="c1"># import the likelihood that contains the model and data vector</span>
+<span class="p">[</span><span class="o">...</span><span class="p">]</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">my_likelihood</span>
+
+<span class="c1"># create the cosmology ccl object</span>
+<span class="n">cosmo</span> <span class="o">=</span> <span class="n">ccl</span><span class="o">.</span><span class="n">Cosmology</span><span class="p">(</span><span class="n">Omega_c</span><span class="o">=</span><span class="mf">0.27</span><span class="p">,</span>
+                      <span class="n">Omega_b</span><span class="o">=</span><span class="mf">0.045</span><span class="p">,</span>
+                      <span class="n">h</span><span class="o">=</span><span class="mf">0.67</span><span class="p">,</span>
+                      <span class="n">sigma8</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>
+                      <span class="n">n_s</span><span class="o">=</span><span class="mf">0.96</span><span class="p">,</span>
+                      <span class="n">transfer_function</span><span class="o">=</span><span class="s1">&#39;bbks&#39;</span><span class="p">)</span>
+<span class="c1"># load a sacc object with the data vector [FIXME: this is a placeholder, the sacc object should be loaded from the likelihood]</span>
+<span class="n">sacc_data</span> <span class="o">=</span> <span class="n">sacc</span><span class="o">.</span><span class="n">Sacc</span><span class="o">.</span><span class="n">load_fits</span><span class="p">(</span><span class="s1">&#39;path/to/data_vector.sacc&#39;</span><span class="p">)</span>
+<span class="c1"># create a dictionary of the necessary firecrown nuisance parameters</span>
+<span class="c1"># from version 1.5.0 of Smokescreen, the systematics dictionary can be optional (more info above)</span>
+<span class="n">syst_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;ia_a_1&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+            <span class="s2">&quot;ia_a_2&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+            <span class="s2">&quot;ia_a_d&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+            <span class="s2">&quot;lens0_bias&quot;</span><span class="p">:</span> <span class="mf">2.0</span><span class="p">,</span>
+            <span class="s2">&quot;lens0_b_2&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+            <span class="s2">&quot;lens0_b_s&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+            <span class="s2">&quot;lens0_mag_bias&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+            <span class="s2">&quot;src0_delta_z&quot;</span><span class="p">:</span> <span class="mf">0.000</span><span class="p">,</span>
+            <span class="s2">&quot;lens0_delta_z&quot;</span><span class="p">:</span> <span class="mf">0.000</span><span class="p">,}</span>
+<span class="c1"># create the smokescreen object</span>
+<span class="n">smoke</span> <span class="o">=</span> <span class="n">ConcealDataVector</span><span class="p">(</span><span class="n">cosmo</span><span class="p">,</span> <span class="n">sacc_data</span><span class="p">,</span> <span class="n">my_likelihood</span><span class="p">,</span>
+                          <span class="p">{</span><span class="s1">&#39;Omega_c&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.22</span><span class="p">,</span> <span class="mf">0.32</span><span class="p">),</span> <span class="s1">&#39;sigma8&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">)},</span>
+                          <span class="n">syst_dict</span><span class="p">,</span>
+                          <span class="n">shift_distr</span><span class="o">=</span><span class="s1">&#39;flat&#39;</span><span class="p">)</span>
+<span class="c1"># conceals (blinds) the data vector</span>
+<span class="n">smoke</span><span class="o">.</span><span class="n">calculate_concealing_factor</span><span class="p">()</span>
+<span class="n">concealed_dv</span> <span class="o">=</span> <span class="n">smoke</span><span class="o">.</span><span class="n">apply_concealing_to_likelihood_datavec</span><span class="p">()</span>
+
+<span class="c1"># create the smokescreen object with Gaussian shifts</span>
+<span class="n">smoke_gaussian</span> <span class="o">=</span> <span class="n">ConcealDataVector</span><span class="p">(</span><span class="n">cosmo</span><span class="p">,</span> <span class="n">syst_dict</span><span class="p">,</span> <span class="n">sacc_data</span><span class="p">,</span> <span class="n">my_likelihood</span><span class="p">,</span>
+                                   <span class="p">{</span><span class="s1">&#39;Omega_c&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.27</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">),</span> <span class="s1">&#39;sigma8&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">)},</span> <span class="n">shift_distr</span><span class="o">=</span><span class="s1">&#39;gaussian&#39;</span><span class="p">)</span>
+<span class="c1"># conceals (blinds) the data vector with Gaussian shifts</span>
+<span class="n">smoke_gaussian</span><span class="o">.</span><span class="n">calculate_concealing_factor</span><span class="p">()</span>
+<span class="n">concealed_dv_gaussian</span> <span class="o">=</span> <span class="n">smoke_gaussian</span><span class="o">.</span><span class="n">apply_concealing_to_likelihood_datavec</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>To encrypt the original sacc file, follow the instructions in the next section.</p>
+</section>
+</section>
+<section id="encryting-and-decrypting-sacc-files">
+<h2>Encryting and Decrypting SACC files<a class="headerlink" href="#encryting-and-decrypting-sacc-files" title="Link to this heading"></a></h2>
+<p>From Smokescreen version 1.3.0, you can encrypt and decrypt SACC files. This is useful when you want to share the data vector with someone else but you don’t want them to see the data. The encryption is done using the <a class="reference external" href="https://cryptography.io/en/latest/">cryptography</a> library. It is important to note that the encryption is done using a symmetric key, so the person you are sharing the data with must have the key to decrypt the file.</p>
+<p>When running the data vector concealment module, encryption is performed by default. The decryption key is saved in a file with the same name as the original file but a <cite>.key</cite> extension. The key is saved in the same directory as the encrypted file.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><strong>By default, the original SACC file is deleted after the encryption. If you want to keep the original SACC file, you can set the `keep_original_sacc` parameter to `true` in the configuration file or set the flag `–keep_original true` via command line</strong></p>
+</div>
+<section id="encrypting-files">
+<h3>Encrypting files<a class="headerlink" href="#encrypting-files" title="Link to this heading"></a></h3>
+<p>To encrypt a sacc file (or any file), you can use the following command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>smokescreen<span class="w"> </span>encrypt<span class="w"> </span>--path_to_sacc<span class="w"> </span>path/to/sacc.fits<span class="w"> </span>--path_to_save<span class="w"> </span>path/to/save/the/file/<span class="w"> </span><span class="o">[</span>--keep_original<span class="w"> </span>true<span class="o">]</span>
+</pre></div>
+</div>
+<p>This will generate an encrypted file with the extension <cite>.encrpt</cite> and a key file with the extension <cite>.key</cite> in the same directory as the encrypted file or in the directory specified by <cite>–path_to_save</cite>.</p>
+<p>You can also encrypt a file from a notebook/your code:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">smokescreen.encryption</span><span class="w"> </span><span class="kn">import</span> <span class="n">encrypt_sacc</span>
+<span class="n">encrypt_sacc</span><span class="p">(</span><span class="s1">&#39;path/to/sacc.fits&#39;</span><span class="p">,</span> <span class="s1">&#39;path/to/save/the/file/&#39;</span><span class="p">,</span> <span class="n">save_file</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">keep_original</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="decrypting-files">
+<h3>Decrypting files<a class="headerlink" href="#decrypting-files" title="Link to this heading"></a></h3>
+<p>To decrypt the file, you can use the following command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>smokescreen<span class="w"> </span>decrypt<span class="w"> </span>--path_to_sacc<span class="w"> </span><span class="o">[</span>path_to_encrypted_sacc<span class="o">]</span><span class="w"> </span>--path_to_key<span class="w"> </span><span class="o">[</span>path_to_file_with_key<span class="o">]</span>
+</pre></div>
+</div>
+<p>or from a notebook/your code:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">smokescreen.encryption</span><span class="w"> </span><span class="kn">import</span> <span class="n">decrypt_sacc</span>
+<span class="n">decrypt_sacc</span><span class="p">(</span><span class="s1">&#39;path/to/encrypted_sacc.encrpt&#39;</span><span class="p">,</span> <span class="s1">&#39;path/to/key.key&#39;</span><span class="p">,</span> <span class="n">save_file</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <cite>save_file</cite> parameter is optional and is set to <cite>True</cite> by default. If set to <cite>False</cite>, the decrypted file will not be saved to disk.</p>
+</section>
+</section>
+<section id="posterior-concealment-blinding">
+<h2>Posterior Concealment (blinding)<a class="headerlink" href="#posterior-concealment-blinding" title="Link to this heading"></a></h2>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><strong>UNDER DEVELOPMENT</strong></p>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="reference.html" class="btn btn-neutral float-right" title="API References" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright LSST Dark Energy Science Collaboration .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

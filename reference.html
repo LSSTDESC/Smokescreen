@@ -1,0 +1,448 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>API References &mdash; Smokescreen  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="_static/custom.js?v=a5a03036"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Usage" href="usage.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Smokescreen
+              <img src="_static/bkp_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API References</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#conceal-data-vector-smokescreen-datavector">Conceal Data Vector (<code class="xref py py-mod docutils literal notranslate"><span class="pre">smokescreen.datavector</span></code>)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#conceal-data-vector-class">Conceal Data Vector Class</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#smokescreen.datavector.ConcealDataVector"><code class="docutils literal notranslate"><span class="pre">ConcealDataVector</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#parameter-shifts-smokescreen-param-shifts">Parameter Shifts (<code class="xref py py-mod docutils literal notranslate"><span class="pre">smokescreen.param_shifts</span></code>)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#parameter-shifts">Parameter Shifts</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#smokescreen.param_shifts.draw_flat_param_shifts"><code class="docutils literal notranslate"><span class="pre">draw_flat_param_shifts()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#smokescreen.param_shifts.draw_flat_or_deterministic_param_shifts"><code class="docutils literal notranslate"><span class="pre">draw_flat_or_deterministic_param_shifts()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#smokescreen.param_shifts.draw_gaussian_param_shifts"><code class="docutils literal notranslate"><span class="pre">draw_gaussian_param_shifts()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#encryption-smokescreen-encryption">Encryption (<code class="xref py py-mod docutils literal notranslate"><span class="pre">smokescreen.encryption</span></code>)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#smokescreen-encryption">Smokescreen Encryption</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#smokescreen.encryption.encrypt_file"><code class="docutils literal notranslate"><span class="pre">encrypt_file()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#smokescreen.encryption.decrypt_file"><code class="docutils literal notranslate"><span class="pre">decrypt_file()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#utils-smokescreen-utils">Utils (<code class="xref py py-mod docutils literal notranslate"><span class="pre">smokescreen.utils</span></code>)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#smokescreen-utils">Smokescreen Utils</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#smokescreen.utils.load_cosmology_from_partial_dict"><code class="docutils literal notranslate"><span class="pre">load_cosmology_from_partial_dict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#smokescreen.utils.load_module_from_path"><code class="docutils literal notranslate"><span class="pre">load_module_from_path()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#smokescreen.utils.string_to_seed"><code class="docutils literal notranslate"><span class="pre">string_to_seed()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Smokescreen</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">API References</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/reference.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-smokescreen.datavector">
+<span id="api-references"></span><h1>API References<a class="headerlink" href="#module-smokescreen.datavector" title="Link to this heading"></a></h1>
+<section id="conceal-data-vector-smokescreen-datavector">
+<h2>Conceal Data Vector (<a class="reference internal" href="#module-smokescreen.datavector" title="smokescreen.datavector"><code class="xref py py-mod docutils literal notranslate"><span class="pre">smokescreen.datavector</span></code></a>)<a class="headerlink" href="#conceal-data-vector-smokescreen-datavector" title="Link to this heading"></a></h2>
+<p>The <a class="reference internal" href="#module-smokescreen.datavector" title="smokescreen.datavector"><code class="xref py py-mod docutils literal notranslate"><span class="pre">smokescreen.datavector</span></code></a> module provides functionalities
+to conceal data vectors in the context of cosmological analysis.</p>
+<section id="conceal-data-vector-class">
+<h3>Conceal Data Vector Class<a class="headerlink" href="#conceal-data-vector-class" title="Link to this heading"></a></h3>
+<dl class="py class">
+<dt class="sig sig-object py" id="smokescreen.datavector.ConcealDataVector">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">smokescreen.datavector.</span></span><span class="sig-name descname"><span class="pre">ConcealDataVector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cosmo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">likelihood</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shifts_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sacc_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">systm_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'2112'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smokescreen.datavector.ConcealDataVector" title="Link to this definition"></a></dt>
+<dd><p>Class for calling a smokescreen on the measured data-vector.</p>
+<p>FIXME: Only cosmological parameters are supported for now for the shifts</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cosmo</strong> (<em>pyccl.Cosmology</em>) – Cosmology object from CCL with a fiducial cosmology.</p></li>
+<li><p><strong>likelihood</strong> (<em>str</em><em> or </em><em>module</em>) – path to the likelihood or a module containing the likelihood
+must contain both <cite>build_likelihood</cite> and <cite>compute_theory_vector</cite> methods</p></li>
+<li><p><strong>shifts_dict</strong> (<em>dict</em>) – Dictionary of parameter names and corresponding shift widths. If the
+shifts are single values, the dictionary values should be the shift
+widths. If the shifts are tuples of values, the dictionary values
+should be the (lower, upper) bounds of the shift widths.</p></li>
+<li><p><strong>sacc_data</strong> (<em>sacc.sacc.Sacc</em>) – Data-vector to be concealed (blinded).
+If None, the data-vector will be loaded from the likelihood.</p></li>
+<li><p><strong>systm_dict</strong> (<em>dict</em>) – Dictionary of systematics names and corresponding fiducial values.
+Default is None, which means that the systematics will be loaded
+from firecrown defaults by the likelihood.</p></li>
+<li><p><strong>seed</strong> (<em>int</em><em> or </em><em>str</em>) – Random seed.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Keyword Arguments<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>shift_type</strong> (<em>str</em>) – Type of shift to be applied. Default is “flat”.</p></li>
+<li><p><strong>debug</strong> (<em>bool</em>) – If True, prints debug information. Default is False.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="smokescreen.datavector.ConcealDataVector.apply_concealing_to_likelihood_datavec">
+<span class="sig-name descname"><span class="pre">apply_concealing_to_likelihood_datavec</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#smokescreen.datavector.ConcealDataVector.apply_concealing_to_likelihood_datavec" title="Link to this definition"></a></dt>
+<dd><p>Applies the concealing (blinding) factor to the data-vector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>self.concealed_data_vector</strong> – Concealed (blinded) data-vector.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>np.ndarray</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The data-vector is concealed by adding or multiplying the
+concealing factor to the data-vector, depending on the
+<cite>factor_type</cite> specified during the calculation of the
+concealing factor.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="smokescreen.datavector.ConcealDataVector.calculate_concealing_factor">
+<span class="sig-name descname"><span class="pre">calculate_concealing_factor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">factor_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'add'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smokescreen.datavector.ConcealDataVector.calculate_concealing_factor" title="Link to this definition"></a></dt>
+<dd><dl class="simple">
+<dt>Calculates the concealing (blinding) factor for the data-vector,</dt><dd><p>according to Muir et al. 2019:</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>factor_type</strong> (<em>str</em>) – Type of concealing (blinding) factor to be calculated. Default is <code class="docutils literal notranslate"><span class="pre">add</span></code>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>.__concealing_factor</strong> – Concealing factor.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<dl>
+<dt>type=”add”:</dt><dd><div class="math notranslate nohighlight">
+\[f^{\rm add} = d(\theta_{\rm blind}) - d(\theta_{\rm fid})\]</div>
+</dd>
+<dt>type=”mult”:</dt><dd><div class="math notranslate nohighlight">
+\[f^{\rm mult} = d(\theta_{\rm blind}) / d(\theta_{\rm fid})\]</div>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="smokescreen.datavector.ConcealDataVector.save_concealed_datavector">
+<span class="sig-name descname"><span class="pre">save_concealed_datavector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_to_save</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_sacc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smokescreen.datavector.ConcealDataVector.save_concealed_datavector" title="Link to this definition"></a></dt>
+<dd><p>Saves the concealed (blinded) data-vector to a file.</p>
+<p>Saves the blinded data-vector to a file with the name:
+<code class="docutils literal notranslate"><span class="pre">{path_to_save}/{file_root}_blinded_data_vector.fits</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path_to_save</strong> (<em>str</em>) – Path to save the blinded data-vector.</p></li>
+<li><p><strong>file_root</strong> (<em>str</em>) – Root of the file name.</p></li>
+<li><p><strong>return_sacc</strong> (<em>bool</em>) – If True, returns the sacc object with the blinded data-vector.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>If <cite>return_sacc</cite> is True, returns the sacc object with
+the blinded data-vector. Otherwise, returns None.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>sacc.sacc.Sacc or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+<section id="parameter-shifts-smokescreen-param-shifts">
+<span id="module-smokescreen.param_shifts"></span><h2>Parameter Shifts (<a class="reference internal" href="#module-smokescreen.param_shifts" title="smokescreen.param_shifts"><code class="xref py py-mod docutils literal notranslate"><span class="pre">smokescreen.param_shifts</span></code></a>)<a class="headerlink" href="#parameter-shifts-smokescreen-param-shifts" title="Link to this heading"></a></h2>
+<p>The <a class="reference internal" href="#module-smokescreen.param_shifts" title="smokescreen.param_shifts"><code class="xref py py-mod docutils literal notranslate"><span class="pre">smokescreen.param_shifts</span></code></a> module provides modules
+to perform shifts in the cosmological parameters.</p>
+<section id="parameter-shifts">
+<h3>Parameter Shifts<a class="headerlink" href="#parameter-shifts" title="Link to this heading"></a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="smokescreen.param_shifts.draw_flat_param_shifts">
+<span class="sig-prename descclassname"><span class="pre">smokescreen.param_shifts.</span></span><span class="sig-name descname"><span class="pre">draw_flat_param_shifts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shift_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smokescreen.param_shifts.draw_flat_param_shifts" title="Link to this definition"></a></dt>
+<dd><p>Draw flat parameter shifts from a dictionary of parameter names and
+corresponding shift widths.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>shift_dict</strong> (<em>dict</em>) – Dictionary of parameter names and corresponding shift widths. If the
+shifts are single values, the dictionary values should be the shift
+widths. If the shifts are tuples of values, the dictionary values
+should be the (lower, upper) bounds of the shift widths.</p></li>
+<li><p><strong>seed</strong> (<em>int</em><em> or </em><em>str</em>) – Random seed.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dictionary of parameter names and corresponding flat parameter shifts.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="smokescreen.param_shifts.draw_flat_or_deterministic_param_shifts">
+<span class="sig-prename descclassname"><span class="pre">smokescreen.param_shifts.</span></span><span class="sig-name descname"><span class="pre">draw_flat_or_deterministic_param_shifts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cosmo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shifts_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smokescreen.param_shifts.draw_flat_or_deterministic_param_shifts" title="Link to this definition"></a></dt>
+<dd><p>Draw flat or deterministic parameter shifts from a dictionary of parameter
+names and corresponding shift widths.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cosmo</strong> (<em>pyccl.Cosmology</em>) – Cosmology object.</p></li>
+<li><p><strong>shift_dict</strong> (<em>dict</em>) – Dictionary of parameter names and corresponding shift. If the
+shifts are single values, it does a deterministic shift: PARAM = FIDUCIAL + SHIFT
+If the shifts are tuples of values, the dictionary values
+should be the (lower, upper) bounds of the shift widths: PARAM = U(a, b)</p></li>
+<li><p><strong>seed</strong> (<em>int</em><em> or </em><em>str</em>) – Random seed.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dictionary of parameter names and corresponding flat or deterministic
+parameter shifts.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="smokescreen.param_shifts.draw_gaussian_param_shifts">
+<span class="sig-prename descclassname"><span class="pre">smokescreen.param_shifts.</span></span><span class="sig-name descname"><span class="pre">draw_gaussian_param_shifts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cosmo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shifts_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smokescreen.param_shifts.draw_gaussian_param_shifts" title="Link to this definition"></a></dt>
+<dd><p>Draw Gaussian parameter shifts from a dictionary of parameter names and
+corresponding shift widths.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cosmo</strong> (<em>pyccl.Cosmology</em>) – Cosmology object.</p></li>
+<li><p><strong>shift_dict</strong> (<em>dict</em>) – Dictionary of parameter names and corresponding shift widths. The
+dictionary values should be the (mean, std) of the Gaussian distribution.</p></li>
+<li><p><strong>seed</strong> (<em>int</em><em> or </em><em>str</em>) – Random seed.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>shifts</strong> – Dictionary of parameter names and corresponding Gaussian parameter shifts.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+<section id="encryption-smokescreen-encryption">
+<span id="module-smokescreen.encryption"></span><h2>Encryption (<a class="reference internal" href="#module-smokescreen.encryption" title="smokescreen.encryption"><code class="xref py py-mod docutils literal notranslate"><span class="pre">smokescreen.encryption</span></code></a>)<a class="headerlink" href="#encryption-smokescreen-encryption" title="Link to this heading"></a></h2>
+<p>The <a class="reference internal" href="#module-smokescreen.encryption" title="smokescreen.encryption"><code class="xref py py-mod docutils literal notranslate"><span class="pre">smokescreen.encryption</span></code></a> module provides functions to encrypt and decrypt files.</p>
+<section id="smokescreen-encryption">
+<h3>Smokescreen Encryption<a class="headerlink" href="#smokescreen-encryption" title="Link to this heading"></a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="smokescreen.encryption.encrypt_file">
+<span class="sig-prename descclassname"><span class="pre">smokescreen.encryption.</span></span><span class="sig-name descname"><span class="pre">encrypt_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_to_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_to_save</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_original</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bytes</span></span></span><a class="headerlink" href="#smokescreen.encryption.encrypt_file" title="Link to this definition"></a></dt>
+<dd><p>Encrypts a SACC file using Fernet encryption.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path_to_file</strong> (<em>str</em>) – Path to the SACC file to be encrypted.</p></li>
+<li><p><strong>path_to_save</strong> (<em>str</em><em>, </em><em>optional</em>) – Path to save the key used to encrypt the file, and the encrypted file.
+by default None [saves in the same directory as the encrypted file].</p></li>
+<li><p><strong>save_file</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, saves the encrypted file in the same directory
+as the original file, by default False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>encrypted_sacc</strong> (<em>bytes</em>) – Encrypted SACC file.</p></li>
+<li><p><strong>key</strong> (<em>bytes</em>) – Key used to encrypt the file.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="smokescreen.encryption.decrypt_file">
+<span class="sig-prename descclassname"><span class="pre">smokescreen.encryption.</span></span><span class="sig-name descname"><span class="pre">decrypt_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_to_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bytes</span></span></span><a class="headerlink" href="#smokescreen.encryption.decrypt_file" title="Link to this definition"></a></dt>
+<dd><p>Decrypts a SACC file using Fernet encryption.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path_to_sacc</strong> (<em>str</em>) – Path to the SACC file to be decrypted.</p></li>
+<li><p><strong>key</strong> (<em>str</em>) – path to the file with the key used to encrypt the SACC.</p></li>
+<li><p><strong>save_file</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, saves the decrypted file in the same directory as the original file,
+by default False.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+<section id="utils-smokescreen-utils">
+<span id="module-smokescreen.utils"></span><h2>Utils (<a class="reference internal" href="#module-smokescreen.utils" title="smokescreen.utils"><code class="xref py py-mod docutils literal notranslate"><span class="pre">smokescreen.utils</span></code></a>)<a class="headerlink" href="#utils-smokescreen-utils" title="Link to this heading"></a></h2>
+<p>The <a class="reference internal" href="#module-smokescreen.utils" title="smokescreen.utils"><code class="xref py py-mod docutils literal notranslate"><span class="pre">smokescreen.utils</span></code></a> module provides utility functions
+for the smokescreen package.</p>
+<section id="smokescreen-utils">
+<h3>Smokescreen Utils<a class="headerlink" href="#smokescreen-utils" title="Link to this heading"></a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="smokescreen.utils.load_cosmology_from_partial_dict">
+<span class="sig-prename descclassname"><span class="pre">smokescreen.utils.</span></span><span class="sig-name descname"><span class="pre">load_cosmology_from_partial_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cosmo_dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smokescreen.utils.load_cosmology_from_partial_dict" title="Link to this definition"></a></dt>
+<dd><p>Given a partial dictionary with cosmological parameters, return a Cosmology
+object setting the unspecified parameters to their default values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>cosmo_dict</strong> (<em>dict</em>) – Dictionary with the cosmological parameters.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Cosmology object with the specified parameters.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Cosmology</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="smokescreen.utils.load_module_from_path">
+<span class="sig-prename descclassname"><span class="pre">smokescreen.utils.</span></span><span class="sig-name descname"><span class="pre">load_module_from_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smokescreen.utils.load_module_from_path" title="Link to this definition"></a></dt>
+<dd><p>Load a module from a given path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> (<em>str</em>) – Path to the module to load.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Module loaded from the given path.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>module</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="smokescreen.utils.string_to_seed">
+<span class="sig-prename descclassname"><span class="pre">smokescreen.utils.</span></span><span class="sig-name descname"><span class="pre">string_to_seed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seedstring</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smokescreen.utils.string_to_seed" title="Link to this definition"></a></dt>
+<dd><p>Convert a string to a random seed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>string</strong> (<em>str</em>) – String to convert to a random seed.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Random seed.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="usage.html" class="btn btn-neutral float-left" title="Usage" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright LSST Dark Energy Science Collaboration .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
