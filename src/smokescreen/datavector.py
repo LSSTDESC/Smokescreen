@@ -24,11 +24,27 @@ import inspect
 import datetime
 import getpass
 from copy import deepcopy
+from packaging.version import Version
 import pyccl as ccl
 import sacc
-from firecrown.likelihood.likelihood import load_likelihood
-from firecrown.likelihood.likelihood import load_likelihood_from_module_type
-from firecrown.likelihood.likelihood import NamedParameters
+import firecrown
+
+# Handle different Firecrown versions
+if Version(firecrown.__version__) >= Version("1.15.0a0"):
+    # New structure (1.15.0a0+)
+    from firecrown.likelihood import (
+        load_likelihood,
+        load_likelihood_from_module_type,
+        NamedParameters
+    )
+else:
+    # Old structure (< 1.15.0a0)
+    from firecrown.likelihood.likelihood import (
+        load_likelihood,
+        load_likelihood_from_module_type,
+        NamedParameters
+    )
+
 from firecrown.parameters import ParamsMap
 from firecrown.updatable import get_default_params_map
 from firecrown.utils import save_to_sacc
