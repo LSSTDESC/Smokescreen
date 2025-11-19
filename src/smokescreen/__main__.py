@@ -33,7 +33,7 @@ banner = rf"""
 
 def datavector_main(path_to_sacc: Path_fr,
                     likelihood_path: str,
-                    shifts_dict: Dict[str, Tuple[float, float]],
+                    shifts_dict: Dict[str, Union[float, Tuple[float, float]]],
                     systematics: dict = None,
                     shift_type: str = 'add',
                     shift_distribution: str = 'flat',
