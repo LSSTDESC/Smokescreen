@@ -8,16 +8,25 @@ import sacc
 import pathlib
 from packaging.version import Version
 import firecrown
-if Version(firecrown.__version__) >= Version("1.8"):
+
+# Handle different Firecrown versions
+if Version(firecrown.__version__) >= Version("1.15.0a0"):
+    # New structure (1.15.0a0+)
+    from firecrown.likelihood import weak_lensing as wl
+    from firecrown.likelihood import TwoPoint
+    from firecrown.likelihood import ConstGaussian
+elif Version(firecrown.__version__) >= Version("1.8"):
+    # Intermediate structure (1.8 - 1.14.x)
     import firecrown.likelihood.weak_lensing as wl
     from firecrown.likelihood.two_point import TwoPoint
     from firecrown.likelihood.gaussian import ConstGaussian
 else:
+    # Old structure (< 1.8)
     import firecrown.likelihood.gauss_family.statistic.source.weak_lensing as wl
     from firecrown.likelihood.gauss_family.statistic.two_point import TwoPoint
     from firecrown.likelihood.gauss_family.gaussian import ConstGaussian
+
 from firecrown.modeling_tools import ModelingTools
-# from firecrown.likelihood.likelihood import NamedParameters
 
 
 def build_likelihood(build_parameters):

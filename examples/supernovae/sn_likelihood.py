@@ -6,15 +6,25 @@ import sacc
 import pathlib
 from packaging.version import Version
 import firecrown
-if Version(firecrown.__version__) >= Version("1.8"):
-    # future proofing for firecrown 1.8
+
+# Handle different Firecrown versions
+if Version(firecrown.__version__) >= Version("1.15.0a0"):
+    # New structure (1.15.0a0+)
+    from firecrown.likelihood import supernova as sn
+    from firecrown.likelihood import ConstGaussian
+    from firecrown.likelihood import NamedParameters
+elif Version(firecrown.__version__) >= Version("1.8"):
+    # Intermediate structure (1.8 - 1.14.x)
     import firecrown.likelihood.supernova as sn
     from firecrown.likelihood.gaussian import ConstGaussian
+    from firecrown.likelihood.likelihood import NamedParameters
 else:
+    # Old structure (< 1.8)
     from firecrown.likelihood.gauss_family.statistic import supernova as sn
     from firecrown.likelihood.gauss_family.gaussian import ConstGaussian
+    from firecrown.likelihood.likelihood import NamedParameters
+
 from firecrown.modeling_tools import ModelingTools
-from firecrown.likelihood.likelihood import NamedParameters
 
 
 def build_likelihood(build_parameters: NamedParameters):
