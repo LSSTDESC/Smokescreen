@@ -1,6 +1,10 @@
 # docs build
 docs/build/
 
+# ignore anything done by claudião
+CLAUDE.md
+.claude/
+
 # distribution build
 dist/
 
