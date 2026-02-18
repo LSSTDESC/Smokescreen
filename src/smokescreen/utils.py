@@ -64,13 +64,16 @@ def load_cosmology_from_partial_dict(cosmo_dict):
 
     try:
         return ccl.Cosmology(**final_dict)
-    except Exception as e:
-        # Provide more helpful error message for debugging
+    except ValueError as e:
+        error_msg = str(e).lower()
+        # Check if error is about missing required parameters
         missing_params = [param for param in ['Omega_c', 'Omega_b', 'h'] if param not in final_dict]
-        if missing_params:
-            raise ValueError(f"Cannot create Cosmology object:"
-                             f"Missing required parameters {missing_params}. "
-                             f"Provided parameters: {list(final_dict.keys())}") from e
+        if missing_params or 'must set parameter' in error_msg or 'missing' in error_msg:
+            raise ValueError(
+                f"Cannot create Cosmology object: "
+                f"Missing required parameters {missing_params or ['unknown']}. "
+                f"Provided parameters: {list(final_dict.keys())}"
+            ) from e
         raise
 
 

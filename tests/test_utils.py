@@ -50,3 +50,22 @@ def test_load_cosmology_from_partial_dict():
     cosmo = load_cosmology_from_partial_dict(cosmo_dict)
     assert cosmo["A_s"] == 2.1e-9
     assert np.isnan(cosmo["sigma8"])
+
+
+def test_load_cosmology_from_partial_dict_conflicting_params():
+    # Test with both A_s and sigma8 provided (conflicting parameters)
+    # This should raise a ValueError from pyccl about conflicting parameters
+    cosmo_dict = {"A_s": 2.1e-9, "sigma8": 0.8}
+    with pytest.raises(ValueError) as exc_info:
+        load_cosmology_from_partial_dict(cosmo_dict)
+
+    # The error message should indicate the conflicting parameters issue
+    assert "a_s" in str(exc_info.value).lower() and "sigma8" in str(exc_info.value).lower()
+
+
+def test_load_cosmology_from_partial_dict_invalid_type():
+    # Test with an invalid parameter type (string instead of number)
+    # This should raise a TypeError from pyccl
+    cosmo_dict = {"Omega_c": "invalid", "sigma8": 0.8}
+    with pytest.raises(TypeError):
+        load_cosmology_from_partial_dict(cosmo_dict)
