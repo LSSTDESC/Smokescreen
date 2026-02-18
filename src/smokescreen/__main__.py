@@ -38,7 +38,9 @@ def datavector_main(path_to_sacc: Path_fr,
                     shift_type: str = 'add',
                     shift_distribution: str = 'flat',
                     seed: Union[int, str] = 2112,
-                    reference_cosmology: Union[CosmologyType, dict] = ccl.CosmologyVanillaLCDM(),
+                    # Note: dict must come first in Union for jsonargparse to correctly
+                    # parse partial cosmology dictionaries without trying to instantiate Cosmology
+                    reference_cosmology: Union[dict, CosmologyType] = ccl.CosmologyVanillaLCDM(),
                     path_to_output: Path_drw = None,
                     keep_original_sacc: bool = False,
                     ) -> None:

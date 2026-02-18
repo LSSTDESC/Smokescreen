@@ -39,10 +39,38 @@ def load_cosmology_from_partial_dict(cosmo_dict):
     """
     # sets the default values for the cosmological parameters
     cosmo_dict_default = ccl.CosmologyVanillaLCDM().to_dict()
-    # ensure that if A_s, we set sigma8 to None
-    if "A_s" in cosmo_dict.keys():
-        cosmo_dict_default["sigma8"] = None
-    return ccl.Cosmology(**{**cosmo_dict_default, **cosmo_dict})
+
+    # Create a clean final dict to avoid conflicts between A_s and sigma8
+    # that can happen when both are present in defaults
+    final_dict = {}
+
+    # Copy all default values first, but be careful about the special case of A_s vs sigma8
+    for key, value in cosmo_dict_default.items():
+        if key == 'A_s' and 'A_s' in cosmo_dict:
+            # If user provided A_s, don't use the default A_s (None)
+            # that would conflict with their sigma8 from defaults
+            continue
+        elif key == 'sigma8' and 'A_s' in cosmo_dict and 'sigma8' not in cosmo_dict:
+            # If user specified A_s but didn't specify sigma8, we don't want to use the default sigma8
+            # that would conflict with their A_s from defaults
+            continue
+        else:
+            final_dict[key] = value
+
+    # Apply user's overrides (filter out None values to avoid pyccl errors)
+    for key, value in cosmo_dict.items():
+        if value is not None:
+            final_dict[key] = value
+
+    try:
+        return ccl.Cosmology(**final_dict)
+    except Exception as e:
+        # Provide more helpful error message for debugging
+        missing_params = [param for param in ['Omega_c', 'Omega_b', 'h'] if param not in final_dict]
+        if missing_params:
+            raise ValueError(f"Cannot create Cosmology object: Missing required parameters {missing_params}. "
+                           f"Provided parameters: {list(final_dict.keys())}") from e
+        raise
 
 
 def load_module_from_path(path):

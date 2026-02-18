@@ -1,4 +1,4 @@
-path_to_sacc: "./cosmicshear_sacc2.fits"
+path_to_sacc: "./cosmicshear_sacc.fits"
 likelihood_path: "./cosmicshear_likelihood.py"
 shifts_dict:
   Omega_c: [0.18, 0.34]
@@ -10,6 +10,6 @@ seed: 2112
 shift_distribution: "flat"
 # only needed if you want a different reference cosmology
 # than ccl.VanillaLCDM
-reference_cosmology: 
+reference_cosmology:
   sigma8: 0.78
 keep_original_sacc: true
