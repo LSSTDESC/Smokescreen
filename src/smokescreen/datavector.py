@@ -25,6 +25,7 @@ import datetime
 import getpass
 from copy import deepcopy
 from packaging.version import Version
+import numpy as np
 import pyccl as ccl
 import sacc
 import firecrown
@@ -170,6 +171,10 @@ class ConcealDataVector():
             # check if the likelihood has a compute_vector method
             if not hasattr(likelihood, 'compute_theory_vector'):  # pragma: no cover
                 raise AttributeError('Likelihood does not have a compute_vector method')
+
+            # Verify SACC consistency after loading likelihood
+            self._verify_sacc_consistency(likelihood)
+
             return likelihood, tools
 
         elif isinstance(likelihood, types.ModuleType):
@@ -186,9 +191,71 @@ class ConcealDataVector():
             # check if the likelihood has a compute_vector method
             if not hasattr(likelihood, 'compute_theory_vector'):  # pragma: no cover
                 raise AttributeError('Likelihood does not have a compute_vector method')
+
+            # Verify SACC consistency after loading likelihood
+            self._verify_sacc_consistency(likelihood)
             return likelihood, tools
         else:
             raise TypeError('Likelihood must be a string path to a likelihood module or a module')
+
+    def _verify_sacc_consistency(self, likelihood):
+        """
+        Verifies that the user-provided SACC data vector and covariance match
+        what the likelihood internally uses.
+
+        After loading the likelihood, this method compares:
+        - self.sacc_data.mean (user's data vector) vs self.likelihood.get_data_vector()
+        - self.sacc_data.covariance (user's covariance) vs self.likelihood.get_cov()
+
+        Raises
+        ------
+        ValueError
+            If the data vector or covariance matrix don't match between
+            the user-provided SACC file and the likelihood's internal values.
+        """
+        # Get the internal data vector and covariance from the likelihood
+        internal_data_vector = likelihood.get_data_vector()
+        internal_covariance = likelihood.get_cov()
+
+        # Get the user-provided SACC data
+        user_data_vector = self.sacc_data.mean
+
+        # Handle covariance - it could be None or a dense matrix
+        if self.sacc_data.covariance is not None:
+            user_covariance = self.sacc_data.covariance.dense
+        else:
+            user_covariance = None
+
+        # Check data vector consistency
+        if not np.allclose(user_data_vector, internal_data_vector, rtol=1e-10, atol=1e-10):
+            # Calculate sum of absolute differences for reporting
+            data_diff_sum = np.sum(np.abs(user_data_vector - internal_data_vector))
+
+            raise ValueError(
+                f"Data vector mismatch between user-provided SACC and likelihood. "
+                f"Expected shape {internal_data_vector.shape}, got {user_data_vector.shape}. "
+                f"Sum of absolute differences: {data_diff_sum:.6e}"
+            )
+
+        # Check covariance consistency
+        if user_covariance is not None and internal_covariance is not None:
+            if not np.allclose(user_covariance, internal_covariance, rtol=1e-10, atol=1e-10):
+                # Calculate norm of difference for reporting
+                cov_diff_norm = np.linalg.norm(user_covariance - internal_covariance)
+
+                raise ValueError(
+                    f"Covariance matrix mismatch between user-provided SACC and likelihood. "
+                    f"Expected shape {internal_covariance.shape}, got {user_covariance.shape}. "
+                    f"Norm of difference: {cov_diff_norm:.6e}"
+                )
+        elif user_covariance is not None and internal_covariance is None:
+            raise ValueError(
+                "User-provided SACC has covariance but likelihood returns None for covariance."
+            )
+        elif user_covariance is None and internal_covariance is not None:
+            raise ValueError(
+                "Likelihood has covariance but user-provided SACC has None for covariance."
+            )
 
     def _test_likelihood(self, likelihood, like_type):
         """

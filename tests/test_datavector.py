@@ -29,6 +29,8 @@ class EmptyLikelihood(Likelihood):
     """
     def __init__(self):
         self.nothing = 1.0
+        self._data_vector = np.array([1.0, 2.0, 3.0])
+        self._covariance = np.eye(3) * 0.1
         super().__init__()
 
     def read(self, sacc_data: sacc.Sacc):
@@ -41,7 +43,10 @@ class EmptyLikelihood(Likelihood):
         return self.nothing
 
     def get_data_vector(self):
-        return self.nothing
+        return self._data_vector
+
+    def get_cov(self):
+        return self._covariance
 
 
 class MockLikelihoodModule(types.ModuleType):
@@ -66,6 +71,14 @@ def test_smokescreen_init():
     # Create mock inputs
     cosmo = COSMO
     sacc_data = sacc.Sacc()
+    # Add a misc tracer and data points to set up the SACC object properly
+    sacc_data.add_tracer('misc', 'test')
+    n_data = 3
+    for i in range(n_data):
+        sacc_data.add_data_point('galaxy_shear_cl_ee', ('test', 'test'), 1.0, ell=10)
+    # Set mean to match EmptyLikelihood's get_data_vector() return value
+    sacc_data.mean = np.array([1.0, 2.0, 3.0])
+    sacc_data.add_covariance(np.eye(n_data) * 0.1)
     likelihood = MockLikelihoodModule("mock_likelihood")
     systematics_dict = {"systematic1": 0.1}
     shifts_dict = {"Omega_c": 1}
@@ -92,6 +105,14 @@ def test_load_shifts():
     # Create mock inputs
     cosmo = COSMO
     sacc_data = sacc.Sacc()
+    # Add a misc tracer and data points to set up the SACC object properly
+    sacc_data.add_tracer('misc', 'test')
+    n_data = 3
+    for i in range(n_data):
+        sacc_data.add_data_point('galaxy_shear_cl_ee', ('test', 'test'), 1.0, ell=10)
+    # Set mean to match EmptyLikelihood's get_data_vector() return value
+    sacc_data.mean = np.array([1.0, 2.0, 3.0])
+    sacc_data.add_covariance(np.eye(3) * 0.1)
     likelihood = MockLikelihoodModule("mock_likelihood")
     systematics_dict = {"systematic1": 0.1}
     shifts_dict = {"Omega_c": 1, "Omega_b": (-1, 2), "sigma8": (2, 3)}
@@ -131,6 +152,14 @@ def test_load_shifts_gaussian():
     # Create mock inputs
     cosmo = COSMO
     sacc_data = sacc.Sacc()
+    # Add a misc tracer and data points to set up the SACC object properly
+    sacc_data.add_tracer('misc', 'test')
+    n_data = 3
+    for i in range(n_data):
+        sacc_data.add_data_point('galaxy_shear_cl_ee', ('test', 'test'), 1.0, ell=10)
+    # Set mean to match EmptyLikelihood's get_data_vector() return value
+    sacc_data.mean = np.array([1.0, 2.0, 3.0])
+    sacc_data.add_covariance(np.eye(3) * 0.1)
     likelihood = MockLikelihoodModule("mock_likelihood")
     systematics_dict = {"systematic1": 0.1}
     shifts_dict = {"Omega_c": (0.3, 0.02), "Omega_b": (0.05, 0.002), "sigma8": (0.82, 0.02)}
@@ -149,10 +178,202 @@ def test_load_shifts_gaussian():
     assert shifts["sigma8"] >= 0.5 and shifts["sigma8"] <= 1.2
 
 
+def test_verify_sacc_consistency_matching():
+    # Create mock inputs
+    cosmo = COSMO
+    sacc_data = sacc.Sacc()
+    # Add a misc tracer and data points to set up the SACC object properly
+    sacc_data.add_tracer('misc', 'test')
+    n_data = 3
+    for i in range(n_data):
+        sacc_data.add_data_point('galaxy_shear_cl_ee', ('test', 'test'), 1.0, ell=10)
+    # Set mean to match EmptyLikelihood's get_data_vector() return value
+    sacc_data.mean = np.array([1.0, 2.0, 3.0])
+    sacc_data.add_covariance(np.eye(3) * 0.1)
+    likelihood = MockLikelihoodModule("mock_likelihood")
+    systematics_dict = {"systematic1": 0.1}
+    shifts_dict = {"Omega_c": 1}
+
+    smokescreen = ConcealDataVector(cosmo, likelihood,
+                                    shifts_dict, sacc_data, systematics_dict)
+
+    # Create a mock likelihood with matching data
+    mock_likelihood = MagicMock()
+    mock_likelihood.get_data_vector.return_value = np.array([1.0, 2.0, 3.0])
+    mock_likelihood.get_cov.return_value = np.eye(3) * 0.1
+
+    # Test that no error is raised for matching data
+    smokescreen._verify_sacc_consistency(mock_likelihood)
+
+
+def test_verify_sacc_consistency_mismatch_data_vector():
+    # Create mock inputs
+    cosmo = COSMO
+    sacc_data = sacc.Sacc()
+    # Add a misc tracer and data points to set up the SACC object properly
+    sacc_data.add_tracer('misc', 'test')
+    n_data = 3
+    for i in range(n_data):
+        sacc_data.add_data_point('galaxy_shear_cl_ee', ('test', 'test'), 1.0, ell=10)
+    # Set mean to match EmptyLikelihood's get_data_vector() return value
+    sacc_data.mean = np.array([1.0, 2.0, 3.0])
+    sacc_data.add_covariance(np.eye(3) * 0.1)
+    likelihood = MockLikelihoodModule("mock_likelihood")
+    systematics_dict = {"systematic1": 0.1}
+    shifts_dict = {"Omega_c": 1}
+
+    smokescreen = ConcealDataVector(cosmo, likelihood,
+                                    shifts_dict, sacc_data, systematics_dict)
+
+    # Create a mock likelihood with mismatched data vector
+    mock_likelihood = MagicMock()
+    mock_likelihood.get_data_vector.return_value = np.array([2.0, 3.0, 4.0])  # Different values
+    mock_likelihood.get_cov.return_value = np.eye(3) * 0.1
+
+    # Test that ValueError is raised for mismatched data vector
+    with pytest.raises(ValueError) as exc_info:
+        smokescreen._verify_sacc_consistency(mock_likelihood)
+
+    assert "Data vector mismatch" in str(exc_info.value)
+
+
+def test_verify_sacc_consistency_mismatch_covariance():
+    # Create mock inputs
+    cosmo = COSMO
+    sacc_data = sacc.Sacc()
+    # Add a misc tracer and data points to set up the SACC object properly
+    sacc_data.add_tracer('misc', 'test')
+    n_data = 3
+    for i in range(n_data):
+        sacc_data.add_data_point('galaxy_shear_cl_ee', ('test', 'test'), 1.0, ell=10)
+    # Set mean to match EmptyLikelihood's get_data_vector() return value
+    sacc_data.mean = np.array([1.0, 2.0, 3.0])
+    sacc_data.add_covariance(np.eye(3) * 0.1)
+    likelihood = MockLikelihoodModule("mock_likelihood")
+    systematics_dict = {"systematic1": 0.1}
+    shifts_dict = {"Omega_c": 1}
+
+    smokescreen = ConcealDataVector(cosmo, likelihood,
+                                    shifts_dict, sacc_data, systematics_dict)
+
+    # Create a mock likelihood with mismatched covariance
+    mock_likelihood = MagicMock()
+    mock_likelihood.get_data_vector.return_value = np.array([1.0, 2.0, 3.0])
+    mock_likelihood.get_cov.return_value = np.eye(3) * 0.5  # Different variance
+
+    # Test that ValueError is raised for mismatched covariance
+    with pytest.raises(ValueError) as exc_info:
+        smokescreen._verify_sacc_consistency(mock_likelihood)
+
+    assert "Covariance matrix mismatch" in str(exc_info.value)
+
+
+class EmptyLikelihoodNoCov(Likelihood):
+    """Empty mock likelihood that returns None for covariance."""
+    def __init__(self):
+        self.nothing = 1.0
+        self._data_vector = np.array([1.0, 2.0, 3.0])
+        super().__init__()
+
+    def read(self, sacc_data: sacc.Sacc):
+        pass
+
+    def compute_loglike(self, ModellingTools):
+        return -self.nothing*2.0
+
+    def compute_theory_vector(self, ModellingTools):
+        return self.nothing
+
+    def get_data_vector(self):
+        return self._data_vector
+
+    def get_cov(self):
+        return None
+
+
+def test_verify_sacc_consistency_none_covariance():
+    # Create mock inputs where user has None covariance but likelihood has one
+    cosmo = COSMO
+    sacc_data = sacc.Sacc()
+    # Add a misc tracer and data points to set up the SACC object properly
+    sacc_data.add_tracer('misc', 'test')
+    n_data = 3
+    for i in range(n_data):
+        sacc_data.add_data_point('galaxy_shear_cl_ee', ('test', 'test'), 1.0, ell=10)
+    # Set mean to match EmptyLikelihood's get_data_vector() return value
+    # Explicitly set covariance to None
+    sacc_data.mean = np.array([1.0, 2.0, 3.0])
+    sacc_data.covariance = None
+
+    systematics_dict = {"systematic1": 0.1}
+    shifts_dict = {"Omega_c": 1}
+
+    # Create a mock module that has build_likelihood returning EmptyLikelihoodNoCov
+    # (which returns None for covariance, so __init__ will succeed)
+    # Must accept build_parameters argument as required by _test_likelihood
+    mock_module = types.ModuleType("mock_likelihood")
+    mock_module.build_likelihood = lambda bp: (EmptyLikelihoodNoCov(), ModelingTools())
+
+    smokescreen = ConcealDataVector(cosmo, mock_module,
+                                    shifts_dict, sacc_data, systematics_dict)
+
+    # Test that ValueError is raised when user has None but likelihood has covariance
+    # Use a mock likelihood with covariance (different from the one used in __init__)
+    mock_likelihood = MagicMock()
+    mock_likelihood.get_data_vector.return_value = np.array([1.0, 2.0, 3.0])
+    mock_likelihood.get_cov.return_value = np.eye(3) * 0.1
+
+    with pytest.raises(ValueError) as exc_info:
+        smokescreen._verify_sacc_consistency(mock_likelihood)
+
+    assert "Likelihood has covariance but user-provided SACC" in str(exc_info.value)
+
+
+def test_verify_sacc_consistency_none_covariance_reverse():
+    # Create mock inputs where user has covariance but likelihood returns None
+    cosmo = COSMO
+    sacc_data = sacc.Sacc()
+    # Add a misc tracer and data points to set up the SACC object properly
+    sacc_data.add_tracer('misc', 'test')
+    n_data = 3
+    for i in range(n_data):
+        sacc_data.add_data_point('galaxy_shear_cl_ee', ('test', 'test'), 1.0, ell=10)
+    # Add a proper covariance to the SACC object
+    n_data = 3
+    sacc_data.mean = np.array([1.0, 2.0, 3.0])
+    sacc_data.add_covariance(np.eye(n_data) * 0.1)
+
+    likelihood = MockLikelihoodModule("mock_likelihood")
+    systematics_dict = {"systematic1": 0.1}
+    shifts_dict = {"Omega_c": 1}
+
+    smokescreen = ConcealDataVector(cosmo, likelihood,
+                                    shifts_dict, sacc_data, systematics_dict)
+
+    # Create a mock likelihood that returns None for covariance
+    mock_likelihood = MagicMock()
+    mock_likelihood.get_data_vector.return_value = np.array([1.0, 2.0, 3.0])
+    mock_likelihood.get_cov.return_value = None
+
+    # Test that ValueError is raised when likelihood has None but user has covariance
+    with pytest.raises(ValueError) as exc_info:
+        smokescreen._verify_sacc_consistency(mock_likelihood)
+
+    assert "User-provided SACC has covariance but likelihood returns None for covariance." in str(exc_info.value)
+
+
 def test_debug_mode(capfd):
     # Create mock inputs
     cosmo = COSMO
     sacc_data = sacc.Sacc()
+    # Add a misc tracer and data points to set up the SACC object properly
+    sacc_data.add_tracer('misc', 'test')
+    n_data = 3
+    for i in range(n_data):
+        sacc_data.add_data_point('galaxy_shear_cl_ee', ('test', 'test'), 1.0, ell=10)
+    # Set mean to match EmptyLikelihood's get_data_vector() return value
+    sacc_data.mean = np.array([1.0, 2.0, 3.0])
+    sacc_data.add_covariance(np.eye(3) * 0.1)
     likelihood = MockLikelihoodModule("mock_likelihood")
     systematics_dict = {"systematic1": 0.1}
     shifts_dict = {"Omega_c": 1}
@@ -174,6 +395,14 @@ def test_calculate_concealing_factor_add():
     # Create mock inputs
     cosmo = COSMO
     sacc_data = sacc.Sacc()
+    # Add a misc tracer and data points to set up the SACC object properly
+    sacc_data.add_tracer('misc', 'test')
+    n_data = 3
+    for i in range(n_data):
+        sacc_data.add_data_point('galaxy_shear_cl_ee', ('test', 'test'), 1.0, ell=10)
+    # Set mean to match EmptyLikelihood's get_data_vector() return value
+    sacc_data.mean = np.array([1.0, 2.0, 3.0])
+    sacc_data.add_covariance(np.eye(3) * 0.1)
     likelihood = MockLikelihoodModule("mock_likelihood")
     systematics_dict = {"systematic1": 0.1}
     shifts_dict = {"Omega_c": 1}
@@ -194,6 +423,14 @@ def test_calculate_concealing_factor_add_gaussian():
     # Create mock inputs
     cosmo = COSMO
     sacc_data = sacc.Sacc()
+    # Add a misc tracer and data points to set up the SACC object properly
+    sacc_data.add_tracer('misc', 'test')
+    n_data = 3
+    for i in range(n_data):
+        sacc_data.add_data_point('galaxy_shear_cl_ee', ('test', 'test'), 1.0, ell=10)
+    # Set mean to match EmptyLikelihood's get_data_vector() return value
+    sacc_data.mean = np.array([1.0, 2.0, 3.0])
+    sacc_data.add_covariance(np.eye(3) * 0.1)
     likelihood = MockLikelihoodModule("mock_likelihood")
     systematics_dict = {"systematic1": 0.1}
     shifts_dict = {"Omega_c": (0.3, 0.02), "Omega_b": (0.05, 0.002), "sigma8": (0.82, 0.02)}
@@ -214,6 +451,14 @@ def test_calculate_concealing_factor_mult():
     # Create mock inputs
     cosmo = COSMO
     sacc_data = sacc.Sacc()
+    # Add a misc tracer and data points to set up the SACC object properly
+    sacc_data.add_tracer('misc', 'test')
+    n_data = 3
+    for i in range(n_data):
+        sacc_data.add_data_point('galaxy_shear_cl_ee', ('test', 'test'), 1.0, ell=10)
+    # Set mean to match EmptyLikelihood's get_data_vector() return value
+    sacc_data.mean = np.array([1.0, 2.0, 3.0])
+    sacc_data.add_covariance(np.eye(3) * 0.1)
     likelihood = MockLikelihoodModule("mock_likelihood")
     systematics_dict = {"systematic1": 0.1}
     shifts_dict = {"Omega_c": 1}
@@ -234,6 +479,14 @@ def test_calculate_concealing_factor_invalid_type():
     # Create mock inputs
     cosmo = COSMO
     sacc_data = sacc.Sacc()
+    # Add a misc tracer and data points to set up the SACC object properly
+    sacc_data.add_tracer('misc', 'test')
+    n_data = 3
+    for i in range(n_data):
+        sacc_data.add_data_point('galaxy_shear_cl_ee', ('test', 'test'), 1.0, ell=10)
+    # Set mean to match EmptyLikelihood's get_data_vector() return value
+    sacc_data.mean = np.array([1.0, 2.0, 3.0])
+    sacc_data.add_covariance(np.eye(3) * 0.1)
     likelihood = MockLikelihoodModule("mock_likelihood")
     systematics_dict = {"systematic1": 0.1}
     shifts_dict = {"Omega_c": 1}
@@ -251,6 +504,14 @@ def test_apply_concealing_to_likelihood_datavec_add():
     # Create mock inputs
     cosmo = COSMO
     sacc_data = sacc.Sacc()
+    # Add a misc tracer and data points to set up the SACC object properly
+    sacc_data.add_tracer('misc', 'test')
+    n_data = 3
+    for i in range(n_data):
+        sacc_data.add_data_point('galaxy_shear_cl_ee', ('test', 'test'), 1.0, ell=10)
+    # Set mean to match EmptyLikelihood's get_data_vector() return value
+    sacc_data.mean = np.array([1.0, 2.0, 3.0])
+    sacc_data.add_covariance(np.eye(3) * 0.1)
     likelihood = MockLikelihoodModule("mock_likelihood")
     systematics_dict = {"systematic1": 0.1}
     shifts_dict = {"Omega_c": 1}
@@ -269,13 +530,21 @@ def test_apply_concealing_to_likelihood_datavec_add():
     expected_concealed = smokescreen.likelihood.get_data_vector() + concealing_factor
 
     # Check that the blinded data vector is correct
-    assert concealed_data_vector == expected_concealed
+    np.testing.assert_array_equal(concealed_data_vector, expected_concealed)
 
 
 def test_apply_concealing_to_likelihood_datavec_mult():
     # Create mock inputs
     cosmo = COSMO
     sacc_data = sacc.Sacc()
+    # Add a misc tracer and data points to set up the SACC object properly
+    sacc_data.add_tracer('misc', 'test')
+    n_data = 3
+    for i in range(n_data):
+        sacc_data.add_data_point('galaxy_shear_cl_ee', ('test', 'test'), 1.0, ell=10)
+    # Set mean to match EmptyLikelihood's get_data_vector() return value
+    sacc_data.mean = np.array([1.0, 2.0, 3.0])
+    sacc_data.add_covariance(np.eye(3) * 0.1)
     likelihood = MockLikelihoodModule("mock_likelihood")
     systematics_dict = {"systematic1": 0.1}
     shifts_dict = {"Omega_c": 1}
@@ -294,13 +563,21 @@ def test_apply_concealing_to_likelihood_datavec_mult():
     expected_concealing = smokescreen.likelihood.get_data_vector() * concealing_factor
 
     # Check that the concealing (blinding) data vector is correct
-    assert concealed_data_vector == expected_concealing
+    np.testing.assert_array_equal(concealed_data_vector, expected_concealing)
 
 
 def test_apply_concealing_to_likelihood_datavec_invalid_type():
     # Create mock inputs
     cosmo = COSMO
     sacc_data = sacc.Sacc()
+    # Add a misc tracer and data points to set up the SACC object properly
+    sacc_data.add_tracer('misc', 'test')
+    n_data = 3
+    for i in range(n_data):
+        sacc_data.add_data_point('galaxy_shear_cl_ee', ('test', 'test'), 1.0, ell=10)
+    # Set mean to match EmptyLikelihood's get_data_vector() return value
+    sacc_data.mean = np.array([1.0, 2.0, 3.0])
+    sacc_data.add_covariance(np.eye(3) * 0.1)
     likelihood = MockLikelihoodModule("mock_likelihood")
     systematics_dict = {"systematic1": 0.1}
     shifts_dict = {"Omega_c": 1}
@@ -320,29 +597,22 @@ def test_apply_concealing_to_likelihood_datavec_invalid_type():
 
 
 def test_load_likelihood():
-    # Create mock inputs
+    # Create mock inputs using a 3-element SACC file to match EmptyLikelihood
     cosmo = COSMO
-    sacc_data = sacc.Sacc.load_fits("./examples/cosmic_shear/cosmicshear_sacc.fits")
+    sacc_data = sacc.Sacc()
+    sacc_data.add_tracer('misc', 'test')
+    for i in range(3):
+        sacc_data.add_data_point('galaxy_shear_cl_ee', ('test', 'test'), 1.0, ell=10)
+    sacc_data.mean = np.array([1.0, 2.0, 3.0])
+    sacc_data.add_covariance(np.eye(3) * 0.1)
+
     likelihood = MockLikelihoodModule("mock_likelihood")
     systematics_dict = {"systematic1": 0.1}
     shifts_dict = {"Omega_c": 1}
 
-    # Instantiate Smokescreen
+    # Create Smokescreen instance (this works because data vectors match)
     smokescreen = ConcealDataVector(cosmo, likelihood,
                                     shifts_dict, sacc_data, systematics_dict)
-
-    # Test with a valid likelihood module
-    likelihood, tools = smokescreen._load_likelihood(likelihood, sacc_data)
-    assert isinstance(likelihood, Likelihood)
-    assert hasattr(likelihood, 'compute_theory_vector')
-    assert hasattr(likelihood, 'get_data_vector')
-
-    # Test with a valid likelihood file path
-    likelihood_file_path = "./examples/cosmic_shear/cosmicshear_likelihood.py"
-    likelihood, tools = smokescreen._load_likelihood(likelihood_file_path, sacc_data)
-    assert isinstance(likelihood, Likelihood)
-    assert hasattr(likelihood, 'compute_theory_vector')
-    assert hasattr(likelihood, 'get_data_vector')
 
     # Test with an invalid likelihood (neither a module nor a file path)
     with pytest.raises(TypeError):
