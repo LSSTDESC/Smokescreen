@@ -29,7 +29,6 @@ import numpy as np
 import pyccl as ccl
 import sacc
 import firecrown
-import numpy as np
 
 # Handle different Firecrown versions
 if Version(firecrown.__version__) >= Version("1.15.0a0"):
