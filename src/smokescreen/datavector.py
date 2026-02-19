@@ -219,7 +219,12 @@ class ConcealDataVector():
 
         # Get the user-provided SACC data
         user_data_vector = self.sacc_data.mean
-        user_covariance = self.sacc_data.covariance.dense
+
+        # Handle covariance - it could be None or a dense matrix
+        if self.sacc_data.covariance is not None:
+            user_covariance = self.sacc_data.covariance.dense
+        else:
+            user_covariance = None
 
         # Check data vector consistency
         if not np.allclose(user_data_vector, internal_data_vector, rtol=1e-10, atol=1e-10):
