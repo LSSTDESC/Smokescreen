@@ -157,7 +157,7 @@ def load_sacc_file(path_to_sacc: str) -> tuple[sacc.Sacc, str]:
     Returns
     -------
     sacc.Sacc
-        Loaded SACC object
+        Loaded SACC object with _smokescreen_input_format attribute set
     str
         Detected input format ('fits' or 'hdf5')
 
@@ -169,6 +169,7 @@ def load_sacc_file(path_to_sacc: str) -> tuple[sacc.Sacc, str]:
     # Try HDF5 first (more specific format check)
     try:
         sacc_obj = sacc.Sacc.load_hdf5(path_to_sacc)
+        sacc_obj._smokescreen_input_format = 'hdf5'
         return sacc_obj, 'hdf5'
     except Exception:
         pass
@@ -176,6 +177,7 @@ def load_sacc_file(path_to_sacc: str) -> tuple[sacc.Sacc, str]:
     # Fall back to FITS format
     try:
         sacc_obj = sacc.Sacc.load_fits(path_to_sacc)
+        sacc_obj._smokescreen_input_format = 'fits'
         return sacc_obj, 'fits'
     except Exception as e:
         raise ValueError(

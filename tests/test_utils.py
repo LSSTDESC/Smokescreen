@@ -77,8 +77,9 @@ class TestLoadSaccFile:
     """Tests for the load_sacc_file utility function."""
 
     def test_load_sacc_file_fits_format(self, tmp_path):
+        import sacc as sacc_mod
         # Create a FITS SACC file
-        sacc_data = sacc.Sacc()
+        sacc_data = sacc_mod.Sacc()
         sacc_data.add_tracer('misc', 'test')
         sacc_data.add_data_point('galaxy_shear_cl_ee', ('test', 'test'), 1.0, ell=10)
         fits_path = tmp_path / "test.fits"
@@ -87,13 +88,14 @@ class TestLoadSaccFile:
         # Load using load_sacc_file
         loaded_sacc, file_format = load_sacc_file(str(fits_path))
 
-        assert isinstance(loaded_sacc, sacc.Sacc)
+        assert isinstance(loaded_sacc, sacc_mod.Sacc)
         assert file_format == 'fits'
         assert len(loaded_sacc.mean) == 1
 
     def test_load_sacc_file_hdf5_format(self, tmp_path):
+        import sacc as sacc_mod
         # Create an HDF5 SACC file
-        sacc_data = sacc.Sacc()
+        sacc_data = sacc_mod.Sacc()
         sacc_data.add_tracer('misc', 'test')
         sacc_data.add_data_point('galaxy_shear_cl_ee', ('test', 'test'), 1.0, ell=10)
         hdf5_path = tmp_path / "test.hdf5"
@@ -102,13 +104,14 @@ class TestLoadSaccFile:
         # Load using load_sacc_file
         loaded_sacc, file_format = load_sacc_file(str(hdf5_path))
 
-        assert isinstance(loaded_sacc, sacc.Sacc)
+        assert isinstance(loaded_sacc, sacc_mod.Sacc)
         assert file_format == 'hdf5'
         assert len(loaded_sacc.mean) == 1
 
     def test_load_sacc_file_with_h5_extension(self, tmp_path):
+        import sacc as sacc_mod
         # Create an HDF5 SACC file with .h5 extension
-        sacc_data = sacc.Sacc()
+        sacc_data = sacc_mod.Sacc()
         sacc_data.add_tracer('misc', 'test')
         sacc_data.add_data_point('galaxy_shear_cl_ee', ('test', 'test'), 1.0, ell=10)
         h5_path = tmp_path / "test.h5"
@@ -117,12 +120,13 @@ class TestLoadSaccFile:
         # Load using load_sacc_file - should detect as HDF5 regardless of extension
         loaded_sacc, file_format = load_sacc_file(str(h5_path))
 
-        assert isinstance(loaded_sacc, sacc.Sacc)
+        assert isinstance(loaded_sacc, sacc_mod.Sacc)
         assert file_format == 'hdf5'
 
     def test_load_sacc_file_with_sacc_extension_hdf5(self, tmp_path):
+        import sacc as sacc_mod
         # Create an HDF5 SACC file with .sacc extension (like sn_datavector.sacc)
-        sacc_data = sacc.Sacc()
+        sacc_data = sacc_mod.Sacc()
         sacc_data.add_tracer('misc', 'test')
         sacc_data.add_data_point('galaxy_shear_cl_ee', ('test', 'test'), 1.0, ell=10)
         sacc_path = tmp_path / "test.sacc"
@@ -131,7 +135,7 @@ class TestLoadSaccFile:
         # Load using load_sacc_file - should detect as HDF5 even with .sacc extension
         loaded_sacc, file_format = load_sacc_file(str(sacc_path))
 
-        assert isinstance(loaded_sacc, sacc.Sacc)
+        assert isinstance(loaded_sacc, sacc_mod.Sacc)
         assert file_format == 'hdf5'
 
     def test_load_sacc_file_nonexistent(self):
