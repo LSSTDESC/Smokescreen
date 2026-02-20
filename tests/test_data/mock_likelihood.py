@@ -1,6 +1,5 @@
 import types
 import pyccl as ccl
-import numpy as np
 from firecrown.modeling_tools import ModelingTools
 from .test_datavector import EmptyLikelihood
 

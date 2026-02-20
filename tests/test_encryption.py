@@ -1,6 +1,5 @@
 import os
 import pytest
-from cryptography.fernet import Fernet
 from smokescreen.encryption import encrypt_file, decrypt_file
 
 
@@ -157,7 +156,7 @@ def test_decrypt_file_save_with_fallback_extension_removal(tmp_path):
     # Note: encrypt_file stores as basename.encrpt where basename is split('.')[0]
     # So data.backup becomes data.encrpt, and decrypts back to data (original extension lost)
 
-    original_content = b"test content for edge case decryption"
+    _ = b"test content for edge case decryption"
     backup_content = b"backup content that was encrypted"
 
     # Encrypt a backup file
@@ -173,12 +172,10 @@ def test_decrypt_file_save_with_fallback_extension_removal(tmp_path):
     key_file = tmp_path / "data.key"
 
     # Decrypt it using the key file
-    decrypted_sacc = decrypt_file(str(tmp_path / "data.encrpt"), str(key_file), save_file=True)
+    _ = decrypt_file(str(tmp_path / "data.encrpt"), str(key_file), save_file=True)
 
     # Should restore to basename (without .encrpt) which is 'data'
     # Note: original extension '.backup' cannot be recovered after encryption
     decrypted_file = tmp_path / "data"
     assert decrypted_file.exists()
     assert decrypted_file.read_bytes() == backup_content
-
-

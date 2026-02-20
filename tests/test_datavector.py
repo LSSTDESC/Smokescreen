@@ -107,60 +107,6 @@ def cosmic_shear_resources(tmp_path):
     }
 
 
-@pytest.fixture
-def fits_sacc_file(tmp_path):
-    """Create a FITS-format SACC file for testing."""
-    sacc_data = sacc.Sacc()
-    # Add tracers matching cosmic shear example
-    sacc_data.add_tracer('sp', 'src0')
-    sacc_data.add_tracer('sp', 'src1')
-    # Add data points
-    n_ell = 5
-    ell = np.logspace(np.log10(10), np.log10(1000), n_ell)
-    for i, e in enumerate(ell):
-        sacc_data.add_data_point('galaxy_shear_cl_ee', ('src0', 'src0'), 1e-7, ell=e)
-        sacc_data.add_data_point('galaxy_shear_cl_ee', ('src0', 'src1'), 5e-8, ell=e)
-        sacc_data.add_data_point('galaxy_shear_cl_ee', ('src1', 'src1'), 2e-7, ell=e)
-
-    # Set mean (3 tracers * 5 ell values = 15 data points)
-    n_data = len(ell) * 3
-    sacc_data.mean = np.ones(n_data) * 1e-7
-    sacc_data.add_covariance(np.eye(n_data) * 1e-14)
-
-    # Save to FITS file
-    fits_file = tmp_path / "test_sacc.fits"
-    sacc_data.save_fits(str(fits_file))
-
-    return str(fits_file), sacc_data
-
-
-@pytest.fixture
-def hdf5_sacc_file(tmp_path):
-    """Create an HDF5-format SACC file for testing."""
-    sacc_data = sacc.Sacc()
-    # Add tracers matching cosmic shear example
-    sacc_data.add_tracer('sp', 'src0')
-    sacc_data.add_tracer('sp', 'src1')
-    # Add data points
-    n_ell = 5
-    ell = np.logspace(np.log10(10), np.log10(1000), n_ell)
-    for i, e in enumerate(ell):
-        sacc_data.add_data_point('galaxy_shear_cl_ee', ('src0', 'src0'), 1e-7, ell=e)
-        sacc_data.add_data_point('galaxy_shear_cl_ee', ('src0', 'src1'), 5e-8, ell=e)
-        sacc_data.add_data_point('galaxy_shear_cl_ee', ('src1', 'src1'), 2e-7, ell=e)
-
-    # Set mean (3 tracers * 5 ell values = 15 data points)
-    n_data = len(ell) * 3
-    sacc_data.mean = np.ones(n_data) * 1e-7
-    sacc_data.add_covariance(np.eye(n_data) * 1e-14)
-
-    # Save to HDF5 file
-    hdf5_file = tmp_path / "test_sacc.hdf5"
-    sacc_data.save_hdf5(str(hdf5_file))
-
-    return str(hdf5_file), sacc_data
-
-
 class EmptyLikelihood(Likelihood):
     """
     empty mock likelihood based on:
