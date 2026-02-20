@@ -85,7 +85,7 @@ def test_decrypt_file(encrypted_file_and_key):
     assert decrypted_sacc == b"This is a test file."
 
 
-def test_decrypt_file_save(encrypted_file_and_key, tmp_path):
+def test_decrypt_file_save(encrypted_file_and_key):
     encrypted_file_path, key_file_path = encrypted_file_and_key
 
     # Test decrypting the file and saving the decrypted file
@@ -95,8 +95,11 @@ def test_decrypt_file_save(encrypted_file_and_key, tmp_path):
     assert isinstance(decrypted_sacc, bytes)
     assert decrypted_sacc == b"This is a test file."
 
-    # Check if the decrypted file is saved
-    decrypted_file_path = tmp_path / "encrypted" / "test_file.fits"
+    # Check if the decrypted file is saved (restores original filename without .encrpt)
+    # Note: encrypt_file stores as basename.encrpt where basename is split('.')[0]
+    # So test_file.txt becomes test_file.encrpt, and decrypts to test_file
+    path = os.path.dirname(encrypted_file_path)
+    decrypted_file_path = os.path.join(path, "test_file")
     assert os.path.exists(decrypted_file_path)
 
     # Check if the content of the decrypted file is correct
