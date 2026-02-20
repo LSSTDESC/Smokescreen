@@ -3,8 +3,10 @@ import tempfile
 import os
 import numpy as np
 import pyccl as ccl
+import sacc
 from smokescreen.utils import string_to_seed, load_module_from_path
 from smokescreen.utils import load_cosmology_from_partial_dict
+from smokescreen.utils import load_sacc_file
 
 
 def test_load_module_from_path():
@@ -69,3 +71,81 @@ def test_load_cosmology_from_partial_dict_invalid_type():
     cosmo_dict = {"Omega_c": "invalid", "sigma8": 0.8}
     with pytest.raises(TypeError):
         load_cosmology_from_partial_dict(cosmo_dict)
+
+
+class TestLoadSaccFile:
+    """Tests for the load_sacc_file utility function."""
+
+    def test_load_sacc_file_fits_format(self, tmp_path):
+        # Create a FITS SACC file
+        sacc_data = sacc.Sacc()
+        sacc_data.add_tracer('misc', 'test')
+        sacc_data.add_data_point('galaxy_shear_cl_ee', ('test', 'test'), 1.0, ell=10)
+        fits_path = tmp_path / "test.fits"
+        sacc_data.save_fits(str(fits_path))
+
+        # Load using load_sacc_file
+        loaded_sacc, file_format = load_sacc_file(str(fits_path))
+
+        assert isinstance(loaded_sacc, sacc.Sacc)
+        assert file_format == 'fits'
+        assert len(loaded_sacc.mean) == 1
+
+    def test_load_sacc_file_hdf5_format(self, tmp_path):
+        # Create an HDF5 SACC file
+        sacc_data = sacc.Sacc()
+        sacc_data.add_tracer('misc', 'test')
+        sacc_data.add_data_point('galaxy_shear_cl_ee', ('test', 'test'), 1.0, ell=10)
+        hdf5_path = tmp_path / "test.hdf5"
+        sacc_data.save_hdf5(str(hdf5_path))
+
+        # Load using load_sacc_file
+        loaded_sacc, file_format = load_sacc_file(str(hdf5_path))
+
+        assert isinstance(loaded_sacc, sacc.Sacc)
+        assert file_format == 'hdf5'
+        assert len(loaded_sacc.mean) == 1
+
+    def test_load_sacc_file_with_h5_extension(self, tmp_path):
+        # Create an HDF5 SACC file with .h5 extension
+        sacc_data = sacc.Sacc()
+        sacc_data.add_tracer('misc', 'test')
+        sacc_data.add_data_point('galaxy_shear_cl_ee', ('test', 'test'), 1.0, ell=10)
+        h5_path = tmp_path / "test.h5"
+        sacc_data.save_hdf5(str(h5_path))
+
+        # Load using load_sacc_file - should detect as HDF5 regardless of extension
+        loaded_sacc, file_format = load_sacc_file(str(h5_path))
+
+        assert isinstance(loaded_sacc, sacc.Sacc)
+        assert file_format == 'hdf5'
+
+    def test_load_sacc_file_with_sacc_extension_hdf5(self, tmp_path):
+        # Create an HDF5 SACC file with .sacc extension (like sn_datavector.sacc)
+        sacc_data = sacc.Sacc()
+        sacc_data.add_tracer('misc', 'test')
+        sacc_data.add_data_point('galaxy_shear_cl_ee', ('test', 'test'), 1.0, ell=10)
+        sacc_path = tmp_path / "test.sacc"
+        sacc_data.save_hdf5(str(sacc_path))
+
+        # Load using load_sacc_file - should detect as HDF5 even with .sacc extension
+        loaded_sacc, file_format = load_sacc_file(str(sacc_path))
+
+        assert isinstance(loaded_sacc, sacc.Sacc)
+        assert file_format == 'hdf5'
+
+    def test_load_sacc_file_nonexistent(self):
+        # Test loading a nonexistent file
+        with pytest.raises(ValueError) as exc_info:
+            load_sacc_file("nonexistent_file.sacc")
+        assert "Cannot load SACC file" in str(exc_info.value)
+
+    def test_load_sacc_file_invalid_fits(self, tmp_path):
+        # Create an invalid FITS file (not a SACC file)
+        invalid_path = tmp_path / "invalid.fits"
+        with open(invalid_path, "w") as f:
+            f.write("This is not a valid FITS file")
+
+        # Test that it raises ValueError
+        with pytest.raises(ValueError):
+            load_sacc_file(str(invalid_path))
