@@ -5,12 +5,11 @@ from jsonargparse import CLI
 from jsonargparse.typing import Path_drw, Path_fr
 from pyccl import Cosmology as CosmologyType
 import pyccl as ccl
-import sacc
 # warnings related to sacc files
 import warnings
 from smokescreen import ConcealDataVector
 from smokescreen.encryption import encrypt_file, decrypt_file
-from smokescreen.utils import load_cosmology_from_partial_dict
+from smokescreen.utils import load_cosmology_from_partial_dict, load_sacc_file
 from . import __version__
 warnings.filterwarnings("ignore")
 
@@ -74,7 +73,7 @@ def datavector_main(path_to_sacc: Path_fr,
     assert os.path.exists(path_to_sacc), f"File {path_to_sacc} does not exist."
     assert os.path.exists(likelihood_path), f"File {likelihood_path} does not exist."
     # reads the sacc file
-    sacc_data = sacc.Sacc.load_fits(path_to_sacc)
+    sacc_data = load_sacc_file(path_to_sacc)
     # creates the smokescreen object
     smoke = ConcealDataVector(cosmo,  likelihood_path, shifts_dict, sacc_data, systematics, seed,
                               shift_distr=shift_distribution)
@@ -159,7 +158,13 @@ def decrypt_main(path_to_sacc: Path_fr, path_to_key: Path_fr) -> None:
     # decrypt the file
     _ = decrypt_file(path_to_sacc, path_to_key, save_file=True)
     print(f"\nSACC file {path_to_sacc} decrypted successfully.")
-    print(f"\nDecrypted file saved as {path}/{os.path.basename(path_to_sacc).split('.')[0]}")
+    # Extract original filename from .encrpt pattern
+    basename = os.path.basename(path_to_sacc)
+    if basename.endswith(".encrpt"):
+        original_name = basename[:-7]  # Remove ".encrpt"
+    else:
+        original_name = basename.split('.')[0]
+    print(f"\nDecrypted file saved as {path}/{original_name}")
 
 
 def main():  # pragma: no cover
