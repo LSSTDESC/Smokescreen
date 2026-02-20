@@ -17,6 +17,8 @@ else:
 
 from firecrown.modeling_tools import ModelingTools
 from smokescreen.datavector import ConcealDataVector
+from smokescreen.utils import load_sacc_file
+
 ccl.gsl_params.LENSING_KERNEL_SPLINE_INTEGRATION = False
 
 COSMO = ccl.CosmologyVanillaLCDM()
@@ -684,3 +686,143 @@ def test_save_concealed_datavector(mock_getuser):
     assert loaded_sacc.metadata['seed_smokescreen'] == 1234
     # Clean up the temporary file
     os.remove(temp_file_name)
+
+
+@patch('src.smokescreen.datavector.getpass.getuser', return_value='test_user')
+def test_save_concealed_datavector_hdf5(mock_getuser):
+    # Create mock inputs using an HDF5 SACC file to ensure input_format is 'hdf5'
+    cosmo = COSMO
+    likelihood = "./examples/cosmic_shear/cosmicshear_likelihood.py"
+    syst_dict = {
+        "trc1_delta_z": 0.1,
+        "trc0_delta_z": 0.1,
+    }
+    shift_dict = {"Omega_c": 0.34, "sigma8": 0.85}
+
+    # Load from HDF5 source
+    sacc_data = sacc.Sacc.load_hdf5("./examples/cosmic_shear/cosmicshear_sacc.hdf5")
+
+    # Create ConcealDataVector with input_format='hdf5'
+    sck = ConcealDataVector(cosmo, likelihood,
+                            shift_dict, sacc_data, syst_dict, seed=1234,
+                            **{'input_format': 'hdf5'})
+
+    # Calculate the concealing factor and apply it to the likelihood data vector
+    sck.calculate_concealing_factor()
+    blinded_dv = sck.apply_concealing_to_likelihood_datavec()
+
+    # Save the blinded data vector to a temporary HDF5 file
+    temp_file_path = "./tests/"
+    temp_file_root = "temp_sacc_hdf5"
+    temp_file_name = f"{temp_file_path}{temp_file_root}_concealed_data_vector.h5"
+
+    # Save with output_format='hdf5' to test HDF5 output
+    returned_sacc = sck.save_concealed_datavector(temp_file_path,
+                                                  temp_file_root,
+                                                  return_sacc=True,
+                                                  output_format='hdf5')
+
+    # Check that the return is a sacc object
+    assert isinstance(returned_sacc, sacc.Sacc)
+
+    # Check that the file was created with .h5 extension
+    assert os.path.exists(temp_file_name)
+    # Verify it's an HDF5 file by checking extension in path
+    assert temp_file_name.endswith('.h5')
+
+    # Load the HDF5 file and check that the data vector matches
+    loaded_sacc = sacc.Sacc.load_hdf5(temp_file_name)
+    np.testing.assert_array_equal(loaded_sacc.mean, blinded_dv)
+
+    # Check metadata
+    info_str = 'Concealed (blinded) data-vector, created by Smokescreen.'
+    assert loaded_sacc.metadata['concealed'] is True
+    assert loaded_sacc.metadata['creator'] == mock_getuser.return_value
+    assert loaded_sacc.metadata['info'] == info_str
+
+    # Clean up the temporary file
+    os.remove(temp_file_name)
+
+
+@patch('src.smokescreen.datavector.getpass.getuser', return_value='test_user')
+def test_save_concealed_datavector_hdf5_from_fits_input(mock_getuser):
+    # Test that when input format is FITS but output format is explicitly set to HDF5,
+    # the file is saved with .h5 extension
+    cosmo = COSMO
+    likelihood = "./examples/cosmic_shear/cosmicshear_likelihood.py"
+    syst_dict = {
+        "trc1_delta_z": 0.1,
+        "trc0_delta_z": 0.1,
+    }
+    shift_dict = {"Omega_c": 0.34, "sigma8": 0.85}
+
+    # Load from FITS source
+    sacc_data = sacc.Sacc.load_fits("./examples/cosmic_shear/cosmicshear_sacc.fits")
+
+    # Create ConcealDataVector with input_format='fits'
+    sck = ConcealDataVector(cosmo, likelihood,
+                            shift_dict, sacc_data, syst_dict, seed=1234,
+                            **{'input_format': 'fits'})
+
+    # Calculate the concealing factor and apply it
+    sck.calculate_concealing_factor()
+    blinded_dv = sck.apply_concealing_to_likelihood_datavec()
+
+    # Save with explicit HDF5 output format
+    temp_file_path = "./tests/"
+    temp_file_root = "temp_sacc_hdf5_from_fits"
+    temp_file_name = f"{temp_file_path}{temp_file_root}_concealed_data_vector.h5"
+
+    returned_sacc = sck.save_concealed_datavector(temp_file_path,
+                                                  temp_file_root,
+                                                  return_sacc=True,
+                                                  output_format='hdf5')
+
+    assert isinstance(returned_sacc, sacc.Sacc)
+    assert os.path.exists(temp_file_name)
+
+    # Verify it can be loaded as HDF5
+    loaded_sacc = sacc.Sacc.load_hdf5(temp_file_name)
+    np.testing.assert_array_equal(loaded_sacc.mean, blinded_dv)
+
+    os.remove(temp_file_name)
+
+
+@patch('src.smokescreen.datavector.getpass.getuser', return_value='test_user')
+def test_save_concealed_datavector_default_format_uses_input_format(mock_getuser):
+    # Test that when output_format is not specified, it defaults to input format
+    cosmo = COSMO
+    likelihood = "./examples/cosmic_shear/cosmicshear_likelihood.py"
+    syst_dict = {
+        "trc1_delta_z": 0.1,
+        "trc0_delta_z": 0.1,
+    }
+    shift_dict = {"Omega_c": 0.34, "sigma8": 0.85}
+
+    # Test with HDF5 input - output should also be HDF5 (.h5)
+    sacc_data_hdf5, _ = load_sacc_file("./examples/cosmic_shear/cosmicshear_sacc.hdf5")
+    sck = ConcealDataVector(cosmo, likelihood,
+                            shift_dict, sacc_data_hdf5, syst_dict, seed=1234)
+
+    sck.calculate_concealing_factor()
+    blinded_dv = sck.apply_concealing_to_likelihood_datavec()
+
+    temp_file_path = "./tests/"
+    temp_file_root = "temp_sacc_default_hdf5"
+
+    # Don't specify output_format - should use input format (hdf5)
+    returned_sacc = sck.save_concealed_datavector(temp_file_path,
+                                                  temp_file_root,
+                                                  return_sacc=True)
+
+    assert isinstance(returned_sacc, sacc.Sacc)
+
+    # Check that the file has .h5 extension (from HDF5 input format)
+    expected_hdf5_name = f"{temp_file_path}{temp_file_root}_concealed_data_vector.h5"
+    assert os.path.exists(expected_hdf5_name)
+
+    # Verify it can be loaded as HDF5
+    loaded_sacc = sacc.Sacc.load_hdf5(expected_hdf5_name)
+    np.testing.assert_array_equal(loaded_sacc.mean, blinded_dv)
+
+    os.remove(expected_hdf5_name)
