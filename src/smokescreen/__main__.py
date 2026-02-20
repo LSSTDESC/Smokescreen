@@ -72,11 +72,11 @@ def datavector_main(path_to_sacc: Path_fr,
     # tests if the sacc file exists
     assert os.path.exists(path_to_sacc), f"File {path_to_sacc} does not exist."
     assert os.path.exists(likelihood_path), f"File {likelihood_path} does not exist."
-    # reads the sacc file
-    sacc_data = load_sacc_file(path_to_sacc)
+    # reads the sacc file (returns sacc object and detected format)
+    sacc_data, input_format = load_sacc_file(path_to_sacc)
     # creates the smokescreen object
     smoke = ConcealDataVector(cosmo,  likelihood_path, shifts_dict, sacc_data, systematics, seed,
-                              shift_distr=shift_distribution)
+                              shift_distr=shift_distribution, input_format=input_format)
     # blinds the sacc file
     smoke.calculate_concealing_factor(factor_type=shift_type)
     # applies the blinding factor to the sacc file
@@ -87,12 +87,16 @@ def datavector_main(path_to_sacc: Path_fr,
     root_name = os.path.splitext(os.path.basename(path_to_sacc))[0]
     # saves the blinded sacc file
     if path_to_output is not None:
-        smoke.save_concealed_datavector(path_to_output, root_name)
+        smoke.save_concealed_datavector(path_to_output, root_name,
+                                        output_format=input_format)
     else:
         # get the input file directory
         path_to_output = os.path.dirname(path_to_sacc)
-        smoke.save_concealed_datavector(path_to_output, root_name)
-    outprintfile = f"{path_to_output}/{root_name}_concealed_data_vector.fits"
+        smoke.save_concealed_datavector(path_to_output, root_name,
+                                        output_format=input_format)
+    # Determine extension based on format
+    ext = '.h5' if input_format == 'hdf5' else '.fits'
+    outprintfile = f"{path_to_output}/{root_name}_concealed_data_vector{ext}"
     print(f"\nConcealed sacc file saved as:\n\t{outprintfile}")
 
     print(f"\nEncrypting the original sacc file {path_to_sacc} ...", end="")

@@ -143,7 +143,7 @@ def modify_default_params(default_params, ccl_cosmology, systematics=None):
     return default_params
 
 
-def load_sacc_file(path_to_sacc: str) -> sacc.Sacc:
+def load_sacc_file(path_to_sacc: str) -> tuple[sacc.Sacc, str]:
     """
     Load a SACC file, automatically detecting if it's FITS or HDF5 format.
 
@@ -158,6 +158,8 @@ def load_sacc_file(path_to_sacc: str) -> sacc.Sacc:
     -------
     sacc.Sacc
         Loaded SACC object
+    str
+        Detected input format ('fits' or 'hdf5')
 
     Raises
     ------
@@ -166,13 +168,15 @@ def load_sacc_file(path_to_sacc: str) -> sacc.Sacc:
     """
     # Try HDF5 first (more specific format check)
     try:
-        return sacc.Sacc.load_hdf5(path_to_sacc)
+        sacc_obj = sacc.Sacc.load_hdf5(path_to_sacc)
+        return sacc_obj, 'hdf5'
     except Exception:
         pass
 
     # Fall back to FITS format
     try:
-        return sacc.Sacc.load_fits(path_to_sacc)
+        sacc_obj = sacc.Sacc.load_fits(path_to_sacc)
+        return sacc_obj, 'fits'
     except Exception as e:
         raise ValueError(
             f"Cannot load SACC file {path_to_sacc}: "
