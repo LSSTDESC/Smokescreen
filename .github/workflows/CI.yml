@@ -84,7 +84,9 @@ jobs:
         uses: codecov/codecov-action@v4.0.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          slug: LSSTDESC/Smokescreen
+          #slug: LSSTDESC/Smokescreen
+          files: coverage.xml
+          fail_ci_if_error: true
 
       - name: flake8
         uses: py-actions/flake8@v2
