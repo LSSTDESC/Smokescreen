@@ -1,0 +1,24 @@
+# Codecov configuration for DESC Smokescreen
+# https://docs.codecov.com/docs/codecov-yaml
+
+coverage:
+  status:
+    project:
+      default:
+        # Allow project coverage to drop slightly without failing
+        threshold: 1%
+        carryforward: true
+    patch:
+      default:
+        # New code introduced in a PR must have at least 90% coverage
+        target: 90%
+        threshold: 1%
+
+# Carry forward coverage from the last successful report
+# for commits that don't upload a new report (e.g. version bumps)
+carryforward: true
+
+comment:
+  layout: "reach,diff,flags,tree"
+  behavior: default
+  require_changes: true
