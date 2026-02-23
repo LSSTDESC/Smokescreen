@@ -12,6 +12,8 @@ on:
   push:
     branches:
       - '*'
+    tags:
+      - '*'
 
 # List of jobs for this workflow.
 
