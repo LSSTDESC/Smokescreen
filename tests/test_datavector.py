@@ -8,6 +8,7 @@ import numpy as np
 import sacc
 import pyccl as ccl
 import firecrown
+import shutil
 
 # Handle different Firecrown versions
 if Version(firecrown.__version__) >= Version("1.15.0a0"):
@@ -17,9 +18,93 @@ else:
 
 from firecrown.modeling_tools import ModelingTools
 from smokescreen.datavector import ConcealDataVector
+from smokescreen.utils import load_sacc_file
+
 ccl.gsl_params.LENSING_KERNEL_SPLINE_INTEGRATION = False
 
 COSMO = ccl.CosmologyVanillaLCDM()
+
+
+@pytest.fixture
+def fits_sacc_file(tmp_path):
+    """Create a FITS-format SACC file for testing."""
+    sacc_data = sacc.Sacc()
+    # Add tracers matching cosmic shear example (src0, src1)
+    sacc_data.add_tracer('sp', 'src0')
+    sacc_data.add_tracer('sp', 'src1')
+    # Add data points with realistic values
+    n_ell = 5
+    ell = np.logspace(np.log10(10), np.log10(1000), n_ell)
+    for e in ell:
+        sacc_data.add_data_point('galaxy_shear_cl_ee', ('src0', 'src0'), 1e-7, ell=e)
+        sacc_data.add_data_point('galaxy_shear_cl_ee', ('src0', 'src1'), 5e-8, ell=e)
+        sacc_data.add_data_point('galaxy_shear_cl_ee', ('src1', 'src1'), 2e-7, ell=e)
+
+    # Set mean (3 tracers * 5 ell values = 15 data points)
+    n_data = len(ell) * 3
+    sacc_data.mean = np.ones(n_data) * 1e-7
+    sacc_data.add_covariance(np.eye(n_data) * 1e-14)
+
+    # Save to FITS file
+    fits_file = tmp_path / "test_sacc.fits"
+    sacc_data.save_fits(str(fits_file))
+
+    return str(fits_file), sacc_data
+
+
+@pytest.fixture
+def hdf5_sacc_file(tmp_path):
+    """Create an HDF5-format SACC file for testing."""
+    sacc_data = sacc.Sacc()
+    # Add tracers matching cosmic shear example (src0, src1)
+    sacc_data.add_tracer('sp', 'src0')
+    sacc_data.add_tracer('sp', 'src1')
+    # Add data points with realistic values
+    n_ell = 5
+    ell = np.logspace(np.log10(10), np.log10(1000), n_ell)
+    for e in ell:
+        sacc_data.add_data_point('galaxy_shear_cl_ee', ('src0', 'src0'), 1e-7, ell=e)
+        sacc_data.add_data_point('galaxy_shear_cl_ee', ('src0', 'src1'), 5e-8, ell=e)
+        sacc_data.add_data_point('galaxy_shear_cl_ee', ('src1', 'src1'), 2e-7, ell=e)
+
+    # Set mean (3 tracers * 5 ell values = 15 data points)
+    n_data = len(ell) * 3
+    sacc_data.mean = np.ones(n_data) * 1e-7
+    sacc_data.add_covariance(np.eye(n_data) * 1e-14)
+
+    # Save to HDF5 file
+    hdf5_file = tmp_path / "test_sacc.hdf5"
+    sacc_data.save_hdf5(str(hdf5_file))
+
+    return str(hdf5_file), sacc_data
+
+
+@pytest.fixture
+def cosmic_shear_resources(tmp_path):
+    """Copy cosmic shear example files to a temp directory for testing."""
+    # Copy the likelihood file and SACC files
+    source_dir = os.path.join(os.path.dirname(__file__), '..', 'examples', 'cosmic_shear')
+
+    # Copy likelihood file
+    likelihood_src = os.path.join(source_dir, 'cosmicshear_likelihood.py')
+    likelihood_dst = str(tmp_path / 'cosmicshear_likelihood.py')
+    shutil.copy2(likelihood_src, likelihood_dst)
+
+    # Copy FITS SACC file
+    fits_src = os.path.join(source_dir, 'cosmicshear_sacc.fits')
+    fits_dst = str(tmp_path / 'cosmicshear_sacc.fits')
+    shutil.copy2(fits_src, fits_dst)
+
+    # Copy HDF5 SACC file
+    hdf5_src = os.path.join(source_dir, 'cosmicshear_sacc.hdf5')
+    hdf5_dst = str(tmp_path / 'cosmicshear_sacc.hdf5')
+    shutil.copy2(hdf5_src, hdf5_dst)
+
+    return {
+        'likelihood': likelihood_dst,
+        'fits_sacc': fits_dst,
+        'hdf5_sacc': hdf5_dst
+    }
 
 
 class EmptyLikelihood(Likelihood):
@@ -635,16 +720,16 @@ def test_load_likelihood():
 
 
 @patch('src.smokescreen.datavector.getpass.getuser', return_value='test_user')
-def test_save_concealed_datavector(mock_getuser):
-    # Create mock inputs
+def test_save_concealed_datavector(mock_getuser, cosmic_shear_resources, tmp_path):
+    # Create mock inputs using fixture resources
     cosmo = COSMO
-    likelihood = "./examples/cosmic_shear/cosmicshear_likelihood.py"
+    likelihood = cosmic_shear_resources['likelihood']
     syst_dict = {
         "trc1_delta_z": 0.1,
         "trc0_delta_z": 0.1,
     }
     shift_dict = {"Omega_c": 0.34, "sigma8": 0.85}
-    sacc_data = sacc.Sacc.load_fits("./examples/cosmic_shear/cosmicshear_sacc.fits")
+    sacc_data = sacc.Sacc.load_fits(cosmic_shear_resources['fits_sacc'])
     sck = ConcealDataVector(cosmo, likelihood,
                             shift_dict, sacc_data, syst_dict, seed=1234)
 
@@ -652,10 +737,10 @@ def test_save_concealed_datavector(mock_getuser):
     sck.calculate_concealing_factor()
     blinded_dv = sck.apply_concealing_to_likelihood_datavec()
 
-    # Save the blinded data vector to a temporary file
-    temp_file_path = "./tests/"
+    # Save the blinded data vector to a temporary file in tmp_path
+    temp_file_path = str(tmp_path)
     temp_file_root = "temp_sacc"
-    temp_file_name = f"{temp_file_path}{temp_file_root}_concealed_data_vector.fits"
+    temp_file_name = f"{temp_file_path}/{temp_file_root}_concealed_data_vector.fits"
     returned_sacc = sck.save_concealed_datavector(temp_file_path,
                                                   temp_file_root,
                                                   return_sacc=True)
@@ -682,5 +767,144 @@ def test_save_concealed_datavector(mock_getuser):
     assert loaded_sacc.metadata['creation'][:10] == datetime.date.today().isoformat()
     assert loaded_sacc.metadata['info'] == info_str
     assert loaded_sacc.metadata['seed_smokescreen'] == 1234
+    # File cleanup handled by tmp_path context manager
+
+
+@patch('src.smokescreen.datavector.getpass.getuser', return_value='test_user')
+def test_save_concealed_datavector_hdf5(mock_getuser):
+    # Create mock inputs using an HDF5 SACC file to ensure input_format is 'hdf5'
+    cosmo = COSMO
+    likelihood = "./examples/cosmic_shear/cosmicshear_likelihood.py"
+    syst_dict = {
+        "trc1_delta_z": 0.1,
+        "trc0_delta_z": 0.1,
+    }
+    shift_dict = {"Omega_c": 0.34, "sigma8": 0.85}
+
+    # Load from HDF5 source
+    sacc_data = sacc.Sacc.load_hdf5("./examples/cosmic_shear/cosmicshear_sacc.hdf5")
+
+    # Create ConcealDataVector with input_format='hdf5'
+    sck = ConcealDataVector(cosmo, likelihood,
+                            shift_dict, sacc_data, syst_dict, seed=1234,
+                            **{'input_format': 'hdf5'})
+
+    # Calculate the concealing factor and apply it to the likelihood data vector
+    sck.calculate_concealing_factor()
+    blinded_dv = sck.apply_concealing_to_likelihood_datavec()
+
+    # Save the blinded data vector to a temporary HDF5 file
+    temp_file_path = "./tests/"
+    temp_file_root = "temp_sacc_hdf5"
+    temp_file_name = f"{temp_file_path}{temp_file_root}_concealed_data_vector.h5"
+
+    # Save with output_format='hdf5' to test HDF5 output
+    returned_sacc = sck.save_concealed_datavector(temp_file_path,
+                                                  temp_file_root,
+                                                  return_sacc=True,
+                                                  output_format='hdf5')
+
+    # Check that the return is a sacc object
+    assert isinstance(returned_sacc, sacc.Sacc)
+
+    # Check that the file was created with .h5 extension
+    assert os.path.exists(temp_file_name)
+    # Verify it's an HDF5 file by checking extension in path
+    assert temp_file_name.endswith('.h5')
+
+    # Load the HDF5 file and check that the data vector matches
+    loaded_sacc = sacc.Sacc.load_hdf5(temp_file_name)
+    np.testing.assert_array_equal(loaded_sacc.mean, blinded_dv)
+
+    # Check metadata
+    info_str = 'Concealed (blinded) data-vector, created by Smokescreen.'
+    assert loaded_sacc.metadata['concealed'] is True
+    assert loaded_sacc.metadata['creator'] == mock_getuser.return_value
+    assert loaded_sacc.metadata['info'] == info_str
+
     # Clean up the temporary file
     os.remove(temp_file_name)
+
+
+@patch('src.smokescreen.datavector.getpass.getuser', return_value='test_user')
+def test_save_concealed_datavector_hdf5_from_fits_input(mock_getuser):
+    # Test that when input format is FITS but output format is explicitly set to HDF5,
+    # the file is saved with .h5 extension
+    cosmo = COSMO
+    likelihood = "./examples/cosmic_shear/cosmicshear_likelihood.py"
+    syst_dict = {
+        "trc1_delta_z": 0.1,
+        "trc0_delta_z": 0.1,
+    }
+    shift_dict = {"Omega_c": 0.34, "sigma8": 0.85}
+
+    # Load from FITS source
+    sacc_data = sacc.Sacc.load_fits("./examples/cosmic_shear/cosmicshear_sacc.fits")
+
+    # Create ConcealDataVector with input_format='fits'
+    sck = ConcealDataVector(cosmo, likelihood,
+                            shift_dict, sacc_data, syst_dict, seed=1234,
+                            **{'input_format': 'fits'})
+
+    # Calculate the concealing factor and apply it
+    sck.calculate_concealing_factor()
+    blinded_dv = sck.apply_concealing_to_likelihood_datavec()
+
+    # Save with explicit HDF5 output format
+    temp_file_path = "./tests/"
+    temp_file_root = "temp_sacc_hdf5_from_fits"
+    temp_file_name = f"{temp_file_path}{temp_file_root}_concealed_data_vector.h5"
+
+    returned_sacc = sck.save_concealed_datavector(temp_file_path,
+                                                  temp_file_root,
+                                                  return_sacc=True,
+                                                  output_format='hdf5')
+
+    assert isinstance(returned_sacc, sacc.Sacc)
+    assert os.path.exists(temp_file_name)
+
+    # Verify it can be loaded as HDF5
+    loaded_sacc = sacc.Sacc.load_hdf5(temp_file_name)
+    np.testing.assert_array_equal(loaded_sacc.mean, blinded_dv)
+
+    os.remove(temp_file_name)
+
+
+@patch('src.smokescreen.datavector.getpass.getuser', return_value='test_user')
+def test_save_concealed_datavector_default_format_uses_input_format(mock_getuser):
+    # Test that when output_format is not specified, it defaults to input format
+    cosmo = COSMO
+    likelihood = "./examples/cosmic_shear/cosmicshear_likelihood.py"
+    syst_dict = {
+        "trc1_delta_z": 0.1,
+        "trc0_delta_z": 0.1,
+    }
+    shift_dict = {"Omega_c": 0.34, "sigma8": 0.85}
+
+    # Test with HDF5 input - output should also be HDF5 (.h5)
+    sacc_data_hdf5, _ = load_sacc_file("./examples/cosmic_shear/cosmicshear_sacc.hdf5")
+    sck = ConcealDataVector(cosmo, likelihood,
+                            shift_dict, sacc_data_hdf5, syst_dict, seed=1234)
+
+    sck.calculate_concealing_factor()
+    blinded_dv = sck.apply_concealing_to_likelihood_datavec()
+
+    temp_file_path = "./tests/"
+    temp_file_root = "temp_sacc_default_hdf5"
+
+    # Don't specify output_format - should use input format (hdf5)
+    returned_sacc = sck.save_concealed_datavector(temp_file_path,
+                                                  temp_file_root,
+                                                  return_sacc=True)
+
+    assert isinstance(returned_sacc, sacc.Sacc)
+
+    # Check that the file has .h5 extension (from HDF5 input format)
+    expected_hdf5_name = f"{temp_file_path}{temp_file_root}_concealed_data_vector.h5"
+    assert os.path.exists(expected_hdf5_name)
+
+    # Verify it can be loaded as HDF5
+    loaded_sacc = sacc.Sacc.load_hdf5(expected_hdf5_name)
+    np.testing.assert_array_equal(loaded_sacc.mean, blinded_dv)
+
+    os.remove(expected_hdf5_name)

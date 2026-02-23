@@ -16,10 +16,12 @@ Smokescreen Utils
 .. autofunction:: load_cosmology_from_partial_dict
 .. autofunction:: load_module_from_path
 .. autofunction:: string_to_seed
+.. autofunction:: load_sacc_file
 '''
 import hashlib
 import importlib.util
 import pyccl as ccl
+import sacc
 
 
 def load_cosmology_from_partial_dict(cosmo_dict):
@@ -139,3 +141,46 @@ def modify_default_params(default_params, ccl_cosmology, systematics=None):
         elif systematics is not None and key in systematics:
             default_params[key] = systematics[key]
     return default_params
+
+
+def load_sacc_file(path_to_sacc: str) -> tuple[sacc.Sacc, str]:
+    """
+    Load a SACC file, automatically detecting if it's FITS or HDF5 format.
+
+    Tries load_hdf5 first (more specific), falls back to load_fits.
+
+    Parameters
+    ----------
+    path_to_sacc : str
+        Path to the SACC file
+
+    Returns
+    -------
+    sacc.Sacc
+        Loaded SACC object with _smokescreen_input_format attribute set
+    str
+        Detected input format ('fits' or 'hdf5')
+
+    Raises
+    ------
+    ValueError
+        If the file cannot be loaded as either format
+    """
+    # Try HDF5 first (more specific format check)
+    try:
+        sacc_obj = sacc.Sacc.load_hdf5(path_to_sacc)
+        sacc_obj._smokescreen_input_format = 'hdf5'
+        return sacc_obj, 'hdf5'
+    except Exception:
+        pass
+
+    # Fall back to FITS format
+    try:
+        sacc_obj = sacc.Sacc.load_fits(path_to_sacc)
+        sacc_obj._smokescreen_input_format = 'fits'
+        return sacc_obj, 'fits'
+    except Exception as e:
+        raise ValueError(
+            f"Cannot load SACC file {path_to_sacc}: "
+            f"HDF5 load failed and FITS load failed with: {e}"
+        )

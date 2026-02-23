@@ -10,8 +10,8 @@ from smokescreen.__main__ import encrypt_main, decrypt_main
 
 @patch('builtins.print')
 @patch('smokescreen.__main__.ConcealDataVector')
-@patch('sacc.Sacc.load_fits')
-def test_main(mock_load_fits, mock_smokescreen, mock_print):
+@patch('smokescreen.__main__.load_sacc_file')
+def test_main(mock_load_sacc, mock_smokescreen, mock_print):
     # Arrange
     path_to_sacc = "./examples/cosmic_shear/cosmicshear_sacc.fits"
     likelihood_path = "./tests/test_data/mock_likelihood.py"
@@ -28,7 +28,7 @@ def test_main(mock_load_fits, mock_smokescreen, mock_print):
     mock_smokescreen.return_value = mock_smokescreen_instance
 
     sacc_file = MagicMock()  # Create a mock sacc_file
-    mock_load_fits.return_value = sacc_file  # Make load_fits return the mock sacc_file
+    mock_load_sacc.return_value = (sacc_file, 'fits')  # Make load_sacc return tuple of (sacc, format)
 
     # Act
     __main__.datavector_main(path_to_sacc, likelihood_path, shifts_dict, systematics,
@@ -36,19 +36,21 @@ def test_main(mock_load_fits, mock_smokescreen, mock_print):
                              path_to_output, keep_original_sacc)
 
     # Assert
-    mock_load_fits.assert_called_once_with(path_to_sacc)
+    mock_load_sacc.assert_called_once_with(path_to_sacc)
     mock_smokescreen.assert_called_once_with(reference_cosmology, likelihood_path,
                                              shifts_dict, sacc_file, systematics, seed,
-                                             shift_distr=shift_distribution)
+                                             shift_distr=shift_distribution, input_format='fits')
     mock_smokescreen_instance.calculate_concealing_factor.assert_called_once()
     mock_smokescreen_instance.apply_concealing_to_likelihood_datavec.assert_called_once()
-    mock_smokescreen_instance.save_concealed_datavector.assert_called_once()
+    mock_smokescreen_instance.save_concealed_datavector.assert_called_once_with(
+        path_to_output, 'cosmicshear_sacc', output_format='fits'
+    )
 
 
 @patch('builtins.print')
 @patch('smokescreen.__main__.ConcealDataVector')
-@patch('sacc.Sacc.load_fits')
-def test_main_loads_cosmology_from_dict(mock_load_fits, mock_smokescreen, mock_print):
+@patch('smokescreen.__main__.load_sacc_file')
+def test_main_loads_cosmology_from_dict(mock_load_sacc, mock_smokescreen, mock_print):
     # Arrange
     path_to_sacc = "./examples/cosmic_shear/cosmicshear_sacc.fits"
     likelihood_path = "./tests/test_data/mock_likelihood.py"
@@ -65,7 +67,7 @@ def test_main_loads_cosmology_from_dict(mock_load_fits, mock_smokescreen, mock_p
     mock_smokescreen.return_value = mock_smokescreen_instance
 
     sacc_file = MagicMock()  # Create a mock sacc_file
-    mock_load_fits.return_value = sacc_file  # Make load_fits return the mock sacc_file
+    mock_load_sacc.return_value = (sacc_file, 'fits')  # Make load_sacc return tuple of (sacc, format)
 
     # Act
     __main__.datavector_main(path_to_sacc, likelihood_path, shifts_dict, systematics, shift_type,
@@ -74,19 +76,21 @@ def test_main_loads_cosmology_from_dict(mock_load_fits, mock_smokescreen, mock_p
 
     # Assert
     mod_ref_cosmo = load_cosmology_from_partial_dict(reference_cosmology)
-    mock_load_fits.assert_called_once_with(path_to_sacc)
+    mock_load_sacc.assert_called_once_with(path_to_sacc)
     mock_smokescreen.assert_called_once_with(mod_ref_cosmo, likelihood_path, shifts_dict,
                                              sacc_file, systematics, seed,
-                                             shift_distr=shift_distribution)
+                                             shift_distr=shift_distribution, input_format='fits')
     mock_smokescreen_instance.calculate_concealing_factor.assert_called_once()
     mock_smokescreen_instance.apply_concealing_to_likelihood_datavec.assert_called_once()
-    mock_smokescreen_instance.save_concealed_datavector.assert_called_once()
+    mock_smokescreen_instance.save_concealed_datavector.assert_called_once_with(
+        path_to_output, 'cosmicshear_sacc', output_format='fits'
+    )
 
 
 @patch('builtins.print')
 @patch('smokescreen.__main__.ConcealDataVector')
-@patch('sacc.Sacc.load_fits')
-def test_main_gaussian_shift(mock_load_fits, mock_smokescreen, mock_print):
+@patch('smokescreen.__main__.load_sacc_file')
+def test_main_gaussian_shift(mock_load_sacc, mock_smokescreen, mock_print):
     # Arrange
     path_to_sacc = "./examples/cosmic_shear/cosmicshear_sacc.fits"
     likelihood_path = "./tests/test_data/mock_likelihood.py"
@@ -103,7 +107,7 @@ def test_main_gaussian_shift(mock_load_fits, mock_smokescreen, mock_print):
     mock_smokescreen.return_value = mock_smokescreen_instance
 
     sacc_file = MagicMock()  # Create a mock sacc_file
-    mock_load_fits.return_value = sacc_file  # Make load_fits return the mock sacc_file
+    mock_load_sacc.return_value = (sacc_file, 'fits')  # Make load_sacc return tuple of (sacc, format)
 
     # Act
     __main__.datavector_main(path_to_sacc, likelihood_path, shifts_dict,
@@ -112,14 +116,16 @@ def test_main_gaussian_shift(mock_load_fits, mock_smokescreen, mock_print):
                              path_to_output, keep_original_sacc)
 
     # Assert
-    mock_load_fits.assert_called_once_with(path_to_sacc)
+    mock_load_sacc.assert_called_once_with(path_to_sacc)
     mock_smokescreen.assert_called_once_with(reference_cosmology,
                                              likelihood_path, shifts_dict, sacc_file,
                                              systematics, seed,
-                                             shift_distr=shift_distribution)
+                                             shift_distr=shift_distribution, input_format='fits')
     mock_smokescreen_instance.calculate_concealing_factor.assert_called_once()
     mock_smokescreen_instance.apply_concealing_to_likelihood_datavec.assert_called_once()
-    mock_smokescreen_instance.save_concealed_datavector.assert_called_once()
+    mock_smokescreen_instance.save_concealed_datavector.assert_called_once_with(
+        path_to_output, 'cosmicshear_sacc', output_format='fits'
+    )
 
 
 @pytest.fixture

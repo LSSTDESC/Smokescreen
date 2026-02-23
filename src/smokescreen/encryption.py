@@ -123,11 +123,20 @@ def decrypt_file(path_to_file: str, key: str, save_file: bool = False) -> bytes:
 
     # save the file
     if save_file:
-        # changes the extension of the file to .dec
+        # Extract original filename from encrypted filename pattern: basename.encrpt -> basename
         filename = os.path.basename(path_to_file)
-        filename = filename.split(".")[0] + ".fits"
+        # Remove .encrpt extension to get the base name
+        if filename.endswith(".encrpt"):
+            base_name = filename[:-7]  # len(".encrpt") == 7
+            # Reconstruct full path with original name
+            decrypted_path = os.path.join(path, base_name)
+        else:
+            # Fallback: just remove .encrpt if present anywhere
+            base_name = filename.replace(".encrpt", "")
+            decrypted_path = os.path.join(path, base_name)
+
         # save the file
-        with open(os.path.join(path, filename), "wb") as file:
+        with open(decrypted_path, "wb") as file:
             file.write(decrypted_sacc)
 
     return decrypted_sacc

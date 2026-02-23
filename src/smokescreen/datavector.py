@@ -112,6 +112,14 @@ class ConcealDataVector():
         # save the shifts
         self.shifts_dict = shifts_dict
 
+        # detect original file format for output preservation
+        # input_format can be passed via kwargs or detected from path_to_sacc
+        if 'input_format' in kwargs:
+            self._input_format = kwargs['input_format']
+        else:
+            # For backwards compatibility - try to get the sacc_data's source info
+            self._input_format = getattr(sacc_data, '_smokescreen_input_format', 'fits')
+
         # load the shifts
         # Check for 'shift_type' keyword argument
         if 'shift_distr' in kwargs:
@@ -525,12 +533,12 @@ class ConcealDataVector():
         return self.concealed_data_vector
 
     def save_concealed_datavector(self, path_to_save, file_root,
-                                  return_sacc=False):
+                                  return_sacc=False, output_format=None):
         """
         Saves the concealed (blinded) data-vector to a file.
 
-        Saves the blinded data-vector to a file with the name:
-        ``{path_to_save}/{file_root}_blinded_data_vector.fits``
+        Saves the blinded data-vector to a file with the appropriate extension
+        based on the input format: ``.fits`` for FITS files or ``.h5`` for HDF5 files.
 
         Parameters
         ----------
@@ -540,6 +548,8 @@ class ConcealDataVector():
             Root of the file name.
         return_sacc : bool
             If True, returns the sacc object with the blinded data-vector.
+        output_format : str, optional
+            Output format to use. If None, uses the detected input format.
 
         Returns
         -------
@@ -547,6 +557,10 @@ class ConcealDataVector():
             If `return_sacc` is True, returns the sacc object with
             the blinded data-vector. Otherwise, returns None.
         """
+        # Determine output format: use specified format or fall back to input format
+        if output_format is None:
+            output_format = getattr(self, '_input_format', 'fits')
+
         idx = self.likelihood.get_sacc_indices()
         concealed_sacc = save_to_sacc(self.sacc_data,
                                       self.concealed_data_vector,
@@ -559,8 +573,17 @@ class ConcealDataVector():
         concealed_sacc.metadata['creation'] = datetime.datetime.now().isoformat()
         concealed_sacc.metadata['info'] = 'Concealed (blinded) data-vector, created by Smokescreen.'
         concealed_sacc.metadata['seed_smokescreen'] = self.seed
-        concealed_sacc.save_fits(f"{path_to_save}/{file_root}_concealed_data_vector.fits",
-                                 overwrite=True)
+
+        # Determine file extension based on format
+        if output_format == 'hdf5':
+            ext = '.h5'
+            save_method = concealed_sacc.save_hdf5
+        else:  # default to FITS
+            ext = '.fits'
+            save_method = concealed_sacc.save_fits
+
+        output_path = f"{path_to_save}/{file_root}_concealed_data_vector{ext}"
+        save_method(output_path, overwrite=True)
         if return_sacc:
             return concealed_sacc
         else:

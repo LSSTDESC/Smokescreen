@@ -1,7 +1,8 @@
 import types
 import pyccl as ccl
 from firecrown.modeling_tools import ModelingTools
-from ..test_smokescreen import EmptyLikelihood
+from .test_datavector import EmptyLikelihood
+
 ccl.gsl_params.LENSING_KERNEL_SPLINE_INTEGRATION = False
 
 COSMO = ccl.CosmologyVanillaLCDM()
