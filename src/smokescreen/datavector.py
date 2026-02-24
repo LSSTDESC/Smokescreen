@@ -538,7 +538,7 @@ class ConcealDataVector():
         Saves the concealed (blinded) data-vector to a file.
 
         Saves the blinded data-vector to a file with the appropriate extension
-        based on the input format: ``.fits`` for FITS files or ``.h5`` for HDF5 files.
+        based on the input format: ``.fits`` for FITS files or ``.hdf5`` for HDF5 files.
 
         Parameters
         ----------
@@ -576,7 +576,7 @@ class ConcealDataVector():
 
         # Determine file extension based on format
         if output_format == 'hdf5':
-            ext = '.h5'
+            ext = '.hdf5'
             save_method = concealed_sacc.save_hdf5
         else:  # default to FITS
             ext = '.fits'

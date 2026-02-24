@@ -95,7 +95,7 @@ def datavector_main(path_to_sacc: Path_fr,
         smoke.save_concealed_datavector(path_to_output, root_name,
                                         output_format=input_format)
     # Determine extension based on format
-    ext = '.h5' if input_format == 'hdf5' else '.fits'
+    ext = '.hdf5' if input_format == 'hdf5' else '.fits'
     outprintfile = f"{path_to_output}/{root_name}_concealed_data_vector{ext}"
     print(f"\nConcealed sacc file saved as:\n\t{outprintfile}")
 
