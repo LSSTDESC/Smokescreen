@@ -109,11 +109,11 @@ class TestLoadSaccFile:
 
     def test_load_sacc_file_with_h5_extension(self, tmp_path):
         import sacc as sacc_mod
-        # Create an HDF5 SACC file with .h5 extension
+        # Create an HDF5 SACC file with .hdf5 extension
         sacc_data = sacc_mod.Sacc()
         sacc_data.add_tracer('misc', 'test')
         sacc_data.add_data_point('galaxy_shear_cl_ee', ('test', 'test'), 1.0, ell=10)
-        h5_path = tmp_path / "test.h5"
+        h5_path = tmp_path / "test.hdf5"
         sacc_data.save_hdf5(str(h5_path))
 
         # Load using load_sacc_file - should detect as HDF5 regardless of extension

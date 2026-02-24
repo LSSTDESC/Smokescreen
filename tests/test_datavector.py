@@ -796,7 +796,7 @@ def test_save_concealed_datavector_hdf5(mock_getuser):
     # Save the blinded data vector to a temporary HDF5 file
     temp_file_path = "./tests/"
     temp_file_root = "temp_sacc_hdf5"
-    temp_file_name = f"{temp_file_path}{temp_file_root}_concealed_data_vector.h5"
+    temp_file_name = f"{temp_file_path}{temp_file_root}_concealed_data_vector.hdf5"
 
     # Save with output_format='hdf5' to test HDF5 output
     returned_sacc = sck.save_concealed_datavector(temp_file_path,
@@ -807,10 +807,10 @@ def test_save_concealed_datavector_hdf5(mock_getuser):
     # Check that the return is a sacc object
     assert isinstance(returned_sacc, sacc.Sacc)
 
-    # Check that the file was created with .h5 extension
+    # Check that the file was created with .hdf5 extension
     assert os.path.exists(temp_file_name)
     # Verify it's an HDF5 file by checking extension in path
-    assert temp_file_name.endswith('.h5')
+    assert temp_file_name.endswith('.hdf5')
 
     # Load the HDF5 file and check that the data vector matches
     loaded_sacc = sacc.Sacc.load_hdf5(temp_file_name)
@@ -829,7 +829,7 @@ def test_save_concealed_datavector_hdf5(mock_getuser):
 @patch('src.smokescreen.datavector.getpass.getuser', return_value='test_user')
 def test_save_concealed_datavector_hdf5_from_fits_input(mock_getuser):
     # Test that when input format is FITS but output format is explicitly set to HDF5,
-    # the file is saved with .h5 extension
+    # the file is saved with .hdf5 extension
     cosmo = COSMO
     likelihood = "./examples/cosmic_shear/cosmicshear_likelihood.py"
     syst_dict = {
@@ -853,7 +853,7 @@ def test_save_concealed_datavector_hdf5_from_fits_input(mock_getuser):
     # Save with explicit HDF5 output format
     temp_file_path = "./tests/"
     temp_file_root = "temp_sacc_hdf5_from_fits"
-    temp_file_name = f"{temp_file_path}{temp_file_root}_concealed_data_vector.h5"
+    temp_file_name = f"{temp_file_path}{temp_file_root}_concealed_data_vector.hdf5"
 
     returned_sacc = sck.save_concealed_datavector(temp_file_path,
                                                   temp_file_root,
@@ -881,7 +881,7 @@ def test_save_concealed_datavector_default_format_uses_input_format(mock_getuser
     }
     shift_dict = {"Omega_c": 0.34, "sigma8": 0.85}
 
-    # Test with HDF5 input - output should also be HDF5 (.h5)
+    # Test with HDF5 input - output should also be HDF5 (.hdf5)
     sacc_data_hdf5, _ = load_sacc_file("./examples/cosmic_shear/cosmicshear_sacc.hdf5")
     sck = ConcealDataVector(cosmo, likelihood,
                             shift_dict, sacc_data_hdf5, syst_dict, seed=1234)
@@ -899,8 +899,8 @@ def test_save_concealed_datavector_default_format_uses_input_format(mock_getuser
 
     assert isinstance(returned_sacc, sacc.Sacc)
 
-    # Check that the file has .h5 extension (from HDF5 input format)
-    expected_hdf5_name = f"{temp_file_path}{temp_file_root}_concealed_data_vector.h5"
+    # Check that the file has .hdf5 extension (from HDF5 input format)
+    expected_hdf5_name = f"{temp_file_path}{temp_file_root}_concealed_data_vector.hdf5"
     assert os.path.exists(expected_hdf5_name)
 
     # Verify it can be loaded as HDF5
