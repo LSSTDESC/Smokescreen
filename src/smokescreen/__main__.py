@@ -42,6 +42,7 @@ def datavector_main(path_to_sacc: Path_fr,
                     reference_cosmology: Union[dict, CosmologyType] = ccl.CosmologyVanillaLCDM(),
                     path_to_output: Path_drw = None,
                     keep_original_sacc: bool = False,
+                    output_suffix: str = None,
                     ) -> None:
     r"""Main function to conceal a SACC file using a firecrown likelihood.
 
@@ -50,19 +51,21 @@ def datavector_main(path_to_sacc: Path_fr,
         likelihood_path (str): Path to the firecrown likelihood module file.
         shifts_dict (dict): Dictionary with fixed values for the firecrown shifts parameters.
             Example: {"Omega_c": (0.20, 0.39), "sigma8": (0.70, 0.90)}
-        shift_type (str): Type of shift to apply to the data vector. 
+        shift_type (str): Type of shift to apply to the data vector.
             Options are 'add' and 'mult'. Defaults to 'add'.
         systematics (dict): Dictionary with fixed values for the firecrown systematics parameters.
-        shift_distribution (str): Distribution type for the parameter shifts. 
+        shift_distribution (str): Distribution type for the parameter shifts.
             Options are 'flat' and 'gaussian'. Defaults to 'flat'.
         seed (int, str): Seed for the blinding process. Defaults to 2112.
-        reference_cosmology (Union[CosmologyType, dict]): 
-            Cosmology object or dictionary with cosmological 
+        reference_cosmology (Union[CosmologyType, dict]):
+            Cosmology object or dictionary with cosmological
             parameters you want different than the VanillaLCDM as reference cosmology.
             Defaults to ccl.CosmologyVanillaLCDM().
         path_to_output (str): Path to save the blinded sacc file. Defaults to None.
-        keep_original_sacc (bool): If True, keeps the original sacc file. 
+        keep_original_sacc (bool): If True, keeps the original sacc file.
             Defaults to False [keeps only the encrypted file].
+        output_suffix (str): Custom suffix for the output file name.
+            Defaults to None (uses 'concealed_data_vector').
     """
     print(banner)
     if isinstance(reference_cosmology, dict):
@@ -88,15 +91,18 @@ def datavector_main(path_to_sacc: Path_fr,
     # saves the blinded sacc file
     if path_to_output is not None:
         smoke.save_concealed_datavector(path_to_output, root_name,
-                                        output_format=input_format)
+                                        output_format=input_format,
+                                        suffix=output_suffix)
     else:
         # get the input file directory
         path_to_output = os.path.dirname(path_to_sacc)
         smoke.save_concealed_datavector(path_to_output, root_name,
-                                        output_format=input_format)
+                                        output_format=input_format,
+                                        suffix=output_suffix)
     # Determine extension based on format
     ext = '.hdf5' if input_format == 'hdf5' else '.fits'
-    outprintfile = f"{path_to_output}/{root_name}_concealed_data_vector{ext}"
+    _suffix = output_suffix if output_suffix is not None else "concealed_data_vector"
+    outprintfile = f"{path_to_output}/{root_name}_{_suffix}{ext}"
     print(f"\nConcealed sacc file saved as:\n\t{outprintfile}")
 
     print(f"\nEncrypting the original sacc file {path_to_sacc} ...", end="")
