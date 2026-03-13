@@ -533,7 +533,8 @@ class ConcealDataVector():
         return self.concealed_data_vector
 
     def save_concealed_datavector(self, path_to_save, file_root,
-                                  return_sacc=False, output_format=None):
+                                  return_sacc=False, output_format=None,
+                                  suffix=None):
         """
         Saves the concealed (blinded) data-vector to a file.
 
@@ -550,6 +551,8 @@ class ConcealDataVector():
             If True, returns the sacc object with the blinded data-vector.
         output_format : str, optional
             Output format to use. If None, uses the detected input format.
+        suffix : str, optional
+            Suffix for the output file name. Defaults to 'concealed_data_vector'.
 
         Returns
         -------
@@ -557,6 +560,8 @@ class ConcealDataVector():
             If `return_sacc` is True, returns the sacc object with
             the blinded data-vector. Otherwise, returns None.
         """
+        if suffix is None:
+            suffix = "concealed_data_vector"
         # Determine output format: use specified format or fall back to input format
         if output_format is None:
             output_format = getattr(self, '_input_format', 'fits')
@@ -582,7 +587,7 @@ class ConcealDataVector():
             ext = '.fits'
             save_method = concealed_sacc.save_fits
 
-        output_path = f"{path_to_save}/{file_root}_concealed_data_vector{ext}"
+        output_path = f"{path_to_save}/{file_root}_{suffix}{ext}"
         save_method(output_path, overwrite=True)
         if return_sacc:
             return concealed_sacc

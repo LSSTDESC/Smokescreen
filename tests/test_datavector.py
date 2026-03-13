@@ -908,3 +908,56 @@ def test_save_concealed_datavector_default_format_uses_input_format(mock_getuser
     np.testing.assert_array_equal(loaded_sacc.mean, blinded_dv)
 
     os.remove(expected_hdf5_name)
+
+
+@patch('src.smokescreen.datavector.getpass.getuser', return_value='test_user')
+def test_save_concealed_datavector_custom_suffix(mock_getuser):
+    cosmo = COSMO
+    likelihood = "./examples/cosmic_shear/cosmicshear_likelihood.py"
+    syst_dict = {
+        "trc1_delta_z": 0.1,
+        "trc0_delta_z": 0.1,
+    }
+    shift_dict = {"Omega_c": 0.34, "sigma8": 0.85}
+    sacc_data, _ = load_sacc_file("./examples/cosmic_shear/cosmicshear_sacc.fits")
+    sck = ConcealDataVector(cosmo, likelihood, shift_dict, sacc_data, syst_dict, seed=1234)
+    sck.calculate_concealing_factor()
+    sck.apply_concealing_to_likelihood_datavec()
+
+    temp_file_path = "./tests/"
+    temp_file_root = "temp_sacc_custom_suffix"
+
+    sck.save_concealed_datavector(temp_file_path, temp_file_root, suffix="my_blind")
+
+    expected_path = f"{temp_file_path}{temp_file_root}_my_blind.fits"
+    default_path = f"{temp_file_path}{temp_file_root}_concealed_data_vector.fits"
+
+    assert os.path.exists(expected_path)
+    assert not os.path.exists(default_path)
+
+    os.remove(expected_path)
+
+
+@patch('src.smokescreen.datavector.getpass.getuser', return_value='test_user')
+def test_save_concealed_datavector_default_suffix(mock_getuser):
+    cosmo = COSMO
+    likelihood = "./examples/cosmic_shear/cosmicshear_likelihood.py"
+    syst_dict = {
+        "trc1_delta_z": 0.1,
+        "trc0_delta_z": 0.1,
+    }
+    shift_dict = {"Omega_c": 0.34, "sigma8": 0.85}
+    sacc_data, _ = load_sacc_file("./examples/cosmic_shear/cosmicshear_sacc.fits")
+    sck = ConcealDataVector(cosmo, likelihood, shift_dict, sacc_data, syst_dict, seed=1234)
+    sck.calculate_concealing_factor()
+    sck.apply_concealing_to_likelihood_datavec()
+
+    temp_file_path = "./tests/"
+    temp_file_root = "temp_sacc_default_suffix"
+
+    sck.save_concealed_datavector(temp_file_path, temp_file_root)
+
+    expected_path = f"{temp_file_path}{temp_file_root}_concealed_data_vector.fits"
+    assert os.path.exists(expected_path)
+
+    os.remove(expected_path)
