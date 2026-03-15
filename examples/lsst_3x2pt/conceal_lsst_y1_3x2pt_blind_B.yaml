@@ -1,0 +1,36 @@
+path_to_sacc: "./sacc_forecasting_y1_3x2pt.sacc"
+likelihood_path: "./3x2pt_likelihood.py"
+output_suffix: "blind_B"
+shifts_dict:
+    A_s: 1.80e-09
+    w0: -0.9
+seed: 4224
+shift_distribution: "flat"
+systematics:
+    lens0_delta_z: 0.0
+    lens1_delta_z: 0.0
+    lens2_delta_z: 0.0
+    lens3_delta_z: 0.0
+    lens4_delta_z: 0.0
+    src0_delta_z: 0.0
+    src1_delta_z: 0.0
+    src2_delta_z: 0.0
+    src3_delta_z: 0.0
+    src4_delta_z: 0.0
+    src0_mult_bias: 0.0
+    src1_mult_bias: 0.0
+    src2_mult_bias: 0.0
+    src3_mult_bias: 0.0
+    src4_mult_bias: 0.0
+    lens0_bias: 1.2497
+    lens1_bias: 1.3809
+    lens2_bias: 1.5231
+    lens3_bias: 1.6716
+    lens4_bias: 1.8245
+    ia_bias: 1.0
+    alphaz: 0.0
+    z_piv: 0.62
+reference_cosmology:
+    A_s: 1.9019e-09
+    Omega_c: 0.2906
+keep_original_sacc: true
