@@ -5,7 +5,6 @@ from firecrown.data_functions import (
 )
 from firecrown.likelihood.factories import load_sacc_data
 from firecrown.likelihood import TwoPoint, TwoPointFactory
-from firecrown.utils import base_model_from_yaml
 from firecrown.modeling_tools import ModelingTools, CCLCreationMode, CCLPureModeTransferFunction
 from firecrown.modeling_tools import CCLFactory, PoweSpecAmplitudeParameter
 from pyccl.neutrinos import NeutrinoMassSplits
@@ -21,13 +20,14 @@ from firecrown.likelihood import (
     NamedParameters,
 )
 
+
 def build_likelihood(
         build_parameters: NamedParameters,
 ) -> tuple[Likelihood, ModelingTools]:
     """
     Docstring for build_likelihood
-    
-    :param build_parameters: you should pass the following 
+
+    :param build_parameters: you should pass the following
         build_parameters:
         - sacc_data: path to a sacc file
         - factory_yaml: a yaml file with the firecrown systematics.
@@ -78,14 +78,14 @@ def build_likelihood(
 
     likelihood_ready = ConstGaussian.create_ready(all_two_point_functions,
                                                   sacc_data.covariance.dense)
-    #likelihood_ready.read(sacc_data)
+
     tools = ModelingTools(ccl_factory=CCLFactory(
         require_nonlinear_pk=True,
-        amplitude_parameter = PoweSpecAmplitudeParameter.AS,
+        amplitude_parameter=PoweSpecAmplitudeParameter.AS,
         num_neutrino_masses=None,
         mass_split=NeutrinoMassSplits.EQUAL,
         creation_mode=CCLCreationMode.DEFAULT,
-        pure_ccl_transfer_function = CCLPureModeTransferFunction.BOLTZMANN_CAMB,
+        pure_ccl_transfer_function=CCLPureModeTransferFunction.BOLTZMANN_CAMB,
         use_camb_hm_sampling=False,
         allow_multiple_camb_instances=False,
         camb_extra_params=None,
@@ -93,4 +93,3 @@ def build_likelihood(
         )
 
     return likelihood_ready, tools
-
