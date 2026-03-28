@@ -961,3 +961,80 @@ def test_save_concealed_datavector_default_suffix(mock_getuser):
     assert os.path.exists(expected_path)
 
     os.remove(expected_path)
+
+
+def test_flat_distribution_and_deterministic_blinding_equivalence(cosmic_shear_resources):
+    """
+    Test that blinding from a flat distribution with a given seed produces the same
+    data vector as blinding deterministically with the registered sampled shifts.
+    """
+    cosmo = COSMO
+    likelihood = cosmic_shear_resources['likelihood']
+    syst_dict = {
+        "trc1_delta_z": 0.1,
+        "trc0_delta_z": 0.1,
+    }
+    seed = 1234
+    # Distribution-based shifts: sample Omega_c and sigma8 from uniform ranges
+    distribution_shifts_dict = {"Omega_c": (0.20, 0.39), "sigma8": (0.6, 0.9)}
+
+    # Step 1: Create smokescreen with distribution-based shifts and get blinded data vector
+    sacc_data = sacc.Sacc.load_fits(cosmic_shear_resources['fits_sacc'])
+    sck_distribution = ConcealDataVector(cosmo, likelihood,
+                                         distribution_shifts_dict, sacc_data,
+                                         syst_dict, seed=seed)
+    sck_distribution.calculate_concealing_factor()
+    blinded_dv_distribution = sck_distribution.apply_concealing_to_likelihood_datavec()
+
+    # Step 2: Register the sampled shift values by re-running the draw with the same seed
+    sampled_shifts = sck_distribution._load_shifts(seed=seed)
+
+    # Step 3: Create smokescreen with deterministic shifts equal to the registered sample values
+    sacc_data2 = sacc.Sacc.load_fits(cosmic_shear_resources['fits_sacc'])
+    sck_deterministic = ConcealDataVector(cosmo, likelihood,
+                                          sampled_shifts, sacc_data2,
+                                          syst_dict, seed=seed)
+    sck_deterministic.calculate_concealing_factor()
+    blinded_dv_deterministic = sck_deterministic.apply_concealing_to_likelihood_datavec()
+
+    # Step 4: Both strategies must produce the same blinded data vector
+    np.testing.assert_array_almost_equal(blinded_dv_distribution, blinded_dv_deterministic)
+
+
+def test_gaussian_distribution_and_deterministic_blinding_equivalence(cosmic_shear_resources):
+    """
+    Test that blinding from a Gaussian distribution with a given seed produces the same
+    data vector as blinding deterministically with the registered sampled shifts.
+    """
+    cosmo = COSMO
+    likelihood = cosmic_shear_resources['likelihood']
+    syst_dict = {
+        "trc1_delta_z": 0.1,
+        "trc0_delta_z": 0.1,
+    }
+    seed = 1234
+    # Gaussian distribution shifts: (mean, std) tuples
+    distribution_shifts_dict = {"Omega_c": (0.3, 0.02), "sigma8": (0.82, 0.02)}
+
+    # Step 1: Create smokescreen with Gaussian distribution shifts and get blinded data vector
+    sacc_data = sacc.Sacc.load_fits(cosmic_shear_resources['fits_sacc'])
+    sck_distribution = ConcealDataVector(cosmo, likelihood,
+                                         distribution_shifts_dict, sacc_data,
+                                         syst_dict, seed=seed,
+                                         **{'shift_distr': 'gaussian'})
+    sck_distribution.calculate_concealing_factor()
+    blinded_dv_distribution = sck_distribution.apply_concealing_to_likelihood_datavec()
+
+    # Step 2: Register the sampled shift values by re-running the Gaussian draw with the same seed
+    sampled_shifts = sck_distribution._load_shifts(seed=seed, shift_distr='gaussian')
+
+    # Step 3: Create smokescreen with deterministic shifts equal to the registered sample values
+    sacc_data2 = sacc.Sacc.load_fits(cosmic_shear_resources['fits_sacc'])
+    sck_deterministic = ConcealDataVector(cosmo, likelihood,
+                                          sampled_shifts, sacc_data2,
+                                          syst_dict, seed=seed)
+    sck_deterministic.calculate_concealing_factor()
+    blinded_dv_deterministic = sck_deterministic.apply_concealing_to_likelihood_datavec()
+
+    # Step 4: Both strategies must produce the same blinded data vector
+    np.testing.assert_array_almost_equal(blinded_dv_distribution, blinded_dv_deterministic)
