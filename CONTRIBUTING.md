@@ -18,14 +18,15 @@ or
    ```bash
    git checkout -b feature/your-feature-name
    ```
+4. **Open an issue** related to your contribution and link your PR to it.
 
 ## How to Contribute
 
 ### Reporting Bugs
-Please open an issue on GitHub with a clear description of the problem, a minimal reproducible example, and the version of Smokescreen you are using.
+Please **open an issue** on GitHub with a clear description of the problem, a minimal reproducible example, and the version of Smokescreen you are using.
 
 ### Suggesting Enhancements
-Open an issue describing the proposed feature, its motivation, and — where possible — a sketch of the intended API or behaviour.
+**Open an issue** describing the proposed feature, its motivation, and — where possible — a sketch of the intended API or behaviour.
 
 ### Submitting a Pull Request
 1. Ensure your changes are covered by tests. Smokescreen uses `pytest`; run the test suite with:
@@ -34,7 +35,8 @@ Open an issue describing the proposed feature, its motivation, and — where pos
    ```
 2. Follow the existing code style. We use `flake8` for linting.
 3. Update the documentation and changelog where relevant.
-4. Open a pull request against the `main` branch with a clear description of your changes and the motivation behind them.
+4. **Open an issue related to your PR**
+5. Open a pull request against the `main` branch with a clear description of your changes and the motivation behind them. Link it to the issue you opened.
 
 ## Code of Conduct
 
