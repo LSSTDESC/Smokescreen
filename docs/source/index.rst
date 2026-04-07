@@ -7,16 +7,10 @@
 **Smokescreen** -- DESC Library for concealing cosmological results
 ********************************************************************
 
-.. image:: _static/Smokescreen_Banner.png
+.. image:: _static/smokescreen.png
    :align: center
 
-`Smokescreen <https://github.com/LSSTDESC/Smokescreen>`_ (currently under development) contains the modules for data concealment (blinding) at the following levels of the analysis:
-
-* Data-vector measurements
-
-* Posterior distribution [not yet developed]
-
-* (TBC) Catalogues
+`Smokescreen <https://github.com/LSSTDESC/Smokescreen>`_  contains the modules for data concealment (blinding) of cosmological data-vectors and their encryption/decryption.
 
 .. attention::
     The term "blinding" is used in the context of data concealment for scientific analysis. We understand this is an outdated term and we are working to update it to a more appropriate term. If you have any suggestions, please let us know.
