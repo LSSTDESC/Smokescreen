@@ -288,6 +288,13 @@ A full validation on realistic simulated analyses, including the complete parame
 Figure \ref{fig:triangle} confirms the expected behaviour: posteriors shift towards the blinded cosmology, whilst the goodness-of-fit remains unchanged ($\chi^2_{\rm red} = 0$ for the noiseless fiducial vector).
 The Bayesian log-evidence $\log Z$, computed via `Nautilus` [@nautilus], is likewise unaffected: $|\Delta\log Z| \leq 1$ for both blinded runs (Blind A: $-0.97$, Blind B: $-0.47$), which is inconclusive on the Jeffreys scale and confirms the blinded analyses are statistically indistinguishable from the unblinded one. The results are summarised in Table \ref{tab:evidence}.
 
+# Research impact statement
+
+Smokescreen is designed as a standard blinding infrastructure for LSST DESC cosmological analyses ahead of LSST's decade-long survey.
+It eliminates inconsistencies between blinding and inference models that can arise from independent *ad hoc* implementations across analysis teams.
+Adoption is already extending beyond LSST DESC: the KiDS collaboration is using Smokescreen to blind their upcoming $6\times2$pt legacy analysis, demonstrating its applicability to any experiment using Firecrown likelihoods and the SACC format.
+More broadly, we hope Smokescreen will help drive the community towards more consistent, open, and verifiable blinding infrastructures ahead of the Stage-IV survey era.
+
 ```{=latex}
 \begin{table}[h]
 \centering
@@ -307,12 +314,7 @@ Blind B        & $1.79$ & $-0.90$ & $0.290$ & $0.0069$ & $-17.14 \pm 0.03$ \\
 
 ![Marginalised 1D and 2D posterior distributions from cosmological inference on the data vectors shown in Figure \ref{fig:data-vectors}, using the same Firecrown likelihood provided to Smokescreen. The true cosmology (cyan), Blind A (red), and Blind B (purple) posteriors shift consistently towards their respective input concealing cosmologies, marked by filled circles and dashed lines. Cross markers indicate the posterior best-fits reported in Table \ref{tab:evidence}. Note that $\Omega_{\rm cdm}$ was not shifted by Smokescreen, yet its posterior shifts a tiny amount as a consequence of the known $A_s$–$\Omega_{\rm cdm}$–$w$ degeneracy, demonstrating that Criterion I is satisfied.](figures/triangle_plot.pdf){#fig:triangle width="85%"}
 
-# Research impact statement
 
-Smokescreen is designed as a standard blinding infrastructure for LSST DESC cosmological analyses ahead of LSST's decade-long survey.
-It eliminates inconsistencies between blinding and inference models that can arise from independent *ad hoc* implementations across analysis teams.
-Adoption is already extending beyond LSST DESC: the KiDS collaboration is using Smokescreen to blind their upcoming $6\times2$pt legacy analysis, demonstrating its applicability to any experiment using Firecrown likelihoods and the SACC format.
-More broadly, we hope Smokescreen will help drive the community towards more consistent, open, and verifiable blinding infrastructures ahead of the Stage-IV survey era.
 
 # Availability
 
