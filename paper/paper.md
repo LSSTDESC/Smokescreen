@@ -108,8 +108,8 @@ Smokescreen was developed to fill this gap.
 # State of the field
 
 Blinding in cosmological surveys can be implemented at several stages of the analysis pipeline.
-Catalogue-level methods [e.g., @2016MNRAS.460.2245J; @2020JCAP...09..052B] provide robust concealment but are difficult to implement, particularly for multi-probe experiments.
-Posterior-level methods [e.g., @2006ApJ...644....1C] are simple but leave the data vectors unblinded throughout the analysis.
+Catalogue-level methods [e.g., @2016MNRAS.460.2245J; @Brieden2020] provide robust concealment but are difficult to implement, particularly for multi-probe experiments.
+Posterior-level methods [e.g., @Conley2006] are simple but leave the data vectors unblinded throughout the analysis.
 Covariance-level blinding [@Sellentin2020] is mathematically elegant but harder to apply in practice, as covariance matrices in multi-probe analyses are constructed in a variety of ways — analytically, from simulations, or via resampling methods, for example.
 Data vector blinding [@Muir2020] provides a practical compromise, offering stronger guarantees than posterior-level methods while remaining easier to implement than catalogue- or covariance-level methods.
 
@@ -214,7 +214,7 @@ Input/output format (`FITS` or `HDF5`) is auto-detected and preserved.
 
 # Application: LSST Y1 3×2pt concealment
 
-We demonstrate Smokescreen on a simulated LSST Y1 3×2pt data vector comprising cosmic shear $C_\ell^{\gamma\gamma}$, galaxy–galaxy lensing $C_\ell^{g\gamma}$, and galaxy clustering $C_\ell^{gg}$ [@2023OJAp....6E..13P] across five tomographic redshift bins, yielding 415 data points sampled at 20 log-spaced multipoles $\ell \in [20, 2000]$ with the samples containing galaxy clustering restricted to scales $k\leq 0.1$ Mpc$^{-1}$.
+We demonstrate Smokescreen on a simulated LSST Y1 3×2pt data vector comprising cosmic shear $C_\ell^{\gamma\gamma}$, galaxy–galaxy lensing $C_\ell^{g\gamma}$, and galaxy clustering $C_\ell^{gg}$ [@Prat2023] across five tomographic redshift bins, yielding 415 data points sampled at 20 log-spaced multipoles $\ell \in [20, 2000]$ with the samples containing galaxy clustering restricted to scales $k\leq 0.1$ Mpc$^{-1}$.
 
 ### Smokescreen configuration
 
@@ -333,7 +333,7 @@ This project is largely possible thanks to several key software tools and packag
 We gratefully acknowledge the Python programming language, without which this work would not have been possible.[^9]
 Our development and analysis efforts relied heavily on essential Python libraries, including: NumPy [@numpy], SciPy [@scipy], Matplotlib [@matplotlib], ChainConsumer [@Hinton2016], AstroPy [@astropy:2013; @astropy:2018; @astropy:2022], HDF5 [@andrew_collette_2022_6575970]
 and cosmology packages like CCL [@2019-Chisari-CCL], CosmoSIS [@2015-Cosmosis],
-CAMB [@2000ApJ...538..473L; @2012JCAP...04..027H], HMCode2020 [@2021MNRAS.502.1401M], and NaMaster [@2019MNRAS.484.4127A].
+CAMB [@Lewis2000; @Howlett2012], HMCode2020 [@2021MNRAS.502.1401M], and NaMaster [@2019MNRAS.484.4127A].
 
 We also acknowledge the use of Jupyter Notebooks [@jupyter] as an interactive computing environment for prototyping and documenting analyses.
 
