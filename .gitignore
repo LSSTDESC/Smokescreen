@@ -5,6 +5,10 @@ docs/build/
 CLAUDE.md
 .claude/
 
+# JOSS paper
+paper/latex/
+paper/jats/
+
 # distribution build
 dist/
 
