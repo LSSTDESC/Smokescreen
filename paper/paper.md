@@ -288,15 +288,24 @@ A full validation on realistic simulated analyses, including the complete parame
 Figure \ref{fig:triangle} confirms the expected behaviour: posteriors shift towards the blinded cosmology, whilst the goodness-of-fit remains unchanged ($\chi^2_{\rm red} = 0$ for the noiseless fiducial vector).
 The Bayesian log-evidence $\log Z$, computed via `Nautilus` [@nautilus], is likewise unaffected: $|\Delta\log Z| \leq 1$ for both blinded runs (Blind A: $-0.97$, Blind B: $-0.47$), which is inconclusive on the Jeffreys scale and confirms the blinded analyses are statistically indistinguishable from the unblinded one. The results are summarised in Table \ref{tab:evidence}.
 
-| | $A_s\times10^{-9}$ | $w$ | $\Omega_{\rm cdm}$ | $\chi_{\rm red}^2$ | $\log Z$ |
-|---|---|---|---|---|---|
-| True Cosmology | $1.88$ | $-0.99$ | $0.292$ | $0.0039$ | $-16.67 \pm 0.03$ |
-| Blind A | $1.97$ | $-1.09$ | $0.294$ | $0.0084$ | $-17.64 \pm 0.03$ |
-| Blind B | $1.79$ | $-0.90$ | $0.290$ | $0.0069$ | $-17.14 \pm 0.03$ |
+```{=latex}
+\begin{table}[h]
+\centering
+\caption{Best fit values, goodness-of-fit, and log-evidence for all three cases in Figure \ref{fig:triangle}.}
+\label{tab:evidence}
+\begin{tabular}{lccccc}
+\hline
+ & $A_s\times10^{-9}$ & $w$ & $\Omega_{\rm cdm}$ & $\chi_{\rm red}^2$ & $\log Z$ \\
+\hline
+True Cosmology & $1.88$ & $-0.99$ & $0.292$ & $0.0039$ & $-16.67 \pm 0.03$ \\
+Blind A        & $1.97$ & $-1.09$ & $0.294$ & $0.0084$ & $-17.64 \pm 0.03$ \\
+Blind B        & $1.79$ & $-0.90$ & $0.290$ & $0.0069$ & $-17.14 \pm 0.03$ \\
+\hline
+\end{tabular}
+\end{table}
+```
 
-: Best fit values, goodness-of-fit, and log-evidence for all three cases in Figure \ref{fig:triangle}. \label{tab:evidence}
-
-![Marginalised 1D and 2D posterior distributions from cosmological inference on the data vectors shown in Figure \ref{fig:data-vectors}, using the same Firecrown likelihood provided to Smokescreen. The true cosmology (cyan), Blind A (red), and Blind B (purple) posteriors shift consistently towards their respective input concealing cosmologies, marked by filled circles and dashed lines. Cross markers indicate the posterior best-fits reported in Table \ref{tab:evidence}. Note that $\Omega_{\rm cdm}$ was not shifted by Smokescreen, yet its posterior shifts a tiny amount as a consequence of the known $A_s$–$\Omega_{\rm cdm}$–$w$ degeneracy, demonstrating that Criterion I is satisfied.](figures/triangle_plot.pdf){#fig:triangle width="90%"}
+![Marginalised 1D and 2D posterior distributions from cosmological inference on the data vectors shown in Figure \ref{fig:data-vectors}, using the same Firecrown likelihood provided to Smokescreen. The true cosmology (cyan), Blind A (red), and Blind B (purple) posteriors shift consistently towards their respective input concealing cosmologies, marked by filled circles and dashed lines. Cross markers indicate the posterior best-fits reported in Table \ref{tab:evidence}. Note that $\Omega_{\rm cdm}$ was not shifted by Smokescreen, yet its posterior shifts a tiny amount as a consequence of the known $A_s$–$\Omega_{\rm cdm}$–$w$ degeneracy, demonstrating that Criterion I is satisfied.](figures/triangle_plot.pdf){#fig:triangle width="85%"}
 
 # Research impact statement
 
@@ -307,13 +316,13 @@ More broadly, we hope Smokescreen will help drive the community towards more con
 
 # Availability
 
-**Source:** [github.com/LSSTDESC/Smokescreen](https://github.com/LSSTDESC/Smokescreen/tree/main)
-**License:** BSD 3-Clause License.
-**Install (conda):** `conda install -c conda-forge lsstdesc-smokescreen`
-**Install (PyPI):** `pip install smokescreen`
-**Documentation:** [lsstdesc.org/Smokescreen/](https://lsstdesc.org/Smokescreen/)
-**Examples:** [github.com/LSSTDESC/Smokescreen/tree/main/examples](https://github.com/LSSTDESC/Smokescreen/tree/main/examples)
-**Notebooks:** [github.com/LSSTDESC/Smokescreen/tree/main/notebooks](https://github.com/LSSTDESC/Smokescreen/tree/main/notebooks)
+- **Source:** [github.com/LSSTDESC/Smokescreen](https://github.com/LSSTDESC/Smokescreen/tree/main)
+- **License:** BSD 3-Clause License.
+- **Install (conda):** `conda install -c conda-forge lsstdesc-smokescreen`
+- **Install (PyPI):** `pip install smokescreen`
+- **Documentation:** [lsstdesc.org/Smokescreen/](https://lsstdesc.org/Smokescreen/)
+- **Examples:** [github.com/LSSTDESC/Smokescreen/tree/main/examples](https://github.com/LSSTDESC/Smokescreen/tree/main/examples)
+- **Notebooks:** [github.com/LSSTDESC/Smokescreen/tree/main/notebooks](https://github.com/LSSTDESC/Smokescreen/tree/main/notebooks)
 
 # AI usage disclosure
 
@@ -348,13 +357,13 @@ Investigation, Resources, Writing - Original Draft, Visualization, Project admin
 **JM:** Conceptualization, Methodology, Project administration;
 **JB:** Conceptualization, Project administration;
 **NEC:** LSST DESC Builder, contributor to `pyCCL`;
-**PHCR:** Data Curation, Software*;
+**PHCR:** Data Curation, Software\*;
 **CG:** Software;
 **CDL:** LSST DESC Builder, contributor to `pyCCL`;
-**BM:** Software*;
+**BM:** Software\*;
 **MP:** Software;
 **NŠ:** Writing - Review & Editing, Visualization;
 **TT:** LSST DESC Builder, contributor to `pyCCL` & `Firecrown`.
-**SPDV:** Software*;
+**SPDV:** Software\*;
 
 \* not direct Smokescreen development, but software used in the work presented here.
