@@ -28,21 +28,24 @@ authors:
   - name: Christos Georgiou
     orcid: 0000-0001-9707-0109
     affiliation: "9"
-  - name: C. Danielle Leonard
+  - name: Mustapha Ishak
     orcid: 0000-0002-7810-6134
     affiliation: "10"
+  - name: C. Danielle Leonard
+    orcid: 0000-0002-7810-6134
+    affiliation: "11"
   - name: Bruno Moraes
     orcid: 0000-0002-5898-0975
-    affiliation: "11, 7"
+    affiliation: "12, 7"
   - name: Marc Paterno
     orcid: 0000-0003-0808-8388
-    affiliation: "12"
+    affiliation: "13"
   - name: "Nikolina Šarčević"
     orcid: 0000-0001-7301-6415
-    affiliation: "13"
+    affiliation: "14"
   - name: "Tilman Tröster"
     orcid: 0000-0003-3520-2406
-    affiliation: "14"
+    affiliation: "15"
   - name: Sandro D. P. Vitenti
     orcid: 0000-0002-4587-7178
     affiliation: "8"
@@ -67,16 +70,18 @@ affiliations:
   - index: 9
     name: "Institut de Física d'Altes Energies (IFAE), The Barcelona Institute of Science and Technology, Campus UAB, 08193 Bellaterra (Barcelona), Spain"
   - index: 10
+    name: Department of Physics, The University of Texas at Dallas, Richardson, Texas 75080, USA
+- index: 11
     name: School of Mathematics, Statistics and Physics, Newcastle University, Newcastle upon Tyne, NE1 7RU, United Kingdom
-  - index: 11
-    name: "CBPF - Centro Brasileiro de Pesquisas Físicas, 22290-180, Rio de Janeiro, RJ, Brazil"
   - index: 12
-    name: Fermi National Accelerator Laboratory, Batavia, IL 60510-0500, U.S.A.
+    name: "CBPF - Centro Brasileiro de Pesquisas Físicas, 22290-180, Rio de Janeiro, RJ, Brazil"
   - index: 13
-    name: Department of Physics, Duke University, Science Dr, Durham, NC 27710, USA
+    name: Fermi National Accelerator Laboratory, Batavia, IL 60510-0500, U.S.A.
   - index: 14
+    name: Department of Physics, Duke University, Science Dr, Durham, NC 27710, USA
+  - index: 15
     name: Institute for Particle Physics and Astrophysics, ETH Zurich, 8093 Zurich, Switzerland
-date: 24 April 2026
+date: 28 April 2026
 bibliography: paper.bib
 ---
 
