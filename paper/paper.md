@@ -29,7 +29,6 @@ authors:
     orcid: 0000-0001-9707-0109
     affiliation: "9"
   - name: Mustapha Ishak
-    orcid: 0000-0002-7810-6134
     affiliation: "10"
   - name: C. Danielle Leonard
     orcid: 0000-0002-7810-6134
@@ -70,7 +69,7 @@ affiliations:
   - index: 9
     name: "Institut de Física d'Altes Energies (IFAE), The Barcelona Institute of Science and Technology, Campus UAB, 08193 Bellaterra (Barcelona), Spain"
   - index: 10
-    name: Department of Physics, The University of Texas at Dallas, Richardson, Texas 75080, USA
+    name: "Department of Physics, The University of Texas at Dallas, Richardson, Texas 75080, USA"
 - index: 11
     name: School of Mathematics, Statistics and Physics, Newcastle University, Newcastle upon Tyne, NE1 7RU, United Kingdom
   - index: 12
@@ -366,6 +365,7 @@ Investigation, Resources, Writing - Original Draft, Visualization, Project admin
 **NEC:** LSST DESC Builder, contributor to `pyCCL`;
 **PHCR:** Data Curation, Software\*;
 **CG:** Software;
+**MI** LSST DESC Builder, contributor to `pyCCL`;
 **CDL:** LSST DESC Builder, contributor to `pyCCL`;
 **BM:** Software\*;
 **MP:** Software;
