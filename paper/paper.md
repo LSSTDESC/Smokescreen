@@ -69,7 +69,7 @@ affiliations:
   - index: 9
     name: "Institut de Física d'Altes Energies (IFAE), The Barcelona Institute of Science and Technology, Campus UAB, 08193 Bellaterra (Barcelona), Spain"
   - index: 10
-    name: 'Department of Physics, The University of Texas at Dallas, Richardson, Texas, USA'
+    name: "Institut de Física d'Altes Energies (IFAE), The Barcelona Institute of Science and Technology, Campus UAB, 08193 Bellaterra (Barcelona), Spain"
 - index: 11
     name: School of Mathematics, Statistics and Physics, Newcastle University, Newcastle upon Tyne, NE1 7RU, United Kingdom
   - index: 12
