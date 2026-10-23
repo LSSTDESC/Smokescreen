@@ -132,8 +132,8 @@ This structure allows any Firecrown[^3]-compatible likelihood to be used, guaran
 
 [^3]: Firecrown is DESC's likelihood library, see [https://github.com/LSSTDESC/firecrown](https://github.com/LSSTDESC/firecrown) for more information.
 
-Smokescreen's test suite is implemented using `pytest` and currently achieves 94% code coverage as tracked by `Codecov`.
-Rather than merely checking array shapes or return types, tests verify physical correctness: for instance, that additive and multiplicative blinding factors are computed exactly as prescribed by \ref{eq:theory_vecs}–\ref{eq:factors}, that SACC consistency checks raise errors on data vector or covariance mismatches to floating-point tolerance, that invalid parameter keys or shift distributions are caught at instantiation, and that the full concealment pipeline, from shift sampling through to the saved output file and its metadata, produces the expected result end-to-end.
+<!-- Smokescreen's test suite is implemented using `pytest` and currently achieves 94% code coverage as tracked by `Codecov`.
+Rather than merely checking array shapes or return types, tests verify physical correctness: for instance, that additive and multiplicative blinding factors are computed exactly as prescribed by \ref{eq:theory_vecs}–\ref{eq:factors}, that SACC consistency checks raise errors on data vector or covariance mismatches to floating-point tolerance, that invalid parameter keys or shift distributions are caught at instantiation, and that the full concealment pipeline, from shift sampling through to the saved output file and its metadata, produces the expected result end-to-end. -->
 
 ## Core blinding algorithm
 
@@ -198,11 +198,11 @@ Supporting modules handle parameter shift generation (`param_shifts.py`, impleme
 Smokescreen requires only a Python module exporting a `build_likelihood(build_parameters)` factory returning a `(Likelihood, ModelingTools)` tuple conforming to the Firecrown interface — the same interface used by Firecrown with the `CosmoSIS`/`Cobaya`/`NumCosmos` [@2015-Cosmosis; @2021-Cobaya; @Vitenti2012c, respectively] connectors.
 Therefore, existing likelihood modules do not require modification.
 
-## Parameter shift strategies
+<!-- ## Parameter shift strategies
 
 Three shift distributions are implemented: deterministic ($\theta_i^{\rm blind} = \rm{const}$), uniform ($\theta_i^{\rm blind} \sim \mathcal{U}(a,b)$), and Gaussian ($\theta_i^{\rm blind} \sim \mathcal{N}(\mu,\sigma)$).
 Reproducibility is ensured through integer or string seeds, with strings mapped to `NumPy`-compatible integers via `MD5` hashing.
-Unknown parameter keys raise a `ValueError` during validation, preventing silent misapplication of shifts.
+Unknown parameter keys raise a `ValueError` during validation, preventing silent misapplication of shifts. -->
 
 ## Security and data integrity
 
@@ -210,14 +210,14 @@ After the concealed SACC file is written, the original is encrypted with `Fernet
 The `.key` file is stored separately from the `.encrpt` data file, allowing a blinding committee to distribute them through independent channels.
 The blinded SACC embeds audit metadata (seed, timestamp, username) sufficient to reconstruct the blinding configuration without external logs.
 
-## CLI and configuration
+<!-- ## CLI and configuration
 
 Smokescreen exposes three subcommands — `datavector`, `encrypt`, and `decrypt` — implemented with `jsonargparse`[^7].
 Arguments may be provided as command-line interface (CLI) flags or through a `YAML` configuration file (`--config  config.yaml`); `--print_config` displays the current argument schema.
 The `reference_cosmology` argument accepts a partial parameter dictionary, completed using `pyccl.CosmologyVanillaLCDM` [@2019-Chisari-CCL] defaults.
 Input/output format (`FITS` or `HDF5`) is auto-detected and preserved.
 
-[^7]: [https://github.com/omni-us/jsonargparse/](https://github.com/omni-us/jsonargparse/)
+[^7]: [https://github.com/omni-us/jsonargparse/](https://github.com/omni-us/jsonargparse/) -->
 
 # Application: LSST Y1 3×2pt concealment
 
@@ -321,7 +321,7 @@ It eliminates inconsistencies between blinding and inference models that can ari
 Adoption is already extending beyond LSST DESC: the KiDS collaboration is using Smokescreen to blind their upcoming $6\times2$pt legacy analysis, demonstrating its applicability to any experiment using Firecrown likelihoods and the SACC format.
 More broadly, we hope Smokescreen will help drive the community towards more consistent, open, and verifiable blinding infrastructures ahead of the Stage-IV survey era.
 
-# Availability
+<!-- # Availability
 
 - **Source:** [github.com/LSSTDESC/Smokescreen](https://github.com/LSSTDESC/Smokescreen/tree/main)
 - **License:** BSD 3-Clause License.
@@ -329,7 +329,7 @@ More broadly, we hope Smokescreen will help drive the community towards more con
 - **Install (PyPI):** `pip install smokescreen`
 - **Documentation:** [lsstdesc.org/Smokescreen/](https://lsstdesc.org/Smokescreen/)
 - **Examples:** [github.com/LSSTDESC/Smokescreen/tree/main/examples](https://github.com/LSSTDESC/Smokescreen/tree/main/examples)
-- **Notebooks:** [github.com/LSSTDESC/Smokescreen/tree/main/notebooks](https://github.com/LSSTDESC/Smokescreen/tree/main/notebooks)
+- **Notebooks:** [github.com/LSSTDESC/Smokescreen/tree/main/notebooks](https://github.com/LSSTDESC/Smokescreen/tree/main/notebooks) -->
 
 # AI usage disclosure
 
