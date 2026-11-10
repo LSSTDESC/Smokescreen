@@ -189,7 +189,7 @@ Supporting modules handle parameter shift generation (`param_shifts.py`, impleme
 
 [^6]: [https://github.com/pyca/cryptography](https://github.com/pyca/cryptography)
 
-![Smokescreen data-flow architecture. Solid arrows show the main execution sequence; dashed arrows show outputs produced by each step; green boxes show outputs. `datavector_main()` orchestrates `ConcealDataVector`, which triggers encryption; `encrypt_main()` provides a standalone encryption path; `decrypt_main()` restores the original SACC file given the `.encrpt` and `.key` files.](figures/Smokescreen_diagram.pdf){#fig:architecture width="100%"}
+![Smokescreen data-flow architecture. Solid arrows show the main execution sequence; dashed arrows show outputs produced by each step; green boxes show outputs. `datavector_main()` orchestrates `ConcealDataVector`, which triggers encryption; `encrypt_main()` provides a standalone encryption path; `decrypt_main()` restores the original SACC file given the `.encrpt` and `.key` files.](figures/Smokescreen_diagram.pdf){#fig:architecture width="95%"}
 
 ## Firecrown likelihood integration
 
@@ -214,26 +214,10 @@ Two blinded realisations ("Blind A" and "Blind B") were produced with determinis
 Blind A settings are:
 
 ```yaml
-path_to_sacc: "./sacc_forecasting_y1_3x2pt.sacc"
-likelihood_path: "./3x2pt_likelihood.py"
 output_suffix: "blind_A"
 shifts_dict:
     A_s: 2.00e-09  # +5.2% shift from fiducial
     w: -1.1  # +10.0% shift from fiducial
-shift_distribution: "flat"
-systematics:
-    lens0_bias: 1.2497
-    lens1_bias: 1.3809
-    lens2_bias: 1.5231
-    lens3_bias: 1.6716
-    lens4_bias: 1.8245
-    ia_bias: 1.0
-    alphaz: 0.0
-    z_piv: 0.62
-reference_cosmology:
-    A_s: 1.9019e-09
-    Omega_c: 0.2906
-keep_original_sacc: true
 ```
 
 While Blind B uses:
@@ -265,7 +249,7 @@ smokescreen datavector --config conceal_lsst_y1_3x2pt_blind_[A/B].yaml
 
 producing `sacc_forecasting_y1_3x2pt_blind_[A/B].sacc` and an encrypted copy of the original. The resulting concealed data vectors are shown in Figure \ref{fig:data-vectors}.
 
-![Example of multi-probe concealment for a simulated LSST Y1 3×2pt data vector: (left) cosmic shear, (middle) galaxy clustering, and (right) galaxy–galaxy lensing. Green circles show the original data vector ($A_s=1.9\times10^{-9}$, $w=-1.0$). Red squares (purple triangles) show *Blind A* (*Blind B*), produced by deterministic shifts to $A_s=2.0\times10^{-9}$, $w=-1.1$ ($A_s=1.8\times10^{-9}$, $w=-0.9$).](figures/datavector_shift_As_Omega_c_w0.pdf){#fig:data-vectors width="100%"}
+![Example of multi-probe concealment for a simulated LSST Y1 3×2pt data vector: (left) cosmic shear, (middle) galaxy clustering, and (right) galaxy–galaxy lensing. Green circles show the original data vector ($A_s=1.9\times10^{-9}$, $w=-1.0$). Red squares (purple triangles) show *Blind A* (*Blind B*), produced by deterministic shifts to $A_s=2.0\times10^{-9}$, $w=-1.1$ ($A_s=1.8\times10^{-9}$, $w=-0.9$).](figures/datavector_shift_As_Omega_c_w0.pdf){#fig:data-vectors width="95%"}
 
 ## Cosmological validation
 
@@ -296,7 +280,7 @@ Blind B        & $1.79$ & $-0.90$ & $0.290$ & $0.0069$ & $-17.14 \pm 0.03$ \\
 \end{table}
 ```
 
-![Marginalised 1D and 2D posterior distributions from cosmological inference on the data vectors shown in Figure \ref{fig:data-vectors}, using the same Firecrown likelihood provided to Smokescreen. The true cosmology (cyan), Blind A (red), and Blind B (purple) posteriors shift consistently towards their respective input concealing cosmologies, marked by filled circles and dashed lines. Cross markers indicate the posterior best-fits reported in Table \ref{tab:evidence}. Note that $\Omega_{\rm cdm}$ was not shifted by Smokescreen, yet its posterior shifts a tiny amount as a consequence of the known $A_s$–$\Omega_{\rm cdm}$–$w$ degeneracy, demonstrating that Criterion I is satisfied.](figures/triangle_plot.pdf){#fig:triangle width="85%"}
+![Marginalised 1D and 2D posterior distributions from cosmological inference on the data vectors shown in Figure \ref{fig:data-vectors}, using the same Firecrown likelihood provided to Smokescreen. The true cosmology (cyan), Blind A (red), and Blind B (purple) posteriors shift consistently towards their respective input concealing cosmologies, marked by filled circles and dashed lines. Cross markers indicate the posterior best-fits reported in Table \ref{tab:evidence}. Note that $\Omega_{\rm cdm}$ was not shifted by Smokescreen, yet its posterior shifts a tiny amount as a consequence of the known $A_s$–$\Omega_{\rm cdm}$–$w$ degeneracy, demonstrating that Criterion I is satisfied.](figures/triangle_plot.pdf){#fig:triangle width="80%"}
 
 # Research impact statement
 
